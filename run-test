@@ -1,0 +1,3 @@
+#!/bin/sh
+export PHPRC=./php.ini
+vendor/bin/phpunit --debug -v $*

@@ -1,0 +1,10 @@
+phpunit.xml
+composer.lock
+composer.phar
+config.json
+vendor/*
+/config.json
+*~
+/prompts/make-busy/
+/composer
+tests/KazooTests/Applications
