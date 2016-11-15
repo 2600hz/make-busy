@@ -1,3 +1,5 @@
+# MakeBusy
+
 ## About
 
 MakeBusy is a functional test suite for Kazoo. It works by creating test accounts in specified Kazoo cluster using Kazoo HTTP REST API and
@@ -21,7 +23,22 @@ must have access to Kazoo REST HTTP API.
 MakeBusy comprises of 4 Docker images: makebusy, makebusy-fs-auth, makebusy-fs-pbx and makebusy-fs-carrier, where makebusy-fs-* are
 automated FreeSwitch images (what, in turn, are based on kazoo/freeswitch docker image).
 
+## How to write tests
+
+Please see a brief (but yet complete) [HOWTO](doc/HOWTO.md).
+
 ## How to run tests
+
+### File structure
+
+Tests are supposed to reside in tests/KazooTests/Applications folder, grouped by application (like Callflow) to test.
+Each test file is supposed to test one exact feature.
+
+### TestCase setup and caching
+
+Each defined TestCase defines a number of Kazoo entities. When a test file is run it checks the Kazoo for entities
+to be defined first, starting from TestAccount, and if they are, the test environment will be loaded from Kazoo,
+instead of creating it. You can alter this by defining shell enviroment variable CLEAN.
 
 ### Environemt variables
 
@@ -50,9 +67,16 @@ Log messages to console also:
 LOG_CONSOLE=1 ./run-test path_to_test.php
 ```
 
-## How to develop and debug tests
+## Intended workflow
 
-## Configuration file (and notes)
+1. Define and name the TestCase
+2. Define and name the test
+3. Do LOG_CONSOLE=1 ./run-test path_to_test.php, and see what's going on
+4. Ensure newly defined test can run successfuly in sequential calls and it cleanups after itself
+5. Ensure newly defined test can run successfuly in freshly created environment: CLEAN=1 LOG_CONSOLE=1 ./run-test path_to_test.php
+6. Have a cup of coffee, go to 2. or 1.
+
+## Configuration file
 
 A valid configuration file config.json must exist in MakeBusy root folder (see etc/config.json as example).
 
@@ -65,3 +89,4 @@ A valid configuration file config.json must exist in MakeBusy root folder (see e
 5. Review and add more basic test cases (e.g. call between accounts, federation?)
 6. Don'do hupall, select and drop account channels (forge channel uuid/track channels)?
 7. Reset Voicemailbox to initial state, more sane way
+8. Improve refer handling and transfer tests
