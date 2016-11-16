@@ -21,7 +21,7 @@ must have access to Kazoo REST HTTP API.
 ## Docker images
 
 MakeBusy comprises of 4 Docker images: makebusy, makebusy-fs-auth, makebusy-fs-pbx and makebusy-fs-carrier, where makebusy-fs-* are
-automated FreeSwitch images (what, in turn, are based on kazoo/freeswitch docker image).
+automated FreeSwitch images (what, in turn, are based on kazoo/freeswitch docker image). Please see [Docker HOWTO](docker/README.md).
 
 ## How to write tests
 

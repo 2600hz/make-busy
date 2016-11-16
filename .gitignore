@@ -9,3 +9,4 @@ vendor/*
 /composer
 tests/KazooTests/Applications
 .ssh
+docker/makebusy/etc/commit
