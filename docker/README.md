@@ -4,7 +4,7 @@
 
 We suppose that there is a designated docker network to run MakeBusy images (named kazoo by default).
 You need to make sure that Kazoo's Kamailio, FreeSwitch and Kazoo's Crossbar application are
-accessible from this docker network segment, and to specify correct settings in [config.json](makebusy/etc/config.json) file,
+accessible from this docker network segment, and to specify correct settings in [config.json](makebusy/etc/config.json.dist) file,
 namely kamailio.kazoo, kazoo.kazoo, and kazoo admin credentials.
 
 All required docker images are build under *kazoo/* namepsace, namely:
