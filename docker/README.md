@@ -23,8 +23,8 @@ language, and tune some Kazoo variables.
 
 There are two shell scripts to assist you to prepare Kazoo: [setup-kazoo.sh](makebusy/setup-kazoo.sh)
 and [setup-kazoo-prompts.sh](makebusy/setup-kazoo-prompts.sh).  Scripts suppose that Kazoo's *sup* command
-is in search PATH, and local files are accessible by Kazoo. But you can do the Kazoo initial setup manually
-as well.
+is in search PATH, and local files are accessible by Kazoo (to load prompts).
+But you can do the Kazoo initial setup manually as well.
 
 ## Build and run
 
@@ -41,6 +41,7 @@ In order to ease test development you can mount the tests folder locally:
 cd docker/makebusy
 ./run.sh /home/kazoo/make-busy-tests
 ```
+
 Here /home/kazoo/make-busy-tests will be mounted as Application folder in MakeBusy docker image,
 allowing to execute tests.
 
