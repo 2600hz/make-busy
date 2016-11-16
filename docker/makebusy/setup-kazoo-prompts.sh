@@ -3,8 +3,6 @@ mkdir mk-bs
 docker cp makebusy.kazoo:/var/www/html/make-busy/prompts/make-busy-media.tar.gz mk-bs/
 cd mk-bs
 tar zxvf make-busy-media.tar.gz
+sup kazoo_media_maintenance import_prompts $PWD mk-bs
 cd ../
-docker cp mk-bs kazoo.kazoo:/home/user
-./sup kazoo_media_maintenance import_prompts /home/user/mk-bs mk-bs
 rm -rf mk-bs
-docker exec --user root kazoo.kazoo rm -rf mk-bs
