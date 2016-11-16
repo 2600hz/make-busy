@@ -15,6 +15,7 @@ RUN build/setup.sh
 
 COPY build/run.sh build/run.sh
 COPY build/run-test.sh run-test.sh
+COPY build/run-test-verbose.sh run-test-verbose.sh
 
 COPY etc/config.json etc/config.json
 COPY build/setup-bs.sh build/setup-bs.sh
