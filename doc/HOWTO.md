@@ -29,13 +29,12 @@ class DeviceTestCase extends TestCase
     protected static $a_device;
     protected static $b_device;
 
-    const A_EXT = 1001;
-    const B_EXT = 1002;
+    const A_EXT = '1001';
+    const B_EXT = '1002';
     const A_NUMBER = '5552221001';
-    const B_NUMBER = '5552221002'
+    const B_NUMBER = '5552221002';
 
     public static function setUpBeforeClass() {
-        public static function setUpBeforeClass() {
         parent::setUpBeforeClass();
 
         $acc = new TestAccount("DeviceTestCase");

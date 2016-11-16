@@ -10,3 +10,4 @@ vendor/*
 tests/KazooTests/Applications
 .ssh
 docker/makebusy/etc/commit
+docker/makebusy/etc/api_key

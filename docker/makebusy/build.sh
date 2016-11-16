@@ -5,5 +5,4 @@ FLAGS=${3:-""}
 cp -a ~/.ssh etc/
 echo Using repository $REPO commit $COMMIT
 echo $COMMIT > etc/commit
-./get-api.sh > etc/api_key
 docker build $FLAGS -t kazoo/makebusy .

@@ -90,6 +90,8 @@ A valid configuration file config.json must exist in MakeBusy root folder (see e
 6. Don'do hupall, select and drop account channels (forge channel uuid/track channels)?
 7. Reset Voicemailbox to initial state, more sane way
 8. Improve refer handling and transfer tests
+9. Creeate binary docker images and publish them to Docker Hub
+10. Run makebusy without apache (with php -S), and under user rights
 
 ## ASCII art
 ```

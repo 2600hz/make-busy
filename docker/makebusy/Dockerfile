@@ -20,9 +20,6 @@ COPY etc/config.json etc/config.json
 COPY build/setup-bs.sh build/setup-bs.sh
 RUN build/setup-bs.sh
 
-COPY build/setup-tests.sh build/setup-tests.sh
-RUN build/setup-tests.sh
-
 COPY etc/.vimrc /root
 
 COPY etc/commit commit
