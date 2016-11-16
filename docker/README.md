@@ -44,4 +44,4 @@ cd docker/makebusy
 Here /home/kazoo/make-busy-tests will be mounted as Application folder in MakeBusy docker image,
 allowing to execute tests.
 
-Please see [example tests project](https://github.com/jamhed/make-busy-tests).
+Please see [example tests project](https://github.com/2600hz/make-busy-skel).
