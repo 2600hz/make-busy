@@ -8,3 +8,4 @@ vendor/*
 /prompts/make-busy/
 /composer
 tests/KazooTests/Applications
+.ssh
