@@ -13,7 +13,7 @@ class Media
     private static $counter = 1;
     private $test_account;
     private $media;
-    private loaded = false;
+    private $loaded = false;
 
     public function __construct(TestAccount $account) {
         $name = "Media " . self::$counter++

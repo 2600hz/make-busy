@@ -11,7 +11,7 @@ class Webhook
     private $webhook;
 
     private static $counter = 1;
-    private loaded = false;
+    private $loaded = false;
 
     public function __construct(TestAccount $account, array $options = array()) {
         $name = "Webhook " . self::$counter++
