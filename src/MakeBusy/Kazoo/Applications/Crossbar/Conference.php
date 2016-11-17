@@ -234,4 +234,9 @@ class Conference
         }
         $conference->save();
     }
+
+    public function reset() {
+        $this->setMemberOption("join_muted", false);
+        $this->setMemberOption("join_deaf", false);
+    }
 }
