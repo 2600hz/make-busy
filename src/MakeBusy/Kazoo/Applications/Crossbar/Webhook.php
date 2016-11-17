@@ -2,8 +2,8 @@
 
 namespace MakeBusy\Kazoo\Applications\Crossbar;
 
-use \MakeBusy\Common\Utils;
 use \MakeBusy\Common\Log;
+use \MakeBusy\Common\Configuration;
 
 class Webhook
 {
