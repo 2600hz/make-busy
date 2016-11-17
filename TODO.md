@@ -9,3 +9,5 @@
 9. Creeate binary docker images and publish them to Docker Hub
 10. Run makebusy docker without apache (with php -S), and under user rights
 11. Add Trunkstore entities to account
+12. Add user's device as user method createDevice (instead of account)
+13. Rename KazooGateways to reflect the purpose (load Kazoo's data for account)
