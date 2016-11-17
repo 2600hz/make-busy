@@ -179,10 +179,16 @@ class Channel
         return $tone;
     }
 
-    public function setVariables($var_name, $value) {
+    public function setVariables($name, $value) {
         $uuid = $this->getUuid();
-        Log::debug("channel:%s set variable:%s to value:%s", $uuid, $value, $uuid);
-        $this->esl->api("uuid_setvar $uuid $var_name $value");
+        Log::debug("channel:%s set variable:%s to value:%s", $uuid, $name, $value);
+        $this->esl->api("uuid_setvar $uuid $name $value");
+    }
+
+    public function getVariable($name) {
+        $uuid = $this->getUuid();
+        Log::debug("channel:%s get variable:%s", $uuid, $name);
+        return $this->esl->api("uuid_getvar $uuid $name");
     }
 
     public function waitDetectTone($freq, $timeout) {
@@ -248,6 +254,24 @@ class Channel
     public function waitCallUpdate($timeout = 10) {
         $uuid = $this->getUuid();
         return $this->waitEvent($timeout, "CALL_UPDATE");
+    }
+
+    public function deflectChannel(Channel $ch, $referred_by) {
+        $call_uuid = $ch->getUuid();
+        $to_tag = $ch->getVariable('sip_to_tag');
+        $from_tag = $ch->getVariable('sip_from_tag');
+        $sip_uri = urldecode($ch->getVariable('sip_req_uri'));
+
+        $refer_to =     '<sip:' . $sip_uri
+                 . '?Replaces=' . $call_uuid
+               . '%3Bto-tag%3D' . $to_tag
+             . '%3Bfrom-tag%3D' . $from_tag
+             . '>';
+
+        $this->setVariables('sip_h_refer-to', $refer_to);
+        $this->setVariables('sip_h_referred-by', $referred_by);
+        $this->deflect($refer_to);
+        $this->waitDestroy();
     }
 
 }

@@ -115,6 +115,10 @@ class Device
         return $this->getGateway()->getEsl()->getChannels()->waitForInbound($number? $number : $this->getSipUsername(), $timeout, $header);
     }
 
+    public function makeReferredByUri() {
+        return sprintf("<sip:%s@%s:5060;transport=udp>", $this->getSipUsername(), $this->getProfile()->getSipIp());
+    }
+
     private function mergeOptions($device, $options) {
         foreach ($options as $key => $value) {
             if (is_object($value) || is_array($value)) {
