@@ -13,6 +13,7 @@ use \CallflowBuilder\Builder;
 use \CallflowBuilder\Node\Device as DeviceNode;
 use \MakeBusy\FreeSWITCH\Sofia\Gateway;
 use \MakeBusy\Kazoo\SDK;
+use \MakeBusy\Common\Configuration;
 
 class Device
 {
