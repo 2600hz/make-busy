@@ -223,6 +223,9 @@ class Conference
     }
 
     public function setConferenceNumbers(array $numbers = array()) { // set conference number for login via ConferenceService
+        if (! $this->loaded) {
+            return;
+        }
         $conference = $this->getConference();
         if (is_null($numbers)) {
             unset($conference->conference_numbers);

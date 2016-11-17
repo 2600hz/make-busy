@@ -17,7 +17,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\RingGroup;
 use \MakeBusy\Kazoo\Applications\Crossbar\Voicemail;
 use \MakeBusy\Kazoo\Applications\Crossbar\Conference;
 use \MakeBusy\Kazoo\Applications\Crossbar\Media;
-
+use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
 
 abstract class AbstractTestAccount
 {
@@ -29,6 +29,7 @@ abstract class AbstractTestAccount
     private $kazoo_vms = [];
     private $kazoo_medias = [];
     private $kazoo_confs = [];
+    private $kazoo_webhooks = [];
 
     private $loaded = false;
     private static $counter = 1; // count created accounts
@@ -121,6 +122,21 @@ abstract class AbstractTestAccount
     public function getKazooMedia($name) {
         if (isset($this->kazoo_medias[$name])) {
             return $this->kazoo_medias[$name];
+        }
+        return null;
+    }
+
+    public function createWebhook(array $options = []) {
+        return new Webhook($this, $options);
+    }
+
+    public function addKazooWebhook($kazoo_webhook) {
+        $this->kazoo_webhooks[$kazoo_webhook->name] = $kazoo_webhook;
+    }
+
+    public function getKazooWebhook($name) {
+        if (isset($this->kazoo_webhooks[$name])) {
+            return $this->kazoo_webhooks[$name];
         }
         return null;
     }
