@@ -49,6 +49,18 @@ class Gateways {
             Log::debug("cache add kazoo voicemailbox name:%s to account:%s", $vm->name, $kazoo_account->name);
             $account->addKazooVm($vm);
         }
+        foreach(self::load($kazoo_account, 'Webhooks') as $hook) {
+            Log::debug("cache add kazoo webhook name:%s to account:%s", $hook->name, $kazoo_account->name);
+            $account->addKazooWebhook($hook);
+        }
+        foreach(self::load($kazoo_account, 'Conferences') as $conf) {
+            Log::debug("cache add kazoo conference name:%s to account:%s", $conf->name, $kazoo_account->name);
+            $account->addKazooConference($conf);
+        }
+        foreach(self::load($kazoo_account, 'Medias') as $media) {
+            Log::debug("cache add kazoo media name:%s to account:%s", $media->name, $kazoo_account->name);
+            $account->addKazooMedia($media);
+        }
     }
 
     public static function loadFromUsers($account) {
@@ -67,6 +79,15 @@ class Gateways {
             $vms[] = $vm;
         }
         return $vms;
+    }
+
+    public static function load($account, $collection) {
+        $items = [];
+        foreach($account->$collection() as $element) {
+            $item = $element->fetch();
+            $items[] = $item;
+        }
+        return $items;
     }
 
     public static function loadFromDevices($account) {

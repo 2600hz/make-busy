@@ -11,3 +11,5 @@
 11. Add Trunkstore entities to account
 12. Add user's device as user method createDevice (instead of account)
 13. Rename KazooGateways to reflect the purpose (load Kazoo's data for account)
+14. Bind systemconfigs to account
+

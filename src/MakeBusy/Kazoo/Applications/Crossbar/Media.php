@@ -16,7 +16,7 @@ class Media
     private $loaded = false;
 
     public function __construct(TestAccount $account) {
-        $name = "Media " . self::$counter++
+        $name = "Media " . self::$counter++;
         $this->test_account = $account;
         $kazoo_media = $account->getKazooMedia($name);
         if (is_null($kazoo_media)) {
@@ -27,7 +27,7 @@ class Media
         }
     }
 
-    public function __construct(TestAccount $test_account, $name) {
+    public function initialize(TestAccount $test_account, $name) {
         $account = $this->getAccount();
 
         $media = $account->Media();

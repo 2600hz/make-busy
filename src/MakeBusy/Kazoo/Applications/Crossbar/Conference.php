@@ -17,7 +17,7 @@ class Conference
     private $conference;
 
     public function __construct(TestAccount $account, array $pins = array(), array $options = array()) {
-        $name = "Conference " . self::$counter++
+        $name = "Conference " . self::$counter++;
         $this->test_account = $account;
         $kazoo_conf = $account->getKazooConference($name);
         if (is_null($kazoo_conf)) {
@@ -28,7 +28,7 @@ class Conference
         }
     }
 
-    public function __construct(TestAccount $test_account, $name, array $pins = array(), array $options = array()) {
+    public function initialize(TestAccount $test_account, $name, array $pins = array(), array $options = array()) {
         $account = $this->getAccount();
         $conference = $account->Conference();
         $conference->name = $name;
@@ -79,7 +79,7 @@ class Conference
     }
 
     public function createCallflow(array $numbers, array $options = array()) { // Need Language for test call from PSTN
-        if (! $this->loaded) {
+        if ($this->loaded) {
             return;
         }
         $builder = new Builder($numbers);
@@ -94,7 +94,7 @@ class Conference
     }
 
     public function createServiceCallflow(array $numbers, array $options = array()) { // Create Callflow for ConferenceService without data_id
-        if (! $this->loaded) {
+        if ($this->loaded) {
             return;
         }
         $builder = new Builder($numbers);
@@ -223,7 +223,7 @@ class Conference
     }
 
     public function setConferenceNumbers(array $numbers = array()) { // set conference number for login via ConferenceService
-        if (! $this->loaded) {
+        if ($this->loaded) {
             return;
         }
         $conference = $this->getConference();

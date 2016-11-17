@@ -23,6 +23,13 @@ class SystemConfigs
         $config->update("crossbar");
     }
 
+    public static function setDefaultConfParam(TestAccount $test_account, $name, $value) {
+        $account = $test_account->getAccount();
+        $config = $account->SystemConfig()->fetch("conferences");
+        $config->default->profiles->default->{$name} = $value;
+        $config->update("conferences");
+    }
+
     public function setCarrierAcl(TestAccount $test_account,$carrier_name,$cidr,$type,$networklist) {
         $account = $test_account->getAccount();
         $config = $account->SystemConfig();
