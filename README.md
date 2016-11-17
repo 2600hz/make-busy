@@ -80,19 +80,6 @@ LOG_CONSOLE=1 ./run-test path_to_test.php
 
 A valid configuration file config.json must exist in MakeBusy root folder (see etc/config.json as example).
 
-## TODO
-
-1. Somehow indicate a dirty state after test (e.g. env should be re-created)?
-2. Language bs is not found (voicemail tests, trying to say user name)
-3. Speed-up redirect to voicemail in voicemail tests
-4. Somehow sync with Kazoo events (e.g. voicemail stored and is available)
-5. Review and add more basic test cases (e.g. call between accounts, federation?)
-6. Don'do hupall, select and drop account channels (forge channel uuid/track channels)?
-7. Reset Voicemailbox to initial state, more sane way
-8. Improve refer handling and transfer tests
-9. Creeate binary docker images and publish them to Docker Hub
-10. Run makebusy without apache (with php -S), and under user rights
-
 ## ASCII art
 ```
            `                                                                        
