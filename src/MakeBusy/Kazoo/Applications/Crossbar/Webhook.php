@@ -14,7 +14,7 @@ class Webhook
     private $loaded = false;
 
     public function __construct(TestAccount $account, array $options = array()) {
-        $name = "Webhook " . self::$counter++
+        $name = "Webhook " . self::$counter++;
         $this->test_account = $account;
         $kazoo_webhook = $account->getKazooWebhook($name);
         if (is_null($kazoo_webhook)) {
@@ -25,7 +25,7 @@ class Webhook
         }
     }
 
-    public function __construct(TestAccount $test_account, $name, array $options = array()) {
+    public function initialize(TestAccount $test_account, $name, array $options = array()) {
         if (!empty( $options['uri'] ) && !empty( $options['hook'] )) {
             $account = $test_account->getAccount();
             $webhook = $account->Webhook();
