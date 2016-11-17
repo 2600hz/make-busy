@@ -15,6 +15,9 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Device;
 use \MakeBusy\Kazoo\Applications\Crossbar\Resource;
 use \MakeBusy\Kazoo\Applications\Crossbar\RingGroup;
 use \MakeBusy\Kazoo\Applications\Crossbar\Voicemail;
+use \MakeBusy\Kazoo\Applications\Crossbar\Conference;
+use \MakeBusy\Kazoo\Applications\Crossbar\Media;
+
 
 abstract class AbstractTestAccount
 {
@@ -24,6 +27,8 @@ abstract class AbstractTestAccount
     private $kazoo_resources = [];
     private $kazoo_users = [];
     private $kazoo_vms = [];
+    private $kazoo_medias = [];
+    private $kazoo_confs = [];
 
     private $loaded = false;
     private static $counter = 1; // count created accounts
@@ -86,6 +91,36 @@ abstract class AbstractTestAccount
     public function getKazooUser($name) {
         if (isset($this->kazoo_users[$name])) {
             return $this->kazoo_users[$name];
+        }
+        return null;
+    }
+
+    public function createConference(array $pins = array(), array $options = array()) {
+        return new Conference($this, $pins, $options);
+    }
+
+    public function addKazooConference($kazoo_conf) {
+        $this->kazoo_confs[$kazoo_conf->name] = $kazoo_conf;
+    }
+
+    public function getKazooConference($name) {
+        if (isset($this->kazoo_confs[$name])) {
+            return $this->kazoo_confs[$name];
+        }
+        return null;
+    }
+
+    public function createMedia() {
+        return new Media($this);
+    }
+
+    public function addKazooMedia($kazoo_media) {
+        $this->kazoo_medias[$kazoo_media->name] = $kazoo_media;
+    }
+
+    public function getKazooMedia($name) {
+        if (isset($this->kazoo_medias[$name])) {
+            return $this->kazoo_medias[$name];
         }
         return null;
     }

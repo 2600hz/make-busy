@@ -6,7 +6,6 @@ use \stdClass;
 
 use \MakeBusy\Common\Utils;
 use \MakeBusy\Common\Log;
-use \MakeBusy\Common\Configuration;
 
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 

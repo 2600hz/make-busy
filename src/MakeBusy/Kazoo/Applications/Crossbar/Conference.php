@@ -4,10 +4,6 @@ namespace MakeBusy\Kazoo\Applications\Crossbar;
 
 use \stdClass;
 
-use \MakeBusy\Kazoo\SDK;
-
-use \MakeBusy\Common\Utils;
-
 use \CallflowBuilder\Builder;
 use \CallflowBuilder\Node\Conference as ConferenceNode;
 use \CallflowBuilder\Node\Language;
@@ -15,16 +11,25 @@ use \MakeBusy\Common\Log;
 
 class Conference
 {
+    private static $counter = 1;
+    private $loaded = false;
     private $test_account;
     private $conference;
 
-    public function __construct(TestAccount $test_account, array $pins = array(), array $options = array()) {
-        $this->setTestAccount($test_account);
+    public function __construct(TestAccount $account, array $pins = array(), array $options = array()) {
+        $name = "Conference " . self::$counter++
+        $this->test_account = $account;
+        $kazoo_conf = $account->getKazooConference($name);
+        if (is_null($kazoo_conf)) {
+            $this->initialize($account, $name, $pins, $options);
+        } else {
+            $this->setConference($kazoo_conf);
+            $this->loaded = true;
+        }
+    }
+
+    public function __construct(TestAccount $test_account, $name, array $pins = array(), array $options = array()) {
         $account = $this->getAccount();
-
-        $name = "Conference " . count($account->Conferences());
-
-
         $conference = $account->Conference();
         $conference->name = $name;
 
@@ -74,6 +79,9 @@ class Conference
     }
 
     public function createCallflow(array $numbers, array $options = array()) { // Need Language for test call from PSTN
+        if (! $this->loaded) {
+            return;
+        }
         $builder = new Builder($numbers);
         $mkbs    = new Language("mk-bs");
         $conference_callflow = new ConferenceNode($this->getId());
@@ -86,6 +94,9 @@ class Conference
     }
 
     public function createServiceCallflow(array $numbers, array $options = array()) { // Create Callflow for ConferenceService without data_id
+        if (! $this->loaded) {
+            return;
+        }
         $builder = new Builder($numbers);
         $mkbs    = new Language("mk-bs");
         $conference_callflow = new ConferenceNode();

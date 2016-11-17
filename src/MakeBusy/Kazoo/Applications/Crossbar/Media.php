@@ -4,23 +4,31 @@ namespace MakeBusy\Kazoo\Applications\Crossbar;
 
 use \stdClass;
 
-use \MakeBusy\Common\Utils;
-use \MakeBusy\Common\Configuration;
-
 use \CallflowBuilder\Builder;
 use \CallflowBuilder\Node\Media as MediaNode;
 use \MakeBusy\Common\Log;
 
 class Media
 {
+    private static $counter = 1;
     private $test_account;
     private $media;
+    private loaded = false;
 
-    public function __construct(TestAccount $test_account) {
-        $this->setTestAccount($test_account);
+    public function __construct(TestAccount $account) {
+        $name = "Media " . self::$counter++
+        $this->test_account = $account;
+        $kazoo_media = $account->getKazooMedia($name);
+        if (is_null($kazoo_media)) {
+            $this->initialize($account, $name);
+        } else {
+            $this->setMedia($kazoo_media);
+            $this->loaded = true;
+        }
+    }
+
+    public function __construct(TestAccount $test_account, $name) {
         $account = $this->getAccount();
-
-        $name = "Media " . count($account->Medias());
 
         $media = $account->Media();
         $media->name = $name;
@@ -78,6 +86,9 @@ class Media
     }
 
     public function createCallflow(array $numbers, array $options = array()) {
+        if (! $this->loaded) {
+            return;
+        }
         $builder = new Builder($numbers);
         $media_callflow = new MediaNode($this->getId());
         $data = $builder->build($media_callflow);
