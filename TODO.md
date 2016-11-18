@@ -11,6 +11,7 @@
 3. Review and add more basic test cases (e.g. call between accounts, federation?)
 4. Create binary docker images and publish them to Docker Hub
 5. global/local resources create/use/test
+6. PHP SDK lazy load needs to be explicit and more intuitive
 
 ## Urgent
 
