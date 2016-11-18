@@ -33,12 +33,17 @@ class Gateways {
             $items = self::loadCollection($account, $collection);
         }
         self::createGatewaysFromDevices($kazoo_account, $account->getCache('Devices'));
-        self::createGatewaysFromRessources($kazoo_account, $account->getCache('Resources'));
+        self::createGatewaysFromResources($kazoo_account, $account->getCache('Resources'));
     }
 
-    public function loadCollection($account, $collection) {
-        foreach(self::loadFromKazoo($account, $collection) as $item) {
-            Log::debug("cache add %s name:%s to account:%s", $collection, $item->name, $account->name);
+    public static function getName($item) {
+        return isset($item->first_name)? $item->first_name : $item->name;
+    }
+
+    public static function loadCollection($account, $collection) {
+        $kazoo_account = $account->getAccount();
+        foreach(self::loadFromKazoo($kazoo_account, $collection) as $item) {
+            Log::debug("cache add %s name:%s to account:%s", $collection, self::getName($item), $kazoo_account->name);
             $account->addToCache($collection, $item);
         }
     }
@@ -64,7 +69,7 @@ class Gateways {
     public static function createGatewaysFromResources($account, $resources) {
         foreach($resources as $resource) {
             $profile = $resource->makebusy->profile; // defined in Crossbar\Resource
-            Log::debug("create gateway for resorce id: %s", $element->id);
+            Log::debug("create gateway for resorce id: %s", $resource->id);
             $gateway = new Gateway(self::getProfile($profile), $resource->id);
             $gateway->fromResource($resource, $account->realm);
         }

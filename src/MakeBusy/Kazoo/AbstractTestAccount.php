@@ -45,14 +45,20 @@ abstract class AbstractTestAccount
     }
 
     function addToCache($collection, $item) {
-        $this->cache[$collection][$item->name] = $item;
+        // fucking oop
+        $name = isset($item->first_name)? $item->first_name : $item->name;
+        $this->cache[$collection][$name] = $item;
     }
 
-    function getFromCache($collection, $item) {
-        return $this->cache[$collection][$item->name];
+    function getFromCache($collection, $name) {
+        $cached = $this->getCache($collection);
+        return isset($cached[$name])? $cached[$name] : null;
     }
 
     function getCache($collection) {
+        if (!isset($this->cache[$collection])) {
+            $this->cache[$collection] = [];
+        }
         return $this->cache[$collection];
     }
 
