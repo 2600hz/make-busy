@@ -95,6 +95,7 @@ abstract class AbstractTestAccount
     }
 
     public static function nukeTestAccounts($type = null) {
+        Log::debug("Reset Kazoo Makebusy config");
         if (is_null($type)) {
             $filter = array('has_key' => 'makebusy');
         } else {

@@ -14,6 +14,7 @@ use \MakeBusy\Common\Log;
 
 class TestAccount extends AbstractTestAccount
 {
+    private static $callflow = 1;
 
     public function setup() {
         parent::setup();

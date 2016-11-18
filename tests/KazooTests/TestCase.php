@@ -50,7 +50,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass() {
         if (isset($_ENV['CLEAN'])) {
-            Log::debug("Reset Kazoo Makebusy config");
             AbstractTestAccount::nukeTestAccounts();
         } else {
             Log::debug("Use existing Kazoo Makebusy config");
