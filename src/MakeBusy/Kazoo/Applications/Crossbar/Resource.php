@@ -28,7 +28,7 @@ class Resource
         $this->profile = $profile;
         $this->name = $name;
 
-        $kazoo_resource = $test_account->getKazooResource($name);
+        $kazoo_resource = $test_account->getFromCache('Resources', $name);
 
         if (is_null($kazoo_resource)) {
             if ($global) {

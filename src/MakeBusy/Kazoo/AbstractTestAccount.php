@@ -22,14 +22,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
 abstract class AbstractTestAccount
 {
     private $account;
-    // caches
-    private $kazoo_devices = [];
-    private $kazoo_resources = [];
-    private $kazoo_users = [];
-    private $kazoo_vms = [];
-    private $kazoo_medias = [];
-    private $kazoo_confs = [];
-    private $kazoo_webhooks = [];
+    private $cache = [];
 
     private $loaded = false;
     private static $counter = 1; // count created accounts
@@ -51,109 +44,44 @@ abstract class AbstractTestAccount
         return $this->loaded;
     }
 
+    function addToCache($collection, $item) {
+        $this->cache[$collection][$item->name] = $item;
+    }
+
+    function getFromCache($collection, $item) {
+        return $this->cache[$collection][$item->name];
+    }
+
+    function getCache($collection) {
+        return $this->cache[$collection];
+    }
+
     public function createDevice($profile, $register = TRUE, array $options = array()) {
         return new Device($this, $profile, $register, $options);
-    }
-
-    public function addKazooDevice($kazoo_device) {
-        $this->kazoo_devices[$kazoo_device->name] = $kazoo_device;
-    }
-
-    public function getKazooDevice($name) {
-        if (isset($this->kazoo_devices[$name])) {
-            return $this->kazoo_devices[$name];
-        }
-        return null;
     }
 
     public function createResource($profile, array $rules, $prefix = null, $emergency = FALSE, $register = FALSE, $global = FALSE) {
         return new Resource($this, $profile, $rules, $prefix, $emergency, $register, $global);
     }
 
-    public function addKazooResource($kazoo_resource) {
-        $this->kazoo_resources[$kazoo_resource->name] = $kazoo_resource;
-    }
-
-    public function getKazooResource($name) {
-        if (isset($this->kazoo_resources[$name])) {
-            return $this->kazoo_resources[$name];
-        }
-        return null;
-    }
-
     public function createUser(array $options = array()) {
         return new User($this, $options);
-    }
-
-    public function addKazooUser($kazoo_user) {
-        $this->kazoo_users[$kazoo_user->first_name] = $kazoo_user;
-    }
-
-    public function getKazooUser($name) {
-        if (isset($this->kazoo_users[$name])) {
-            return $this->kazoo_users[$name];
-        }
-        return null;
     }
 
     public function createConference(array $pins = array(), array $options = array()) {
         return new Conference($this, $pins, $options);
     }
 
-    public function addKazooConference($kazoo_conf) {
-        $this->kazoo_confs[$kazoo_conf->name] = $kazoo_conf;
-    }
-
-    public function getKazooConference($name) {
-        if (isset($this->kazoo_confs[$name])) {
-            return $this->kazoo_confs[$name];
-        }
-        return null;
-    }
-
     public function createMedia() {
         return new Media($this);
-    }
-
-    public function addKazooMedia($kazoo_media) {
-        $this->kazoo_medias[$kazoo_media->name] = $kazoo_media;
-    }
-
-    public function getKazooMedia($name) {
-        if (isset($this->kazoo_medias[$name])) {
-            return $this->kazoo_medias[$name];
-        }
-        return null;
     }
 
     public function createWebhook(array $options = []) {
         return new Webhook($this, $options);
     }
 
-    public function addKazooWebhook($kazoo_webhook) {
-        $this->kazoo_webhooks[$kazoo_webhook->name] = $kazoo_webhook;
-    }
-
-    public function getKazooWebhook($name) {
-        if (isset($this->kazoo_webhooks[$name])) {
-            return $this->kazoo_webhooks[$name];
-        }
-        return null;
-    }
-
     public function createVm($box_number, array $options = array()) {
         return new Voicemail($this, $box_number, $options);
-    }
-
-    public function addKazooVm($kazoo_vm) {
-        $this->kazoo_vms[$kazoo_vm->name] = $kazoo_vm;
-    }
-
-    public function getKazooVm($name) {
-        if (isset($this->kazoo_vms[$name])) {
-            return $this->kazoo_vms[$name];
-        }
-        return null;
     }
 
     public function createRingGroup(array $numbers, array $members, $strategy = "simultaneous") {

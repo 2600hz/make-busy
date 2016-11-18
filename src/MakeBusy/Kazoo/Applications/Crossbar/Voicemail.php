@@ -24,7 +24,7 @@ class Voicemail
     public function __construct(TestAccount $account, $box_number, array $options = array()) {
         $this->test_account = $account;
         $name = "VMBox " . self::$counter++;
-        $kazoo_vm = $account->getKazooVm($name);
+        $kazoo_vm = $account->getFromCache('VMBoxes', $name);
         if (is_null($kazoo_vm)) {
             $this->initialize($account, $name, $box_number, $options);
         } else {

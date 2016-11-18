@@ -18,7 +18,7 @@ class Media
     public function __construct(TestAccount $account) {
         $name = "Media " . self::$counter++;
         $this->test_account = $account;
-        $kazoo_media = $account->getKazooMedia($name);
+        $kazoo_media = $account->getFromCache('Medias', $name);
         if (is_null($kazoo_media)) {
             $this->initialize($account, $name);
         } else {

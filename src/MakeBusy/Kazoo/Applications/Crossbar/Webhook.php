@@ -16,7 +16,7 @@ class Webhook
     public function __construct(TestAccount $account, array $options = array()) {
         $name = "Webhook " . self::$counter++;
         $this->test_account = $account;
-        $kazoo_webhook = $account->getKazooWebhook($name);
+        $kazoo_webhook = $account->getFromCache('Webhooks', $name);
         if (is_null($kazoo_webhook)) {
             $this->initialize($account, $name, $options);
         } else {

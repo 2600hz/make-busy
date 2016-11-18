@@ -19,7 +19,8 @@ class Conference
     public function __construct(TestAccount $account, array $pins = array(), array $options = array()) {
         $name = "Conference " . self::$counter++;
         $this->test_account = $account;
-        $kazoo_conf = $account->getKazooConference($name);
+        $kazoo_conf = $account->getFromCache('Conferences', $name);
+
         if (is_null($kazoo_conf)) {
             $this->initialize($account, $name, $pins, $options);
         } else {

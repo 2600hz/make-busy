@@ -20,7 +20,7 @@ class User {
     public function __construct(TestAccount $account, array $options = array()) {
         $name = "User " . self::$counter++;
         $this->test_account = $account;
-        $kazoo_user = $account->getKazooUser($name);
+        $kazoo_user = $account->getFromCache('Users', $name);
         if (is_null($kazoo_user)) {
             $this->initialize($account, $name, $options);
         } else {

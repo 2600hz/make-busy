@@ -31,7 +31,7 @@ class Device
     public function __construct(TestAccount $account, $profile, $register = TRUE, array $options = array()) {
         $name = "Device " . self::$counter++;
         $this->test_account = $account;
-        $kazoo_device = $account->getKazooDevice($name);
+        $kazoo_device = $account->getFromCache('Devices', $name);
         if (is_null($kazoo_device)) {
             $this->initialize($account, $name, $profile, $register, $options);
             $kazoo_device = $this->device;

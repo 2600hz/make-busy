@@ -99,7 +99,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function ensureEvent($ev) {
-        self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\ESL\\Event", $ev, "Expected evnet wasn't received");
+        self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\ESL\\Event", $ev, "Expected event wasn't received");
         return $ev;
     }
 
