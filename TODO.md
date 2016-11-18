@@ -18,6 +18,7 @@
 1. Reset Voicemailbox to initial state systematically
 2. Reset Conferences to initial state systematically
 3. Conference callflow update/cache/load?
+4. Reduce tone timeouts to speed up testing
 
 ## Immediate
 
