@@ -12,4 +12,3 @@
 12. Add user's device as user method createDevice (instead of account)
 13. Rename KazooGateways to reflect the purpose (load Kazoo's data for account)
 14. Bind systemconfigs to account
-15. We need to detect conference join tone instead of guessing audio
