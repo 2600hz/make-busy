@@ -10,21 +10,40 @@ use \MakeBusy\Common\Utils;
 use \MakeBusy\Common\Configuration;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\Kazoo\Applications\Crossbar\SystemConfigs;
+use \MakeBusy\FreeSWITCH\Sofia\Gateway;
+use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 use \MakeBusy\Common\Log;
 
 class Connectivity
 {
+    private static $counter = 1;
+    private static $gateway_counter = 0; // because servers is an array, starting from zero
 
     private $test_account;
     private $connectivity;
-    const IP_PROFILE   = "pbx";
-    const USER_PROFILE = "auth";
+    private $loaded = false;
+    private $gateways = []; // instances of Sofia\Gateway
 
-    public function __construct(TestAccount $test_account, array $options = array()) {
-        $this->setTestAccount($test_account);
+    public function __construct(TestAccount $account, array $options = array()) {
+        $name = "Connectivity " . self::$counter++;
+        $this->test_account = $account;
+        $kazoo_connectivity = $account->getFromCache('Connectivities', $name);
+        if (is_null($kazoo_connectivity)) {
+            $this->initialize($account, $name, $options);
+        } else {
+            $this->setConnectivity($kazoo_connectivity);
+            $counter = self::$gateway_counter;
+            foreach($this->getConnectivity()->servers as $element) {
+                $this->createSofiaGateway($element, $counter++);
+            } 
+            $this->loaded = true;
+        }
+    }
 
+    public function initialize(TestAccount $test_account, $name, array $options = array()) {
         $account = $this->getAccount();
         $connectivity = $account->Connectivity();
+        $connectivity->name = $name;
         $connectivity->account = new stdClass();
         $connectivity->account->trunks = 0;
         $connectivity->account->inbound_trunks = 0;
@@ -36,6 +55,10 @@ class Connectivity
         $connectivity->makebusy->test = TRUE;
         $connectivity->save();
         $this->setConnectivity($connectivity);
+    }
+
+    public function isLoaded() {
+        return $this->loaded;
     }
 
     private function getTestAccount() {
@@ -51,7 +74,8 @@ class Connectivity
     }
 
     public function getConnectivity() {
-        return $this->connectivity->fetch();
+        return $this->connectivity;
+        //->fetch();
     }
 
     private function setConnectivity($connectivity) {
@@ -62,41 +86,43 @@ class Connectivity
         return $this->getConnectivity()->getId();
     }
 
-    public function addGateway($type, $credential = null, $password = null) {
+    public function addGateway($profile, $type, $credential = null, $password = null) {
+        if ($this->isLoaded()) {
+            return self::$gateway_counter++;
+        }
         $connectivity = $this->getConnectivity();
-        $count = count($connectivity->servers);
-        $arg_list = func_get_args();
-        $name = "Pbx " .  $count;
+        $gateway_id = self::$gateway_counter++;
+        $name = "Gateway " . $gateway_id;
 
         $element = new stdClass();
         $element->auth = new stdClass();
-        $element->server_name=$name;
+        $element->server_name = $name;
         $element->DIDs = new stdClass();
         $element->makebusy = new stdClass();
 
-        switch ($type){
+        switch ($type) {
            case "Password":
                 $element->auth->auth_method = "Password";
                 $element->auth->auth_user = $credential;
                 $element->auth->auth_password = $password;
-                $element->makebusy->profile   = 'auth';
+                $element->makebusy->profile   = $profile;
                 $element->makebusy->register = TRUE;
                 break;
            case 'IP':
                 $element->auth->auth_method="IP";
                 $element->auth->ip=$credential;
-                $element->makebusy->profile   = 'pbx';
+                $element->makebusy->profile   = $profile;
                 $element->makebusy->register = FALSE;
                 break;
            default:
                 $element->auth->auth_method   = 'Password';
                 $element->auth->auth_user     = 'noreg';
                 $element->auth->auth_password = 'register';
-                $element->makebusy->profile   = 'auth';
+                $element->makebusy->profile   = $profile;
                 $element->makebusy->register  = FALSE;
         }
 
-        $element->server_type="FreeSWITCH";
+        $element->server_type = "FreeSWITCH";
         $element->monitor = new stdClass();
         $element->monitor->monitor_enabled = new stdClass();
 
@@ -114,8 +140,21 @@ class Connectivity
 
         $element->makebusy->id = strtolower(Utils::randomString(28, "hex"));
         array_push($connectivity->servers, $element);
+        $this->createSofiaGateway($element, $gateway_id);
+
         $connectivity->save();
-        return $count;
+        return $gateway_id;
+    }
+
+    public static function getProfile($profile) {
+        return EslConnection::getInstance($profile)->getProfiles()->getProfile("profile");
+    }
+
+    public function createSofiaGateway($element, $gateway_id) {
+        $gateway = new Gateway(self::getProfile($element->makebusy->profile), $element->server_name);
+        $gateway->fromConnectivity($element, $this->getAccount()->realm);
+        $this->gateways[$gateway_id] = $gateway;
+        return $gateway;
     }
 
     public function setAcl($name, $ip) {
@@ -131,6 +170,10 @@ class Connectivity
         SystemConfigs::removeCarrierAcl($test_account, $name, $cidr);
     }
 
+    public function getGateway($id) {
+        return $this->gateways[$id];
+    }
+
     public function getGatewayId($gatewayid) {
         return $this->getConnectivity()->servers[$gatewayid]->makebusy->id;
     }
@@ -139,7 +182,7 @@ class Connectivity
         return $this->getConnectivity()->servers[$gatewayid]->auth->$param;
     }
 
-    public function assignNumber($gatewayid,$number) {
+    public function assignNumber($gatewayid, $number) {
         $connectivity = $this->getConnectivity();
         $number = '+' . $number;
         $connectivity->servers[$gatewayid]->DIDs->$number = new stdClass();

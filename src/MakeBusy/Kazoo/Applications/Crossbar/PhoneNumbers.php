@@ -13,15 +13,28 @@ use \MakeBusy\Common\Log;
 
 class PhoneNumbers
 {
+    private static $counter = 1;
+    private $test_account;
+    private $phone_number;
+    private $loaded = false;
 
-  private $test_account;
-  private $phone_number;
+    public function __construct(TestAccount $account, $number, $activate = true) {
+        $this->test_account = $account;
+        $kazoo_phonenumber = $account->getFromCache('PhoneNumbers', $number);
+        if (is_null($kazoo_phonenumber)) {
+            $this->initialize($account, $number, $activate);
+        } else {
+            $kazoo_phonenumber->notNew();
+            $this->setPhoneNumber($kazoo_phonenumber);
+            $this->loaded = true;
+        }
+    }
 
-    public function __construct(TestAccount $test_account, $number, $activate = TRUE) {
+    public function initialize(TestAccount $test_account, $number, $activate = TRUE) {
         $this->setTestAccount($test_account);
 
         $account = $this->getAccount();
-        $phone_number=$account->PhoneNumber();
+        $phone_number = $account->PhoneNumber();
         $phone_number->fetch($number);
         if ($number[0]=="+") {
             $phone_number->save(substr($number,1));
@@ -49,7 +62,7 @@ class PhoneNumbers
     }
 
     public function getPhoneNumber() {
-        return $this->phone_number->fetch();
+        return $this->phone_number;
     }
 
     private function setPhoneNumber($phone_number) {

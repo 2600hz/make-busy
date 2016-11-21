@@ -30,10 +30,9 @@ class SystemConfigs
         $config->update("conferences");
     }
 
-    public function setCarrierAcl(TestAccount $test_account,$carrier_name,$cidr,$type,$networklist) {
+    public static function setCarrierAcl(TestAccount $test_account,$carrier_name,$cidr,$type,$networklist) {
         $account = $test_account->getAccount();
         $config = $account->SystemConfig();
-        $config->fetchEcallmgr();
         $config->acls->$carrier_name=new stdClass();
         $config->acls->$carrier_name->type = $type;
         $name = "network-list-name";
@@ -44,10 +43,9 @@ class SystemConfigs
         $config->update("ecallmgr");
     }
 
-    public function removeCarrierAcl(TestAccount $test_account, $carrier_name, $cidr){
+    public static function removeCarrierAcl(TestAccount $test_account, $carrier_name, $cidr){
         $account = $test_account->getAccount();
         $config = $account->SystemConfig();
-        $config->fetchEcallMgr();
     }
 
     public function get(TestAccount $test_account) {

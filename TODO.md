@@ -19,14 +19,20 @@
 2. Reset Conferences to initial state systematically
 3. Conference callflow update/cache/load?
 4. Reduce tone timeouts to speed up testing
+5. Abstract cached entities constructors (__construct/initialize pairs)
 
 ## Immediate
 
-1. Add Trunkstore entities to account
 2. Add user's device as user method createDevice (instead of account)
 3. Rename KazooGateways to reflect the purpose (load Kazoo's data for account)
 4. Bind systemconfigs to account
+5. Slow number creation, need to investigate
 
 ## Bugs
 
 1. Language bs is not found (voicemail tests, trying to say user name), therefore username prompt isn't tested.
+
+## Leftovers
+
+1. TODO: stub code right now, need to add remove ACL to SDK.
+

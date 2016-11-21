@@ -29,7 +29,7 @@ class Gateways {
 
     public static function loadFromAccount(AbstractTestAccount $account) {
         $kazoo_account = $account->getAccount();
-        foreach(['Devices', 'Resources', 'Users', 'VMBoxes', 'Webhooks', 'Conferences', 'Medias'] as $collection) {
+        foreach(['Devices', 'Resources', 'Users', 'VMBoxes', 'Webhooks', 'Conferences', 'Medias', 'Connectivities', 'PhoneNumbers'] as $collection) {
             $items = self::loadCollection($account, $collection);
         }
         self::createGatewaysFromDevices($kazoo_account, $account->getCache('Devices'));
@@ -37,7 +37,7 @@ class Gateways {
     }
 
     public static function getName($item) {
-        return isset($item->first_name)? $item->first_name : $item->name;
+        return isset($item->first_name)? $item->first_name : isset($item->name)? $item->name : $item->id;
     }
 
     public static function loadCollection($account, $collection) {

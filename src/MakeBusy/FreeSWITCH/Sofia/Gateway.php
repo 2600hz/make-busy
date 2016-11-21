@@ -123,37 +123,37 @@ class Gateway
     }
 
 
-    public function fromConnectivity($trunkstore, $realm){
+    public function fromConnectivity($connectivity, $realm){
         $this->setParam('realm', $realm);
         $this->setParam('from-domain', $realm);
 
-        if ($trunkstore->auth->auth_method=="IP") {
+        if ($connectivity->auth->auth_method == "IP") {
             $this->setParam('username', "not-required");
             $this->setParam('password', "not-required");
         }
 
-        if(!empty($trunkstore->auth->auth_user)) {
-            $this->setParam('username', $trunkstore->auth->auth_user);
+        if(!empty($connectivity->auth->auth_user)) {
+            $this->setParam('username', $connectivity->auth->auth_user);
         }
 
-        if(!empty($trunkstore->auth->auth_password)) {
-            $this->setParam('password', $trunkstore->auth->auth_password);
+        if(!empty($connectivity->auth->auth_password)) {
+            $this->setParam('password', $connectivity->auth->auth_password);
         }
 
-        if(!empty($trunkstore->makebusy->proxy)) {
-            $this->setParam('proxy', $trunkstore->makebusy->proxy);
+        if(!empty($connectivity->makebusy->proxy)) {
+            $this->setParam('proxy', $connectivity->makebusy->proxy);
         }
 
-        if(!empty($trunkstore->makebusy->transport)) {
-            $this->setParam('register-transport', $trunkstore->makebusy->transport);
+        if(!empty($connectivity->makebusy->transport)) {
+            $this->setParam('register-transport', $connectivity->makebusy->transport);
         }
 
-        if(!empty($trunkstore->makebusy->port)) {
-            $value=$trunkstore->makebusy->proxy.":".$trunkstore->makebusy->port;
+        if(!empty($connectivity->makebusy->port)) {
+            $value=$connectivity->makebusy->proxy.":".$connectivity->makebusy->port;
             $this->setParam('proxy', $value);
         }
 
-        if(!empty($trunkstore->makebusy->register)) {
+        if(!empty($connectivity->makebusy->register)) {
             $this->setParam('register', TRUE);
         } else {
             $this->setParam('register', FALSE);

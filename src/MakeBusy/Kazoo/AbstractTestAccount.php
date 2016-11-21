@@ -18,6 +18,8 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Voicemail;
 use \MakeBusy\Kazoo\Applications\Crossbar\Conference;
 use \MakeBusy\Kazoo\Applications\Crossbar\Media;
 use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
+use \MakeBusy\Kazoo\Applications\Crossbar\Connectivity;
+use \MakeBusy\Kazoo\Applications\Crossbar\PhoneNumbers;
 
 abstract class AbstractTestAccount
 {
@@ -45,8 +47,8 @@ abstract class AbstractTestAccount
     }
 
     function addToCache($collection, $item) {
-        // fucking oop
-        $name = isset($item->first_name)? $item->first_name : $item->name;
+        // fucking oop (special case for users (no name, first_name instead) and phone_number (no name, id only))
+        $name = isset($item->first_name)? $item->first_name : isset($item->name)? $item->name : $item->id;
         $this->cache[$collection][$name] = $item;
     }
 
@@ -92,6 +94,14 @@ abstract class AbstractTestAccount
 
     public function createRingGroup(array $numbers, array $members, $strategy = "simultaneous") {
         return new RingGroup($this, $numbers, $members, $strategy);
+    }
+
+    public function createConnectivity(array $options = array()) {
+        return new Connectivity($this, $options);
+    }
+
+    public function createPhoneNumber($number, array $options = array()) {
+        return new PhoneNumbers($this, $number, $options);
     }
 
     public static function nukeTestAccounts($type = null) {
