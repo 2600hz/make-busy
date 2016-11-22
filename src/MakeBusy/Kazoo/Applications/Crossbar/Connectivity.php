@@ -23,7 +23,7 @@ class Connectivity
     private $connectivity;
     private $loaded = false;
     private $number;
-    private $gateways = []; // instances of Sofia\Gateway
+    public $gateways = []; // instances of Sofia\Gateway
 
     public function __construct(TestAccount $account, array $options = array()) {
         $this->number = self::$counter++; // to name gateways

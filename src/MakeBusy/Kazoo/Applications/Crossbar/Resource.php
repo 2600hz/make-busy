@@ -95,11 +95,6 @@ class Resource
         return $this->getProfile()->getGateway($this->resource->id);
     }
 
-    // returns Channel or null
-    public function waitForInbound($number, $timeout = 5, $header = 'Caller-Destination-Number') {
-        return $this->getGateway()->getEsl()->getChannels()->waitForInbound($number, $timeout, $header);
-    }
-
     public function getId(){
         return $this->getResource()->getId();
     }
@@ -130,6 +125,24 @@ class Resource
         }
         $flow = self::callflowNode($this, $options);
         return $this->getAccount()->createCallflow($flow, $numbers);
+    }
+
+    // returns Channel or null
+    public function originate($uri, $timeout=5, array $options = array(), $on_answer='&park') {
+        $gateway = $this->getGateway();
+        $call_uuid = $this->call_uuid();
+        $options['origination_uuid'] = $call_uuid;
+        $job_uuid = $gateway->api_originate($uri, $on_answer, $options);
+        return $gateway->getEsl()->getChannels()->waitForOutbound($call_uuid, 'Unique-ID', $timeout);
+    }
+
+    public function call_uuid() {
+        return sprintf("BS-RESOURCE-%s-%s", self::$instance_id, self::$call_counter++);
+    }
+
+    // returns Channel or null
+    public function waitForInbound($number = null, $timeout = 5, $header = 'Caller-Destination-Number') {
+        return $this->getGateway()->getEsl()->getChannels()->waitForInbound($number? $number : $this->getSipUsername(), $timeout, $header);
     }
 
     public static function callflowNode(Resource $device, array $options = array()) {

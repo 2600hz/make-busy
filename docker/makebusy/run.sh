@@ -7,8 +7,8 @@ else
 fi
 NETWORK=${NETWORK:-"kazoo"}
 NAME=makebusy.$NETWORK
-docker stop $NAME
-docker rm $NAME
+docker stop -t 1 $NAME
+docker rm -f $NAME
 docker run -td \
 	--net $NETWORK \
 	-h $NAME \

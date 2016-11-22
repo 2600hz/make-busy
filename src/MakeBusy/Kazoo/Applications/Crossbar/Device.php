@@ -106,7 +106,7 @@ class Device
         $gateway = $this->getGateway();
         $call_uuid = $this->call_uuid();
         $options['origination_uuid'] = $call_uuid;
-        $job_uuid = $gateway->originate($uri, $on_answer, $options);
+        $job_uuid = $gateway->api_originate($uri, $on_answer, $options);
         return $gateway->getEsl()->getChannels()->waitForOutbound($call_uuid, 'Unique-ID', $timeout);
     }
 

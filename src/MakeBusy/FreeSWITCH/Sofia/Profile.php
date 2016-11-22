@@ -172,4 +172,27 @@ class Profile
         Log::debug("fs %s has all registrations", $this->getEsl()->getType());
     }
 
+    public function waitForAdd($counter = 1, $timeout = 10){
+        Log::debug("fs %s wait: for gateway add events:%d for %d seconds", $this->getEsl()->getType(), $counter, $timeout);
+        $this->getEsl()->events("CUSTOM sofia::gateway_state");
+        $start = time();
+
+        while($counter > 0){
+            $event = $this->getEsl()->recvEvent();
+            if ((time() - $start) >= $timeout){
+                Log::error("fs %s timeout waiting gateway add", $this->getEsl()->getType());
+                return null;
+            }
+
+            if (!$event) {
+                continue;
+            }
+
+            if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_add") {
+                $counter--;
+            }
+        }
+        Log::debug("fs %s has gateways added", $this->getEsl()->getType());
+    }
+
 }

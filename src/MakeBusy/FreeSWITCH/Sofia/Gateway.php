@@ -10,6 +10,7 @@ class Gateway
     private $profile;
     private $name;
     private $params;
+    private static $call_counter = 1;
 
     public function __construct(Profile $profile, $name) {
         $this->profile = $profile;
@@ -47,12 +48,28 @@ class Gateway
         return $this;
     }
 
-    public function originate($uri, $on_answer='&park', array $vars = array()) {
+    // freeswitch api wrapper
+    public function api_originate($uri, $on_answer='&park', array $vars = array()) {
         $name = $this->getName();
         $channel_vars = $this->createChannelVariables($vars);
         $url = $channel_vars . "sofia/gateway/$name/$uri";
         $event = $this->getEsl()->bgapi("originate $url $on_answer");
         return $event->getHeader('Job-UUID');
+    }
+
+    public function originate($uri, $timeout=5, array $options = array(), $on_answer='&park') {
+        $call_uuid = $this->call_uuid();
+        $options['origination_uuid'] = $call_uuid;
+        $job_uuid = $this->api_originate($uri, $on_answer, $options);
+        return $this->getEsl()->getChannels()->waitForOutbound($call_uuid, 'Unique-ID', $timeout);
+    }
+
+    public function waitForInbound($number, $timeout = 5, $header = 'Caller-Destination-Number') {
+        return $this->getEsl()->getChannels()->waitForInbound($number, $timeout, $header);
+    }
+
+    public function call_uuid() {
+        return sprintf("BS-GATEWAY-%s-%s", $this->name, self::$call_counter++);
     }
 
     private function createChannelVariables($args) {
