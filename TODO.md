@@ -20,6 +20,8 @@
 3. Conference callflow update/cache/load?
 4. Reduce tone timeouts to speed up testing
 5. Abstract cached entities constructors (__construct/initialize pairs)
+6. Log HTTP REST API requests URIs and response time
+7. When HTTP REST API fails display sane and complete error message (not a dump)
 
 ## Immediate
 

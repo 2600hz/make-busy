@@ -18,11 +18,11 @@ class PhoneNumbers
     private $phone_number;
     private $loaded = false;
 
-    public function __construct(TestAccount $account, $number, $activate = true) {
+    public function __construct(TestAccount $account, $number, array $options = []) {
         $this->test_account = $account;
         $kazoo_phonenumber = $account->getFromCache('PhoneNumbers', $number);
         if (is_null($kazoo_phonenumber)) {
-            $this->initialize($account, $number, $activate);
+            $this->initialize($account, $number, $options);
         } else {
             $kazoo_phonenumber->notNew();
             $this->setPhoneNumber($kazoo_phonenumber);
@@ -30,23 +30,34 @@ class PhoneNumbers
         }
     }
 
-    public function initialize(TestAccount $test_account, $number, $activate = TRUE) {
+    public function initialize(TestAccount $test_account, $number, array $options = []) {
         $this->setTestAccount($test_account);
 
         $account = $this->getAccount();
         $phone_number = $account->PhoneNumber();
         $phone_number->fetch($number);
+        $this->setPhoneNumber($phone_number);
+
+        if (isset($options['cnam'])) {
+            $this->setCnam($options['cnam']);
+        }
+
+        if (isset($options['change_lookup'])) {
+            $this->changeLookup($options['change_lookup']);
+        }
+
         if ($number[0]=="+") {
             $phone_number->save(substr($number,1));
         } else {
             $phone_number->save($number);
         }
 
-        if ($activate) {
-            $phone_number->activate($number);
+        if (isset($options['activate'])) {
+            $phone_number->activate($options['activate']);
+        } else {
+            $phone_number->activate(true);
         }
-
-        $this->setPhoneNumber($phone_number);
+        return $this;
     }
 
     private function getTestAccount() {
@@ -75,7 +86,7 @@ class PhoneNumbers
             $phone_number->cnam=new stdClass();
         }
         $phone_number->cnam->display_name=$display_name;
-        $phone_number->save();
+        return $phone_number;
     }
 
     public function changeLookup($value) {
@@ -85,13 +96,13 @@ class PhoneNumbers
         }
         $phone_number->cnam->enable_lookup=$value;
         $phone_number->cnam->inbound_lookup=$value;
-        $phone_number->save();
+        return $this;
     }
 
     public function activate() {
         $phone_number=$this->getPhoneNumber();
         $phone_number->activate($phone_number->getId());
-        $phone_number->save();
+        return $this;
     }
 
     public function setFailover($failovertype, $destination) {
@@ -101,19 +112,19 @@ class PhoneNumbers
             $destination = "+" . $destination;
         }
         $phone_number->failover->$failovertype = $destination;
-        $phone_number->save();
+        return $this;
     }
 
     public function setE911($postal_code,$street_address,$extended_address,$locality,$region,$customer_name="") {
-       $phone_number=$this->getPhoneNumber();
-       $phone_number->dash_e911=new stdClass();
-       $phone_number->dash_e911->postal_code=$postal_code;
-       $phone_number->dash_e911->street_address=$street_address;
-       $phone_number->dash_e911->extended_address=$extended_address;
-       $phone_number->dash_e911->locality=$locality;
-       $phone_number->dash_e911->region=$region;
-       $phone_number->dash_e911->customer_name=$customer_name;
-       $phone_number->save();
+        $phone_number=$this->getPhoneNumber();
+        $phone_number->dash_e911=new stdClass();
+        $phone_number->dash_e911->postal_code=$postal_code;
+        $phone_number->dash_e911->street_address=$street_address;
+        $phone_number->dash_e911->extended_address=$extended_address;
+        $phone_number->dash_e911->locality=$locality;
+        $phone_number->dash_e911->region=$region;
+        $phone_number->dash_e911->customer_name=$customer_name;
+        return $this;
     }
 
     public function remove() {
@@ -146,9 +157,14 @@ class PhoneNumbers
     }
 
     public function resetE911() {
-       $phone_number=$this->getPhoneNumber();
-       $phone_number->dash_e911=new stdClass();
-       $phone_number->save();
+        $phone_number=$this->getPhoneNumber();
+        $phone_number->dash_e911=new stdClass();
+        return $this;
+    }
+
+    public function save() {
+        $this->getPhoneNumber()->save();
+        return $this;
     }
 
 }

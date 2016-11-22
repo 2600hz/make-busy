@@ -24,6 +24,7 @@ class Gateways {
             $account = $element->fetch();
             self::createGatewaysFromDevices($account, self::loadFromKazoo($account, 'Devices'));
             self::createGatewaysFromResources($account, self::loadFromKazoo($account, 'Resources'));
+            self::createGatewaysFromConnectivities($account, self::loadFromKazoo($account, 'Connectivities'));
         }
     }
 
@@ -60,7 +61,7 @@ class Gateways {
     public static function createGatewaysFromDevices($account, $devices) {
        foreach($devices as $device) {
             $profile = $device->makebusy->profile; // defined in Crossbar\Device
-            Log::debug("create gateway for device id:%s", $device->id);
+            Log::debug("create gateway in profile:%s for device id:%s", $profile, $device->id);
             $gateway = new Gateway(self::getProfile($profile), $device->id);
             $gateway->fromDevice($device, $account->realm);
         }
@@ -69,10 +70,22 @@ class Gateways {
     public static function createGatewaysFromResources($account, $resources) {
         foreach($resources as $resource) {
             $profile = $resource->makebusy->profile; // defined in Crossbar\Resource
-            Log::debug("create gateway for resorce id: %s", $resource->id);
+            Log::debug("create gateway in profile:%s for resorce id: %s", $profile, $resource->id);
             $gateway = new Gateway(self::getProfile($profile), $resource->id);
             $gateway->fromResource($resource, $account->realm);
         }
     }
+
+    public static function createGatewaysFromConnectivities($account, $connectivities) {
+        foreach($connectivities as $connectivity) {
+            foreach($connectivity->servers as $server) {
+                $profile = $server->makebusy->profile; // defined in Crossbar\Connectivity
+                Log::debug("create gateway in profile:%s for connectivity id:%s", $profile, $server->server_name);
+                $gateway = new Gateway(self::getProfile($profile), $server->server_name);
+                $gateway->fromConnectivity($server, $account->realm);
+            }
+        }
+    }
+
 
 }

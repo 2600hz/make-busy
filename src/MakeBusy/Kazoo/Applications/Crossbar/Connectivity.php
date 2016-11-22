@@ -22,10 +22,12 @@ class Connectivity
     private $test_account;
     private $connectivity;
     private $loaded = false;
+    private $number;
     private $gateways = []; // instances of Sofia\Gateway
 
     public function __construct(TestAccount $account, array $options = array()) {
-        $name = "Connectivity " . self::$counter++;
+        $this->number = self::$counter++; // to name gateways
+        $name = "Connectivity " . $this->number;
         $this->test_account = $account;
         $kazoo_connectivity = $account->getFromCache('Connectivities', $name);
         if (is_null($kazoo_connectivity)) {
@@ -92,7 +94,7 @@ class Connectivity
         }
         $connectivity = $this->getConnectivity();
         $gateway_id = self::$gateway_counter++;
-        $name = "Gateway " . $gateway_id;
+        $name = sprintf("conn-%s-gw-%s", $this->number, $gateway_id);
 
         $element = new stdClass();
         $element->auth = new stdClass();
