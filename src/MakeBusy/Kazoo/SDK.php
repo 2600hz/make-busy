@@ -5,6 +5,7 @@ namespace MakeBusy\Kazoo;
 use \Kazoo\SDK as KazooSDK;
 use \Kazoo\AuthToken\ApiKey;
 use \Kazoo\AuthToken\User;
+use \MakeBusy\Common\Log;
 
 use \MakeBusy\Common\Configuration;
 
@@ -28,10 +29,17 @@ class SDK
                 $options = array();
             }
 
+            $logger = function() {
+                $args = func_get_args();
+                $severity = array_shift($args);
+                $message = array_shift($args);
+                Log::$severity("sdk %s", $message);
+            };
+
+            $options["logger"] = $logger;
+
             self::$sdk = new KazooSDK($auth_token, $options);
 
-            //$http_client = self::$sdk->getHttpClient();
-            //$http_client->addListener('before', array(new MakebusyListener(), 'onRequestBeforeSend'));
         }
 
         return self::$sdk;
