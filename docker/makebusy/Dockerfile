@@ -4,6 +4,9 @@ MAINTAINER Roman Galeev <jamhed@2600hz.com>
 USER root
 WORKDIR /root
 
+ARG REPO=https://github.com/2600hz/make-busy.git
+ARG COMMIT=HEAD
+
 COPY build/setup-os.sh build/setup-os.sh
 RUN build/setup-os.sh
 
