@@ -21,6 +21,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
 use \MakeBusy\Kazoo\Applications\Crossbar\Connectivity;
 use \MakeBusy\Kazoo\Applications\Crossbar\PhoneNumbers;
 use \MakeBusy\Kazoo\Applications\Crossbar\Registrations;
+use \MakeBusy\Kazoo\Applications\Crossbar\SystemConfigs;
 
 abstract class AbstractTestAccount
 {

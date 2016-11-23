@@ -128,8 +128,16 @@ class Utils
         $chunk = $obj;
         $last = count($keys)-1;
         foreach($keys as $id => $key) {
-            $chunk->$key = isset($chunk->$key)? $chunk->$key : (($last == $id)? $value : new stdClass());
-            $chunk = $chunk->$key;
+            if ($last == $id) {
+                if (is_null($value)) {
+                    unset($chunk->$key);
+                } else {
+                    $chunk->$key = $value;
+                }
+            } else {
+                $chunk->$key = isset($chunk->$key)? $chunk->$key : new stdClass();
+                $chunk = $chunk->$key;
+            }
         }
     }
 

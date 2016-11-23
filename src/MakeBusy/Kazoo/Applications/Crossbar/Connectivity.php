@@ -170,6 +170,7 @@ class Connectivity
         $test_account = $this->getTestAccount();
         $cidr = $ip . "/32";
         SystemConfigs::removeCarrierAcl($test_account, $name, $cidr);
+        return $this;
     }
 
     public function getGateway($id) {

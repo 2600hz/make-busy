@@ -18,53 +18,39 @@ class SystemConfigs
 
     public function setSystemConfigsCrossbarParam(TestAccount $test_account,$parametr,$value) {
         $account = $test_account->getAccount();
-        $config = $account->SystemConfig();
-        $config->$parametr=$value;
-        $config->update("crossbar");
+        $config = $account->SystemConfig("crossbar");
+        $config->$parametr = $value;
+        $config->update();
     }
 
     public static function setDefaultConfParam(TestAccount $test_account, $name, $value) {
         $account = $test_account->getAccount();
-        $config = $account->SystemConfig()->fetch("conferences");
-        $config->default->profiles->default->{$name} = $value;
-        $config->update("conferences");
+        $config = $account->SystemConfig("conferences");
+        Utils::mset($config->default, ['profiles', 'default', $name], $value);
+        $config->update();
     }
 
-    public static function setCarrierAcl(TestAccount $test_account,$carrier_name,$cidr,$type,$networklist) {
+    public static function setCarrierAcl(TestAccount $test_account, $carrier_name, $cidr, $type, $networklist) {
         $account = $test_account->getAccount();
-        $config = $account->SystemConfig();
-        $config->acls->$carrier_name=new stdClass();
-        $config->acls->$carrier_name->type = $type;
-        $name = "network-list-name";
-        $config->acls->$carrier_name->$name = $networklist;
-        $config->acls->$carrier_name->cidr  = $cidr;
-        $config->acls->$carrier_name->makebusy = new stdClass();
-        $config->acls->$carrier_name->makebusy->test = TRUE;
-        $config->update("ecallmgr");
+        $config = $account->SystemConfig("ecallmgr");
+        Utils::mset($config->default, ['acls', $carrier_name, 'type'], $type);
+        Utils::mset($config->default, ['acls', $carrier_name, 'network-list-name'], $networklist);
+        Utils::mset($config->default, ['acls', $carrier_name, 'cidr'], $cidr);
+        Utils::mset($config->default, ['acls', $carrier_name, 'makebusy', 'test'], true);
+        $config->update();
     }
 
-    public static function removeCarrierAcl(TestAccount $test_account, $carrier_name, $cidr){
+    public static function removeCarrierAcl(TestAccount $test_account, $carrier_name){
         $account = $test_account->getAccount();
-        $config = $account->SystemConfig();
+        $config = $account->SystemConfig("ecallmgr");
+        Utils::mset($config->default, ['acls', $carrier_name]);
+        $config->update();
     }
 
     public function get(TestAccount $test_account) {
         $acc = $test_account->getAccount();
         $encoded = $acc->SystemConfig()->fetch();
         return json_decode($encoded->toJson());
-    }
-
-    public function createSection(TestAccount $test_account, $section) {
-        $account = $test_account->getAccount();
-        $config = $account->SystemConfig();
-        $config->update($section);
-    }
-
-    public function setSectionKey(TestAccount $test_account, $section, $name, $value) {
-        $account = $test_account->getAccount();
-        $config = $account->SystemConfig()->fetch($section);
-        $config->default->profiles->default->{$name} = $value;
-        $config->update($section);
     }
 
     private function setSystemConfig($SystemConfig) {
