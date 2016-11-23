@@ -36,7 +36,18 @@ class SDK
                 Log::$severity("sdk %s", $message);
             };
 
+            $entity_logger = function() {
+                $args = func_get_args();
+                $severity = array_shift($args);
+                $header = array_shift($args);
+                $entity = array_shift($args);
+                if (isset($_ENV["LOG_ENTITIES"])) {
+                    Log::dump("sdk $severity $header", print_r($entity, true));
+                }
+            };
+
             $options["logger"] = $logger;
+            $options["entity_logger"] = $entity_logger;
 
             self::$sdk = new KazooSDK($auth_token, $options);
 
