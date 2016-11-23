@@ -62,6 +62,11 @@ Dump FreeSwitch events content to MakeBusy log file:
 DUMP_EVENTS=1 ./run-test path_to_test.php
 ```
 
+Dump HTTP REST API content:
+```
+DUMP_ENTITIES=1 ./run-test path_to_test.php
+```
+
 Log messages to console also:
 ```
 LOG_CONSOLE=1 ./run-test path_to_test.php
