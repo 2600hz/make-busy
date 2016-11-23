@@ -1,6 +1,7 @@
 <?php
 
 namespace MakeBusy\Common;
+use stdClass;
 
 class Utils
 {
@@ -122,4 +123,14 @@ class Utils
         $npa = array_rand(self::$tollfree_npa);
         return '' . $npa . Utils::nxx() . Utils::xxxx();
     }
+
+    public static function mset($obj, array $keys, $value = null) {
+        $chunk = $obj;
+        $last = count($keys)-1;
+        foreach($keys as $id => $key) {
+            $chunk->$key = isset($chunk->$key)? $chunk->$key : (($last == $id)? $value : new stdClass());
+            $chunk = $chunk->$key;
+        }
+    }
+
 }

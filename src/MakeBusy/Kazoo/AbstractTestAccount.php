@@ -20,6 +20,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Media;
 use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
 use \MakeBusy\Kazoo\Applications\Crossbar\Connectivity;
 use \MakeBusy\Kazoo\Applications\Crossbar\PhoneNumbers;
+use \MakeBusy\Kazoo\Applications\Crossbar\Registrations;
 
 abstract class AbstractTestAccount
 {
@@ -62,6 +63,10 @@ abstract class AbstractTestAccount
             $this->cache[$collection] = [];
         }
         return $this->cache[$collection];
+    }
+
+    public function getRegistrations($filter) {
+        return Registrations::getRegistrations($this, $filter);
     }
 
     public function createDevice($profile, $register = TRUE, array $options = array()) {

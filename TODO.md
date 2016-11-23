@@ -3,6 +3,7 @@
 ## Good to have
 
 1. Run makebusy docker without apache (with php -S), and under user rights
+2. Each test should have a brief description what is tested and why. References to unknown issue tracker are just bad.
 
 ## Important
 

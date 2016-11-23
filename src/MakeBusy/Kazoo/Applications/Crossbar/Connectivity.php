@@ -203,18 +203,16 @@ class Connectivity
         $connectivity->save();
     }
 
-    public function setFailover($gatewayid, $failover_type, $destination) {
+    // failover_type: sip|e164, destination: either number or sip uri
+    public function setFailover(int $gatewayid, $number, $failover_type, $destination) {
         $connectivity = $this->getConnectivity();
-        $gateway = $connectivity->servers[$gatewayid];
-        $gateway->options->failover->$failover_type = $destination;
-        $connectivity->servers[(int) $gatewayid] = $gateway;
+        Utils::mset($connectivity->servers[$gatewayid], ['DIDs', $number, 'failover', $failover_type], $destination);
         $connectivity->save();
     }
 
-    public function resetFailover($gateway_id) {
+    public function resetFailover(int $gatewayid, $number) {
         $connectivity = $this->getConnectivity();
-        $gateway = $connectivity->servers[$gateway_id];
-        $gateway->options->failover = new stdClass();
+        Utils::mset($connectivity->servers[$gatewayid], ['DIDs', $number, 'failover']);
         $connectivity->save();
     }
 

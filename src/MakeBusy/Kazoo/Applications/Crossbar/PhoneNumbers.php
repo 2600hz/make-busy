@@ -105,16 +105,6 @@ class PhoneNumbers
         return $this;
     }
 
-    public function setFailover($failovertype, $destination) {
-        $phone_number=$this->getPhoneNumber();
-        $phone_number->failover=new stdClass();
-        if ($failovertype == 'e164' && strpos($destination, "+") !== 0) {
-            $destination = "+" . $destination;
-        }
-        $phone_number->failover->$failovertype = $destination;
-        return $this;
-    }
-
     public function setE911($postal_code,$street_address,$extended_address,$locality,$region,$customer_name="") {
         $phone_number=$this->getPhoneNumber();
         $phone_number->dash_e911=new stdClass();

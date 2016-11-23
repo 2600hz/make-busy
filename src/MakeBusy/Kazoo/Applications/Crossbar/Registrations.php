@@ -8,9 +8,7 @@ use \MakeBusy\Common\Utils;
 
 class Registrations
 {
-    private $test_account;
-
-    public function getRegistrations(TestAccount $test_account,$filter=null) {
+    public static function getRegistrations(TestAccount $test_account,$filter=null) {
         $account = $test_account->getAccount();
         $registrations=$account->Registrations()->fetch();
         if ($filter) {
@@ -21,8 +19,7 @@ class Registrations
                }
            }
         } else {
-           return $registrations;
+            return $registrations;
         }
     }
-
 }
