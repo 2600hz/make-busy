@@ -22,6 +22,7 @@
 4. Reduce tone timeouts to speed up testing
 5. Abstract cached entities constructors (__construct/initialize pairs)
 7. When HTTP REST API fails display sane and complete error message (not a dump)
+8. Update docs for docker
 
 ## Immediate
 
