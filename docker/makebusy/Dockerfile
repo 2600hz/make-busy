@@ -1,5 +1,8 @@
-FROM php:5.6.27-apache
+FROM php:5-cli
 MAINTAINER Roman Galeev <jamhed@2600hz.com>
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV APT_LISTCHANGES_FRONTEND=none
 
 USER root
 WORKDIR /root
@@ -10,21 +13,25 @@ ARG COMMIT=HEAD
 COPY build/setup-os.sh build/setup-os.sh
 RUN build/setup-os.sh
 
-COPY etc/.ssh .ssh
+WORKDIR /home/user
 
 COPY build/setup.sh build/setup.sh
-COPY build/rebuild.sh build/rebuild.sh
 RUN build/setup.sh
 
-COPY build/run.sh build/run.sh
-COPY build/run-test.sh run-test.sh
-COPY build/run-test-verbose.sh run-test-verbose.sh
+COPY etc/config.json make-busy/config.json
+COPY run run
 
-COPY etc/config.json etc/config.json
-COPY build/setup-bs.sh build/setup-bs.sh
-RUN build/setup-bs.sh
+RUN setcap CAP_NET_BIND_SERVICE+ep /usr/local/bin/php
 
-COPY etc/.vimrc /root
+RUN chown -R user:user make-busy
+WORKDIR /home/user/make-busy
+USER user
+
+RUN ./composer install
 
 COPY etc/commit commit
+COPY build/rebuild.sh build/rebuild.sh
 RUN build/rebuild.sh
+
+COPY build/run.sh ../run.sh
+ENTRYPOINT [ "../run.sh" ]

@@ -28,7 +28,7 @@ But you can do the Kazoo initial setup manually as well.
 
 ```sh
 cd docker
-./build.sh
+./build.sh # optional -- you can use publically available docker images
 ./run.sh
 ```
 ## Develop and run tests

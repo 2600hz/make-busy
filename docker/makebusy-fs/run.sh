@@ -12,5 +12,5 @@ docker run $FLAGS \
 	-h $NAME \
 	--name $NAME \
 	--env TYPE=$TYPE \
-	--env MAKEBUSY_URL=http://$MAKEBUSY_CONTAINER/make-busy/gateways.php \
+	--env MAKEBUSY_URL=http://$MAKEBUSY_CONTAINER/gateways.php \
 	2600hz/makebusy-fs

@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ ! -z $1 ]
 then
-	VOLUME="-v $1:/var/www/html/make-busy/tests/KazooTests/Applications/"
+	VOLUME="-v $1:/home/user/make-busy/tests/KazooTests/Applications/"
 else
 	VOLUME=""
 fi
@@ -14,5 +14,5 @@ docker run -td \
 	-h $NAME \
 	--name $NAME \
 	$VOLUME \
-	kazoo/makebusy
+	2600hz/makebusy
 
