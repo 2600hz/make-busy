@@ -9,10 +9,8 @@ namely kamailio.kazoo, kazoo.kazoo, and kazoo admin credentials.
 
 All required docker images are build under *kazoo/* namepsace, namely:
 
-1. kazoo/base-os
-2. kazoo/freeswitch
-3. kazoo/makebusy-fs
-4. kazoo/makebusy
+1. kazoo/makebusy-fs
+2. kazoo/makebusy
 
 All images are intended to be self-buildable, and req
 

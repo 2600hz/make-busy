@@ -9,4 +9,4 @@ sed -i "s|\"ext-sip-ip\" value=\".*\"|\"ext-sip-ip\" value=\"$IP\"|" $FSCFG/sip_
 sed -i "s|\"rtp-ip\" value=\".*\"|\"rtp-ip\" value=\"$IP\"|" $FSCFG/sip_profiles/profile.xml
 sed -i "s|\"ext-rtp-ip\" value=\".*\"|\"ext-rtp-ip\" value=\"$IP\"|" $FSCFG/sip_profiles/profile.xml
 
-sed -i "s|cmd=\"exec\" data=\".*|cmd=\"exec\" data=\"wget -qO - http://makebusy.kazoo/make-busy/gateways.php?type=$TYPE\"/>|" $FSCFG/sip_profiles/profile.xml
+sed -i "s|cmd=\"exec\" data=\".*|cmd=\"exec\" data=\"wget -qO - $MAKEBUSY_URL/gateways.php?type=$TYPE\"/>|" $FSCFG/sip_profiles/profile.xml
