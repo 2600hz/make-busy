@@ -4,6 +4,9 @@ FLAGS=${2:-"-td"}
 NETWORK=${NETWORK:-"kazoo"}
 MAKEBUSY_CONTAINER=${3:-"makebusy.$NETWORK"}
 NAME=makebusy-fs-$TYPE.$NETWORK
+
+echo :: starting $NAME instance
+
 docker stop -t 1 $NAME
 docker rm -f $NAME
 docker run $FLAGS \

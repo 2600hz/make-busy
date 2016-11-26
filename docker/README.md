@@ -7,40 +7,49 @@ You need to make sure that Kazoo's Kamailio, FreeSwitch and Kazoo's Crossbar app
 accessible from this docker network segment, and to specify correct settings in [config.json](makebusy/etc/config.json.dist) file,
 namely kamailio.kazoo, kazoo.kazoo, and kazoo admin credentials.
 
-All required docker images are build under *kazoo/* namepsace, namely:
+All required docker images are build under *2600hz/* namepsace, namely:
 
-1. kazoo/makebusy-fs
-2. kazoo/makebusy
+1. 2600hz/makebusy-fs
+2. 2600hz/makebusy
 
-All images are intended to be self-buildable, and req
+All images are intended to be self-buildable.
 
 ## Kazoo setup
 
-In order to test Voicemail and Conference features you need to install special voice prompts as mk-bs
+In order to test some features (e.g. Voicemail or Conference) you need to install special voice prompts as mk-bs
 language, and tune some Kazoo variables.
 
-There are two shell scripts to assist you to prepare Kazoo: [setup-kazoo.sh](makebusy/setup-kazoo.sh)
-and [setup-kazoo-prompts.sh](makebusy/setup-kazoo-prompts.sh).  Scripts suppose that Kazoo's *sup* command
-is in search PATH, and local files are accessible by Kazoo (to load prompts).
-But you can do the Kazoo initial setup manually as well.
+There are two sample shell scripts to assist you to prepare Kazoo:
 
-## Build and run
+* [makebusy/kazoo/configure-for-makebusy.sh](makebusy/kazoo/configure-for-makebusy.sh)
+* [makebusy/kazoo/setup-makebusy-prompts.sh](makebusy/kazoo/setup-makebusy-prompts.sh).
+
+Scripts assume that Kazoo's *sup* command is in the shell search PATH, and local files are accessible by Kazoo (to load prompts).
+But you can do the Kazoo initial setup manually as well by look at the scripts and run the manually.
+
+## Build and run MakeBusy in Docker
 
 ```sh
 cd docker
 ./build.sh # optional -- you can use publically available docker images
 ./run.sh
 ```
-## Develop and run tests
+## Writting/Running MakeBusy tests in Docker
 
-In order to ease test development you can mount the tests folder locally:
+In order to ease test development you can mount the your tests folder locally:
 
 ```sh
 cd docker/makebusy
-./run.sh /home/kazoo/make-busy-tests
+TESTS_PATH="/home/kazoo/make-busy-tests" ./run.sh
 ```
 
-Here /home/kazoo/make-busy-tests will be mounted as Application folder in MakeBusy docker image,
+Here /home/kazoo/make-busy-tests will be mounted as Application folder in MakeBusy docker image(under tests/KazooTests folder),
 allowing to execute tests.
 
-Please see [example tests project](https://github.com/2600hz/make-busy-skel).
+Please see [example tests project](https://github.com/2600hz/make-busy-skel) for see how to write test with MakeBusy.
+
+## Running Tests
+
+```sh
+docker exec -ti makebusy.kazoo /home/user/make-busy/docker/makebusy/run/verbose.sh /home/user/make-busy/tests/KazooTests/Applications/{path_to_test.php}
+```
