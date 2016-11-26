@@ -34,22 +34,37 @@ cd docker
 ./build.sh # optional -- you can use publically available docker images
 ./run.sh
 ```
-## Writting/Running MakeBusy tests in Docker
+## Using MakeBusy as Docker container
 
-In order to ease test development you can mount the your tests folder locally:
+Suppose you have your tests on your host file system like this:
+/home/kazoo/make-busy-tests/Callflow/Device/Milliwatt.php
 
+In order to ease test development you can mount the your tests folder as docker volume:
 ```sh
 cd docker/makebusy
 TESTS_PATH="/home/kazoo/make-busy-tests" ./run.sh
 ```
 
-Here /home/kazoo/make-busy-tests will be mounted as Application folder in MakeBusy docker image(under tests/KazooTests folder),
-allowing to execute tests.
+Here /home/kazoo/make-busy-tests will be mounted in tests/KazooTests/Applications folder in MakeBusy docker container.
+
+There is a [shell wrapper](makebusy/run-tests.sh) to ease invocation of MakeBusy:
+```sh
+LOG_CONSOLE=1 ./run-test.sh -v --debug Callflow/Device/Milliwatt.php
+```
+
+It passes environment variables and shell options to [run-test](../run-test) MakeBusy test-runner wrapper. It seems feasible to
+make the run-tests.sh wrapper accessible from your PATH variable. 
 
 Please see [example tests project](https://github.com/2600hz/make-busy-skel) for see how to write test with MakeBusy.
 
-## Running Tests
+## Running Tests without wrapper
 
 ```sh
-docker exec -ti makebusy.kazoo /home/user/make-busy/docker/makebusy/run/verbose.sh /home/user/make-busy/tests/KazooTests/Applications/{path_to_test.php}
+docker exec -ti makebusy.kazoo ../run-tests tests/KazooTests/Applications/{path_to_test.php}
+```
+
+with ENV options:
+
+```sh
+docker exec -ti makebusy.kazoo /bin/bash -c "LOG_CONSOLE=1 ../run-tests tests/KazooTests/Applications/{path_to_test.php}"
 ```

@@ -1,7 +1,26 @@
-#!/bin/sh
-if [ -z $1 ]
+#!/bin/bash
+REOPTS=""
+for ARG in "$@"
+do
+	if [ "${ARG: -4}" == ".php" ]
+	then
+		FILE=$ARG
+	else
+		REOPTS="$REOPTS $ARG"
+	fi
+done
+if [ -z $FILE ]
 then
-	echo Please specify the test file relatively to your tests folder
+	echo Please specify the test file relatively to your tests folder mounted in MakeBusy container
 	exit
 fi
-docker exec -ti makebusy.kazoo ../run/test.sh tests/KazooTests/Applications/$1
+REEXPORT=""
+for var in LOG_CONSOLE CLEAN REGISTER_PROFILE RESTART_PROFILE DUMP_EVENTS DUMP_ENTITIES
+do
+	VALUE=$(eval echo \$$var)
+	if [ ! -z $VALUE ]
+	then
+		REEXPORT="$REEXPORT $var=$VALUE"
+	fi
+done
+docker exec -ti makebusy.kazoo /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"

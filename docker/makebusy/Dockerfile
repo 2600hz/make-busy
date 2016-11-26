@@ -19,7 +19,6 @@ COPY build/setup.sh build/setup.sh
 RUN build/setup.sh
 
 COPY etc/config.json make-busy/config.json
-COPY run run
 
 RUN setcap CAP_NET_BIND_SERVICE+ep /usr/local/bin/php
 
@@ -27,7 +26,7 @@ RUN chown -R user:user make-busy
 WORKDIR /home/user/make-busy
 USER user
 
-RUN ./composer install
+RUN ./composer install && ./composer clear-cache
 
 COPY etc/commit commit
 COPY build/rebuild.sh build/rebuild.sh
