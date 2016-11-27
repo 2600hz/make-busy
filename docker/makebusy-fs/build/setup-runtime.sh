@@ -1,7 +1,7 @@
 #!/bin/sh
 FSCFG=/usr/local/freeswitch/conf
 
-IP=`ifdata -pa eth0`
+IP=`hostname -i`
 echo type:$TYPE ip:$IP
 
 sed -i "s|\"sip-ip\" value=\".*\"|\"sip-ip\" value=\"$IP\"|" $FSCFG/sip_profiles/profile.xml
