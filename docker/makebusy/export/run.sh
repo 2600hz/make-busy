@@ -18,5 +18,5 @@ docker run -td \
 	-h $NAME \
 	--name $NAME \
 	$VOLUME \
-	kazoo/makebusy
+	2600hz/makebusy
 

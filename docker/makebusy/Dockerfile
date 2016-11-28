@@ -1,8 +1,5 @@
-FROM php:5-cli
+FROM php:5-alpine
 MAINTAINER Roman Galeev <jamhed@2600hz.com>
-
-ENV DEBIAN_FRONTEND noninteractive
-ENV APT_LISTCHANGES_FRONTEND=none
 
 USER root
 WORKDIR /root

@@ -10,4 +10,4 @@ echo $COMMIT > etc/commit
 docker build $FLAGS \
 	--build-arg REPO=$REPO \
 	--build-arg COMMIT=$COMMIT \
-	-t 2600hz/makebusy .
+	-t kazoo/makebusy .
