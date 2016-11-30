@@ -59,19 +59,18 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         Log::truncateLog();
     }
 
-    public static function sync_sofia_profile($profile_name, $loaded = false, $counter = null) {
+    public static function sync_sofia_profile($profile_name, $loaded = false, int $counter = null) {
         $profile = self::getProfile($profile_name);
         if ($loaded) {
-            if (isset($_ENV['REGISTER_PROFILE'])) {
-                $profile->register();
-            }
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
+            } else if ($counter >0) {
+                $profile->register();
             }
         } else {
             $profile->restart();
         }
-        if ($counter) {
+        if ($counter > 0) {
             $profile->waitForRegister($counter);
         }
         return $profile;
