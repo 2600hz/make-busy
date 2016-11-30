@@ -26,6 +26,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\SystemConfigs;
 abstract class AbstractTestAccount
 {
     private $account;
+    private $system_configs;
     private $cache = [];
 
     private $loaded = false;
@@ -42,6 +43,11 @@ abstract class AbstractTestAccount
             $this->create($type, $name);
             $this->setup();
         }
+        $system_configs = new SystemConfigs($this);
+    }
+
+    public function SystemConfigs() {
+        return $this->system_configs;
     }
 
     public function isLoaded() {

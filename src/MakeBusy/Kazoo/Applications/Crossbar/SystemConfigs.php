@@ -11,27 +11,31 @@ class SystemConfigs
 {
     private $test_account;
 
-    public function getSystemConfigs(TestAccount $test_account,$filter=null) {
-        $account = $test_account->getAccount();
+    public function __construct($test_account) {
+        $this->setTestAccount($test_account);
+    }
+
+    public function getSystemConfigs($filter=null) {
+        $account = $self->test_account->getAccount();
         return $account->SystemConfigs()->fetch();
     }
 
-    public function setSystemConfigsCrossbarParam(TestAccount $test_account,$parametr,$value) {
-        $account = $test_account->getAccount();
+    public function setSystemConfigsCrossbarParam($parametr, $value) {
+        $account = $self->test_account->getAccount();
         $config = $account->SystemConfig("crossbar");
         $config->$parametr = $value;
         $config->update();
     }
 
-    public static function setDefaultConfParam(TestAccount $test_account, $name, $value) {
-        $account = $test_account->getAccount();
+    public static function setDefaultConfParam($name, $value) {
+        $account = $self->test_account->getAccount();
         $config = $account->SystemConfig("conferences");
         Utils::mset($config->default, ['profiles', 'default', $name], $value);
         $config->update();
     }
 
-    public static function setCarrierAcl(TestAccount $test_account, $carrier_name, $cidr, $type, $networklist) {
-        $account = $test_account->getAccount();
+    public static function setCarrierAcl($carrier_name, $cidr, $type, $networklist) {
+        $account = $self->test_account->getAccount();
         $config = $account->SystemConfig("ecallmgr");
         Utils::mset($config->default, ['acls', $carrier_name, 'type'], $type);
         Utils::mset($config->default, ['acls', $carrier_name, 'network-list-name'], $networklist);
@@ -40,21 +44,21 @@ class SystemConfigs
         $config->update();
     }
 
-    public static function removeCarrierAcl(TestAccount $test_account, $carrier_name){
-        $account = $test_account->getAccount();
+    public static function removeCarrierAcl($carrier_name) {
+        $account = $self->test_account->getAccount();
         $config = $account->SystemConfig("ecallmgr");
         Utils::mset($config->default, ['acls', $carrier_name]);
         $config->update();
     }
 
-    public function get(TestAccount $test_account) {
-        $acc = $test_account->getAccount();
+    public function get() {
+        $acc = $sellf->test_account->getAccount();
         $encoded = $acc->SystemConfig()->fetch();
         return json_decode($encoded->toJson());
     }
 
     private function setSystemConfig($SystemConfig) {
-        $this->systemconfig=$systemConfig;
+        $this->systemconfig = $systemConfig;
     }
 
     private function getTestAccount() {

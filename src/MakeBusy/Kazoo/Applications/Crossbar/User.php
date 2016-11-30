@@ -65,6 +65,11 @@ class User {
         $this->setUser($user);
     }
 
+    public function createDevice($profile, $register = true, array $options = []) {
+        $options['owner_id'] = $this->getId();
+        return $this->test_account->createDevice("auth", $register, $options);
+    }
+
     private function mergeOptions($user, $options) {
         foreach ($options as $key => $value) {
             if (is_object($value) || is_array($value)) {

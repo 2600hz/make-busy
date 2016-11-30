@@ -162,14 +162,14 @@ class Connectivity
     public function setAcl($name, $ip) {
         $test_account = $this->getTestAccount();
         $cidr = $ip . "/32";
-        SystemConfigs::setCarrierAcl($test_account, $name, $cidr, "allow", "trusted");
+        $test_account->SystemConfigs()->setCarrierAcl($name, $cidr, "allow", "trusted");
         return $this;
     }
 
     public function removeAcl($name, $ip){
         $test_account = $this->getTestAccount();
         $cidr = $ip . "/32";
-        SystemConfigs::removeCarrierAcl($test_account, $name, $cidr);
+        $test_account->SystemConfigs()->removeCarrierAcl($name, $cidr);
         return $this;
     }
 
