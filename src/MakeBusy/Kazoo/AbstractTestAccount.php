@@ -28,6 +28,7 @@ abstract class AbstractTestAccount
     private $account;
     private $system_configs;
     private $cache = [];
+    private $type;
 
     private $loaded = false;
     private static $counter = 1; // count created accounts
@@ -35,6 +36,7 @@ abstract class AbstractTestAccount
     public function __construct($type) {
         $name = sprintf("BS %s %s", $type, self::$counter++);
         $acc = self::load(['filter_name' => $name, 'filter_makebusy.type' => $type]);
+        $this->type = $type;
         if (isset($acc[0])) {
             $this->loaded = true;
             $this->setAccount($acc[0]->getId());
@@ -52,6 +54,10 @@ abstract class AbstractTestAccount
 
     public function isLoaded() {
         return $this->loaded;
+    }
+
+    public function getType() {
+        return $this->type;
     }
 
     function addToCache($collection, $item) {
@@ -188,13 +194,6 @@ abstract class AbstractTestAccount
         $this->setAccount($account->getId());
 
         Log::info("created new makebusy test account %s (%s)", $account->getId(), $account->name);
-    }
-
-    public function __destruct() {
-        // TODO: uncomment to remove the test account
-        //  when the test is complete... is is currently
-        //  useful to leave for debuging
-        // $this->getAccount()->remove();
     }
 
     public function __toString() {

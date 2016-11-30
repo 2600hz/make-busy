@@ -18,7 +18,6 @@ use \MakeBusy\Common\Configuration;
 class Device
 {
     static private $counter = 1;
-    static public $instance_id = 1;
     static private $call_counter = 1;
 
     private $test_account;
@@ -28,15 +27,15 @@ class Device
     private $callflow_numbers;
     private $loaded = false;
 
-    public function __construct(TestAccount $account, $profile, $register = TRUE, array $options = array()) {
-        $name = "Device " . self::$counter++;
-        $this->test_account = $account;
-        $kazoo_device = $account->getFromCache('Devices', $name);
+    public function __construct(TestAccount $test_account, $profile, $register = TRUE, array $options = array()) {
+        $name = sprintf("%s Device %d", $test_account->getType(), self::$counter++);
+        $this->test_account = $test_account;
+        $kazoo_device = $test_account->getFromCache('Devices', $name);
         if (is_null($kazoo_device)) {
-            $this->initialize($account, $name, $profile, $register, $options);
+            $this->initialize($test_account, $name, $profile, $register, $options);
             $kazoo_device = $this->device;
             $gateway = new Gateway($this->getProfile(), $kazoo_device->id);
-            $gateway->fromDevice($kazoo_device, $account->getAccount()->realm);
+            $gateway->fromDevice($kazoo_device, $test_account->getAccount()->realm);
         } else {
             $this->setDevice($kazoo_device);
             $this->loaded = true;
@@ -46,15 +45,14 @@ class Device
     }
 
     public function call_uuid() {
-        return sprintf("BS-DEVICE-%s-%s", self::$instance_id, self::$call_counter++);
+        return sprintf("BS-DEVICE-%s-%s", $this->test_account->getType(), self::$call_counter++);
     }
 
-    public function initialize($account, $name, $profile, $register, $options) {
-        $this->account = $account;
+    public function initialize($test_account, $name, $profile, $register, $options) {
         $this->name = $name;
         $this->profile = $profile;
 
-        $device = $account->getAccount()->Device();
+        $device = $test_account->getAccount()->Device();
         $device->name = $name;
 
         $device->caller_id = new stdClass();
@@ -72,7 +70,7 @@ class Device
         $device->caller_id->emergency->number = "7778889999";
 
         $device->sip = new stdClass();
-        $device->sip->username = "device_" . (self::$counter - 1);
+        $device->sip->username = sprintf("%s_device_%d", $test_account->getType(), self::$counter - 1);
         $device->sip->password = Utils::randomString();
 
         $device->makebusy = new stdClass();

@@ -56,8 +56,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         } else {
             Log::debug("Use existing Kazoo Makebusy config");
         }
-        Device::$instance_id = Utils::randomString(8);
-        Resource::$instance_id = Utils::randomString(8);
         Log::truncateLog();
     }
 
@@ -66,14 +64,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
-            } else if ($counter >0) {
+            } else if (! isset($_ENV['SKIP_REGISTER'])) {
                 $profile->register();
             }
         } else {
             $profile->restart();
-        }
-        if ($counter > 0) {
-            $profile->waitForRegister($counter);
+            if ($counter > 0) {
+                $profile->waitForRegister($counter);
+            }
         }
         return $profile;
     }

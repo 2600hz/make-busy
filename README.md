@@ -47,12 +47,12 @@ Clear (and re-create) Kazoo config before running test, FreeSwitch profile is al
 CLEAN=1 ./run-test path_to_test.php
 ```
 
-(Re)Register existing profile before running tests:
+Skip gateway registration:
 ```
-REGISTER_PROFILE=1 ./run-test path_to_test.php
+SKIP_REGISTER=1 ./run-test path_to_test.php
 ```
 
-Restart existing profile before running tests:
+Restart existing profile before running test:
 ```
 RESTART_PROFILE=1 ./run-test path_to_test.php
 ```

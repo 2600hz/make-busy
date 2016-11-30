@@ -25,10 +25,7 @@
 
 ## Immediate
 
-1. Some tests fail when run as suite, need to investigate
 5. Slow number creation, need to investigate
-3. OwnerChangePid and subsequent calls to VM
-
 
 ## Bugs
 
@@ -37,5 +34,3 @@
 ## Leftovers
 
 1. TODO: stub code right now, need to add remove ACL to SDK
-
-Device/TransferAttended Device/KeyPress

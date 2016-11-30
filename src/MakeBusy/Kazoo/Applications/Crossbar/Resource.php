@@ -19,11 +19,10 @@ class Resource
     private $name;
     private $profile;
     static private $counter = 1;
-    static public $instance_id = 1;
     static private $call_counter = 1;
 
     public function __construct(TestAccount $test_account, $profile, array $rules, $prefix = null, $emergency = FALSE, $register = FALSE, $global = FALSE) {
-        $name = "Resource " . self::$counter++;
+        $name = sprintf("%s Resource %d", $test_account->getType(), self::$counter++);
         $this->test_account = $test_account;
         $this->profile = $profile;
         $this->name = $name;
@@ -112,7 +111,7 @@ class Resource
     }
 
     private function setAccount(TestAccount $test_account) {
-        $this->account = $test_account;
+        $this->test_account = $test_account;
     }
 
     private function getAccount() {
@@ -137,7 +136,7 @@ class Resource
     }
 
     public function call_uuid() {
-        return sprintf("BS-RESOURCE-%s-%s", self::$instance_id, self::$call_counter++);
+        return sprintf("BS-RESOURCE-%s-%s", $this->test_account->getType(), self::$call_counter++);
     }
 
     // returns Channel or null
