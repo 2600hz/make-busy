@@ -51,6 +51,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass() {
         if (isset($_ENV['CLEAN'])) {
             AbstractTestAccount::nukeTestAccounts();
+            // TODO: hup only test channels (e.g. BS-.*)
+            self::getEsl("auth")->api("hupall");
         } else {
             Log::debug("Use existing Kazoo Makebusy config");
         }
