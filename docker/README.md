@@ -47,7 +47,7 @@ TESTS_PATH="/home/kazoo/make-busy-tests" ./run.sh
 
 Here /home/kazoo/make-busy-tests will be mounted in tests/KazooTests/Applications folder in MakeBusy docker container.
 
-There is a [shell wrapper](makebusy/run-tests.sh) to ease invocation of MakeBusy:
+There is a [shell wrapper](../bin/run-tests.sh) to ease invocation of MakeBusy:
 ```sh
 LOG_CONSOLE=1 ./run-test.sh -v --debug Callflow/Device/Milliwatt.php
 ```

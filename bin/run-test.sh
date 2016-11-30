@@ -1,4 +1,5 @@
 #!/bin/bash
+NETWORK=${NETWORK:-"kazoo"}
 REOPTS=""
 for ARG in "$@"
 do
@@ -23,4 +24,4 @@ do
 		REEXPORT="$REEXPORT $var=$VALUE"
 	fi
 done
-docker exec -ti makebusy.kazoo /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
+docker exec -ti makebusy.$NETWORK /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
