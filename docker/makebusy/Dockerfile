@@ -5,7 +5,6 @@ USER root
 WORKDIR /root
 
 ARG REPO=https://github.com/2600hz/make-busy.git
-ARG COMMIT=HEAD
 
 COPY build/setup-os.sh build/setup-os.sh
 RUN build/setup-os.sh
@@ -22,8 +21,6 @@ RUN setcap CAP_NET_BIND_SERVICE+ep /usr/local/bin/php
 RUN chown -R user:user make-busy
 WORKDIR /home/user/make-busy
 USER user
-
-RUN ./composer install && ./composer clear-cache
 
 COPY etc/commit commit
 COPY build/rebuild.sh build/rebuild.sh

@@ -9,5 +9,4 @@ echo $COMMIT > etc/commit
 
 docker build $FLAGS \
 	--build-arg REPO=$REPO \
-	--build-arg COMMIT=$COMMIT \
 	-t kazoo/makebusy .
