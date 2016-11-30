@@ -28,7 +28,7 @@ class Device
     private $loaded = false;
 
     public function __construct(TestAccount $test_account, $profile, $register = TRUE, array $options = array()) {
-        $name = sprintf("%s Device %d", $test_account->getType(), self::$counter++);
+        $name = sprintf("%s DV %d", $test_account->getType(), self::$counter++);
         $this->test_account = $test_account;
         $kazoo_device = $test_account->getFromCache('Devices', $name);
         if (is_null($kazoo_device)) {

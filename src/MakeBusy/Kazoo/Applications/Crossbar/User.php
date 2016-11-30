@@ -18,7 +18,7 @@ class User {
     private $callflow_numbers;
 
     public function __construct(TestAccount $account, array $options = array()) {
-        $name = "User " . self::$counter++;
+        $name = sprintf("%s UR %d", $account->getType(), self::$counter++);
         $this->test_account = $account;
         $kazoo_user = $account->getFromCache('Users', $name);
         if (is_null($kazoo_user)) {

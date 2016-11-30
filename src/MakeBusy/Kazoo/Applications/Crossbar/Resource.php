@@ -22,7 +22,7 @@ class Resource
     static private $call_counter = 1;
 
     public function __construct(TestAccount $test_account, $profile, array $rules, $prefix = null, $emergency = FALSE, $register = FALSE, $global = FALSE) {
-        $name = sprintf("%s Resource %d", $test_account->getType(), self::$counter++);
+        $name = sprintf("%s RS %d", $test_account->getType(), self::$counter++);
         $this->test_account = $test_account;
         $this->profile = $profile;
         $this->name = $name;

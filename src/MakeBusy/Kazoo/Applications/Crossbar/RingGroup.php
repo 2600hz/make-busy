@@ -23,7 +23,8 @@ class RingGroup
 
     public function createCallflow(array $numbers, array $members, $strategy) {
         $builder = new Builder($numbers);
-        $ring_group = new RingGroupNode("RingGroup_" . self::$counter++);
+        $name = sprintf("%s_RG_%d", $this->test_account->getType(), self::$counter++);
+        $ring_group = new RingGroupNode($name);
         if (!empty($strategy)) {
             $ring_group->strategy($strategy);
         }

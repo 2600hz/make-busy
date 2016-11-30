@@ -27,7 +27,7 @@ class Connectivity
 
     public function __construct(TestAccount $account, array $options = array()) {
         $this->number = self::$counter++; // to name gateways
-        $name = "Connectivity " . $this->number;
+        $name = sprintf("%s CN %d", $account->getType(), self::$counter++);
         $this->test_account = $account;
         $kazoo_connectivity = $account->getFromCache('Connectivities', $name);
         if (is_null($kazoo_connectivity)) {
