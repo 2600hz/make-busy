@@ -1,4 +1,4 @@
-FROM php:5-alpine
+FROM php:7-alpine
 MAINTAINER Roman Galeev <jamhed@2600hz.com>
 
 USER root
