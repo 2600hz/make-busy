@@ -37,15 +37,10 @@ class Gateways {
         self::createGatewaysFromResources($kazoo_account, $account->getCache('Resources'));
     }
 
-    public static function getName($item) {
-        return isset($item->first_name)? $item->first_name : isset($item->name)? $item->name : $item->id;
-    }
-
     public static function loadCollection($account, $collection) {
         $kazoo_account = $account->getAccount();
         foreach(self::loadFromKazoo($kazoo_account, $collection) as $item) {
-            Log::debug("cache add %s name:%s to account:%s", $collection, self::getName($item), $kazoo_account->name);
-            $account->addToCache($collection, $item);
+            $account->addToCache($collection, $item->fetch());
         }
     }
 

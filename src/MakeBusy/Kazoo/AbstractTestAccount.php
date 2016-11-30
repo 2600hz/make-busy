@@ -50,7 +50,8 @@ abstract class AbstractTestAccount
 
     function addToCache($collection, $item) {
         // fucking oop (special case for users (no name, first_name instead) and phone_number (no name, id only))
-        $name = isset($item->first_name)? $item->first_name : isset($item->name)? $item->name : $item->id;
+        $name = isset($item->first_name)? $item->first_name : (isset($item->name)? $item->name : $item->id);
+        Log::debug("caching name:%s in collection:%s", $name, $collection);
         $this->cache[$collection][$name] = $item;
     }
 
