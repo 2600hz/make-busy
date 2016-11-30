@@ -4,7 +4,7 @@ SUITE=$1
 [ -z $SUITE ] && echo "please specify a folder with tests" && exit 0
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
-for TEST in $(find $SUITE -name '*.php')
+for TEST in $(find $SUITE -name '*.php' | shuf)
 do
 	echo TEST: $TEST
 	vendor/bin/phpunit $* $TEST
