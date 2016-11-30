@@ -59,7 +59,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         Log::truncateLog();
     }
 
-    public static function sync_sofia_profile($profile_name, $loaded = false, int $counter = null) {
+    public static function syncSofiaProfile($profile_name, $loaded = false, int $counter = null) {
         $profile = self::getProfile($profile_name);
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
@@ -77,8 +77,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function className($object) {
-        $classNameWithNamespace = get_class($object);
-        return substr($classNameWithNamespace, strrpos($classNameWithNamespace, '\\')+1);
+        $namespace = get_class($object);
+        return substr($namespace, strrpos($namespace, '\\')+1);
     }
 
     public static function getSipTargets() {
