@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function build_image {
 	pushd $1 > /dev/null
