@@ -79,7 +79,11 @@ class Profile
     }
 
     public function register() {
-        $this->esl->api_f('sofia profile %s register all', $this->getName());
+        foreach($this->getGateways()->getGateways() as $gateway) {
+            if ($gateway->getParam('register')) {
+                $this->esl->api_f('sofia profile %s register %s', $this->getName(), $gateway->getName());
+            }
+        }
     }
 
     public function rescan() {
