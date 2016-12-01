@@ -75,20 +75,20 @@ class Call extends DeviceTestCase {
     // main entry, will be called once per each Kamailio target
     public function main($sip_uri) {
         $target = self::B_EXT .'@'. $sip_uri;
-        $ch_a = self::ensureChannel( self::$a_device->originate($target) );
-        $ch_b = self::ensureChannel( self::$b_device->waitForInbound() );
+        $channel_a = self::ensureChannel( self::$a_device->originate($target) );
+        $channel_b = self::ensureChannel( self::$b_device->waitForInbound() );
 
-        self::ensureAnswer($ch_a, $ch_b);
-        self::ensureEvent($ch_a->waitPark());
-        self::ensureTwoWayAudio($ch_a, $ch_b);
-        self::hangupBridged($ch_a, $ch_b);
+        self::ensureAnswer($channel_a, $channel_b);
+        self::ensureEvent($channel_a->waitPark());
+        self::ensureTwoWayAudio($channel_a, $channel_b);
+        self::hangupBridged($channel_a, $channel_b);
     }
 
 }
 ```
 
 For convinience there are number of checks and utility functions defined in TestCase class, namely: ensureChannel
-checks the result to be a Channel, and fails if it is not, ensureAnswer answers for $ch_b and ensures both channels
+checks the result to be a Channel, and fails if it is not, ensureAnswer answers for $channel_b and ensures both channels
 are answered, ensureEvent ensures the event was received, ensureTwoWayAudio checks channels can hear each other,
 and hangupBridged ensures channels are properly hanged up. Please see [TestCase.php](../tests/KazooTests/TestCase.php)
 for additional information.
