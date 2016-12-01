@@ -19,9 +19,8 @@
 4. Reduce tone timeouts to speed up testing
 5. Abstract cached entities constructors (__construct/initialize pairs)
 7. When HTTP REST API fails display sane and complete error message (not a dump)
-8. Make entities names TestCase-specific, e.g. 'DeviceTest Device 1'
 9. list and hup test case channels only
-10. have a flag to skip waiting for register
+10. reset Voicemailbox (delete messages)
 
 ## Immediate
 

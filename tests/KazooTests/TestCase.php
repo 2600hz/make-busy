@@ -65,7 +65,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
             } else if (! isset($_ENV['SKIP_REGISTER'])) {
-                $profile->register();
+                $profile->register(false);
+                if ($counter > 0) {
+                    $profile->waitForRegister($counter);
+                }
             }
         } else {
             $profile->restart();
@@ -74,11 +77,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             }
         }
         return $profile;
-    }
-
-    public static function className($object) {
-        $namespace = get_class($object);
-        return substr($namespace, strrpos($namespace, '\\')+1);
     }
 
     public static function getSipTargets() {

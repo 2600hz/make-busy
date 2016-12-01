@@ -14,7 +14,7 @@ class Webhook
     private $loaded = false;
 
     public function __construct(TestAccount $account, array $options = array()) {
-        $name = sprintf("%s WH %d", $account->getType(), self::$counter++);
+        $name = sprintf("%s WH %d", $account->getBaseType(), self::$counter++);
         $this->test_account = $account;
         $kazoo_webhook = $account->getFromCache('Webhooks', $name);
         if (is_null($kazoo_webhook)) {

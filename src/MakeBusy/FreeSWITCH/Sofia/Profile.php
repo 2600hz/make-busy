@@ -78,10 +78,10 @@ class Profile
         return $this->getProfileParam("Ext-SIP-IP");
     }
 
-    public function register() {
+    public function register($wait = true) {
         foreach($this->getGateways()->getGateways() as $gateway) {
             if ($gateway->getParam('register')) {
-                $gateway->register();
+                $gateway->register($wait);
             }
         }
     }

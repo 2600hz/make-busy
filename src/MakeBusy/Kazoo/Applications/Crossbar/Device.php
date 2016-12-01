@@ -28,7 +28,7 @@ class Device
     private $loaded = false;
 
     public function __construct(TestAccount $test_account, $profile, $register = TRUE, array $options = array()) {
-        $name = sprintf("%s DV %d", $test_account->getType(), self::$counter++);
+        $name = sprintf("%s DV %d", $test_account->getBaseType(), self::$counter++);
         $this->test_account = $test_account;
         $kazoo_device = $test_account->getFromCache('Devices', $name);
         if (is_null($kazoo_device)) {
@@ -70,7 +70,7 @@ class Device
         $device->caller_id->emergency->number = "7778889999";
 
         $device->sip = new stdClass();
-        $device->sip->username = sprintf("%s_device_%d", $test_account->getType(), self::$counter - 1);
+        $device->sip->username = sprintf("%s_%d", $test_account->getBaseType(), self::$counter - 1);
         $device->sip->password = Utils::randomString();
 
         $device->makebusy = new stdClass();
@@ -189,7 +189,6 @@ class Device
         Log::debug("trying to disable device %s", $device->name);
         $device->enabled = FALSE;
         $device->save();
-        Log::info("disabled device %s", $device->name);
     }
 
     public function enableDevice(){
@@ -197,7 +196,6 @@ class Device
         Log::debug("trying to enable device %s", $device->name);
         $device->enabled = TRUE;
         $device->save();
-        Log::info("enabled device %s", $device->name);
     }
 
     public function setInviteFormat($format, $route = null){
@@ -212,7 +210,6 @@ class Device
         $device->sip->invite_format = $format;
         Log::debug("setting format %s on device %s", $format, $id);
         $device->save();
-        Log::info("device %s saved format %s and route %s", $id, $format, $route);
     }
 
     public function getInviteFormat(){
@@ -228,7 +225,6 @@ class Device
         Log::debug("setting call flow sub-key %s to value %s on device %s", $param, $value, $device->getId() );
         $device->call_forward->$param = $value;
         $device->save();
-        Log::info("successfully set call flow sub-key %s to value %s on device %s", $param, $value, $device->getId() );
     }
 
     public function setDeviceParam($param, $value){
@@ -236,7 +232,6 @@ class Device
         Log::debug("trying to set key %s to value %s on device %s", $param, $value, $device->getId() );
         $device->$param = $value;
         $device->save();
-        Log::info("successfully set key %s to value %s on device %s", $param, $value, $device->getId() );
     }
 
     public function getDeviceParam($param){
@@ -262,7 +257,6 @@ class Device
         $device->call_forward->direct_calls_only  = FALSE;
         $device->call_forward->failover           = FALSE;
         $device->save();
-        Log::info("successfully reset Call Flows parameters for device %s", $device->getId() );
     }
 
     public function resetDeviceParam($param){
@@ -270,16 +264,14 @@ class Device
         Log::debug("resetting key %s on device %s", $param, $device->getId() );
         unset($device->$param);
         $device->save();
-        Log::info("successfully reset key %s on device %s", $param, $device->getId() );
     }
 
     public function unsetCid($type = "external"){
         $device = $this->getDevice();
-        Log::debug("trying to unset caller ID on device %s", $device->getId() );
+        Log::debug("unset cid on device %s", $device->getId() );
         unset($device->caller_id->$type->number);
         unset($device->caller_id->$type->name);
         $device->save();
-        Log::info("successfully unset caller ID  on device %s", $device->getId() );
     }
 
     public function setCid($number, $name, $type = "external") {
@@ -289,18 +281,16 @@ class Device
 
     public function setCidNumber($number, $type = "external"){
         $device = $this->getDevice();
-        Log::debug("trying to set number %s on device %s", $number, $device->getId() );
-        $device->caller_id->$key->number = $number;
+        Log::debug("set cid number %s on device %s", $number, $device->getId() );
+        $device->caller_id->$type->number = $number;
         $device->save();
-        Log::info("successfully set number %s on device %s", $number, $device->getId() );
     }
 
     public function setCidName($name, $type = "external"){
         $device = $this->getDevice();
-        Log::debug("trying to set name %s on device %s", $name, $device->getId() );
-        $device->caller_id->$key->name = $name;
+        Log::debug("set cid name %s on device %s", $name, $device->getId() );
+        $device->caller_id->$type->name = $name;
         $device->save();
-        Log::info("successfully set name %s on device %s", $name, $device->getId() );
     }
 
     public function getCidParam($type = "external"){

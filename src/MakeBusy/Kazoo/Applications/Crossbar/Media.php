@@ -16,7 +16,7 @@ class Media
     private $loaded = false;
 
     public function __construct(TestAccount $account) {
-        $name = sprintf("%s MD %d", $account->getType(), self::$counter++);
+        $name = sprintf("%s MD %d", $account->getBaseType(), self::$counter++);
         $this->test_account = $account;
         $kazoo_media = $account->getFromCache('Medias', $name);
         if (is_null($kazoo_media)) {

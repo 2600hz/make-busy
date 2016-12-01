@@ -17,7 +17,7 @@ class Conference
     private $conference;
 
     public function __construct(TestAccount $account, array $pins = array(), array $options = array()) {
-        $name = sprintf("%s CF %d", $account->getType(), self::$counter++);
+        $name = sprintf("%s CF %d", $account->getBaseType(), self::$counter++);
         $this->test_account = $account;
         $kazoo_conf = $account->getFromCache('Conferences', $name);
 

@@ -29,20 +29,23 @@ abstract class AbstractTestAccount
     private $system_configs;
     private $cache = [];
     private $type;
+    private $base_type;
 
     private $loaded = false;
     private static $counter = 1; // count created accounts
 
-    public function __construct($type) {
-        $name = sprintf("BS %s %s", $type, self::$counter++);
-        $acc = self::load(['filter_name' => $name, 'filter_makebusy.type' => $type]);
-        $this->type = $type;
+    public function __construct($class) {
+        $this->type = self::shortName($class);
+        $this->base_type = self::shortName(get_parent_class($class));
+
+        $name = sprintf("BS %s %s", $this->base_type, self::$counter++);
+        $acc = self::load(['filter_name' => $name, 'filter_makebusy.type' => $this->base_type]);
         if (isset($acc[0])) {
             $this->loaded = true;
             $this->setAccount($acc[0]->getId());
             KazooGateways::loadFromAccount($this); // get all devices, create gateways, keep devices in $devices cache for later use
         } else {
-            $this->create($type, $name);
+            $this->create($name);
             $this->setup();
         }
         $system_configs = new SystemConfigs($this);
@@ -59,6 +62,16 @@ abstract class AbstractTestAccount
     public function getType() {
         return $this->type;
     }
+
+    public static function shortName($namespace) {
+        return substr($namespace, strrpos($namespace, '\\')+1);
+    }
+
+
+    public function getBaseType() {
+        return $this->base_type;
+    }
+
 
     function addToCache($collection, $item) {
         // fucking oop (special case for users (no name, first_name instead) and phone_number (no name, id only))
@@ -158,7 +171,7 @@ abstract class AbstractTestAccount
     public function setup() {
     }
 
-    public function create($type, $name) {
+    public function create($name) {
 
         $account = SDK::getInstance()->Account(null);
         $account->name = $name;
@@ -167,7 +180,7 @@ abstract class AbstractTestAccount
 
         $account->makebusy = new stdClass();
         $account->makebusy->test = TRUE;
-        $account->makebusy->type = $type;
+        $account->makebusy->type = $this->base_type;
         $account->caller_id = new stdClass();
 
         $account->caller_id->internal = new stdClass();

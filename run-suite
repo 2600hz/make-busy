@@ -6,6 +6,7 @@ SUITE=$1
 shift
 for TEST in $(find $SUITE -name '*.php' | shuf)
 do
+	echo
 	echo TEST: $TEST
 	vendor/bin/phpunit $* $TEST
 done

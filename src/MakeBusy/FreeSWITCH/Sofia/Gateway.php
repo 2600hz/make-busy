@@ -178,14 +178,18 @@ class Gateway
         return $this;
     }
 
-    public function register() {
+    public function register($wait = true) {
         $this->getEsl()->api_f('sofia profile %s register %s', $this->getProfileName(), $this->getName());
-        return $this->waitForRegister();
+        if ($wait) {
+            return $this->waitForRegister();
+        }
     }
 
-    public function unregister() {
+    public function unregister($wait = true) {
         $this->getEsl()->api_f('sofia profile %s unregister %s', $this->getProfileName(), $this->getName());
-        return $this->waitForUnRegister();
+        if ($wait) {
+            return $this->waitForUnRegister();
+        }
     }
 
     public function statusRegistry() {
