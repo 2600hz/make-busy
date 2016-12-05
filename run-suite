@@ -16,6 +16,8 @@ do
 		if [ ! $? -eq 0 ]
 		then
 			echo GIVE UP SUITE ON: $TEST
+			exit 1
 		fi
 	fi
 done
+exit 0
