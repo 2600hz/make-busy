@@ -1,17 +1,24 @@
-#!/bin/sh
-COMMIT=$1
-export NETWORK=$COMMIT
+#!/bin/bash
+export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
+COMMIT=${1:0:10}
+export NETWORK=git-$COMMIT
+docker network create $NETWORK
 cd ~/kazoo-docker/kazoo
 ./build-commit.sh $COMMIT
+cd ~/kazoo-docker/rabbitmq && ./run.sh
+cd ~/kazoo-docker/couchdb && ./run.sh
+cd ~/kazoo-docker/kamailio && ./run.sh
+cd ~/kazoo-docker/freeswitch && ./run.sh
+cd ~/kazoo-docker/kazoo
+./run-commit.sh $COMMIT
 cd ~/kazoo-docker
-rabbitmq/run.sh
-couchdb/run.sh
-kamailio/run.sh
-freeswitch/run.sh
-kazoo/run-commit.sh $COMMIT
+./after-start.sh
 cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
 cd ~/make-busy/docker/makebusy
+./make-config.sh $NETWORK
+./build.sh
 TESTS_PATH=~/tests ./run.sh
-cd ~/make-busy
-bin/run-suite.sh Callflow
+cd ~/make-busy/docker/makebusy/kazoo/
+./configure-for-makebusy.sh
+./setup-makebusy-prompts.sh
