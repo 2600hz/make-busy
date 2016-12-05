@@ -11,17 +11,13 @@ do
 	vendor/bin/phpunit $* $TEST
 	if [ ! $? -eq 0 ]
 	then
-		echo REPEAT TEST: $TEST
-		sleep 5
-		vendor/bin/phpunit $* $TEST
+		echo REPEAT TEST CLEAN: $TEST
+		CLEAN=1 vendor/bin/phpunit $* $TEST
 		if [ ! $? -eq 0 ]
 		then
-			echo REPEAT TEST CLEAN: $TEST
-			CLEAN=1 vendor/bin/phpunit $* $TEST
-			if [ ! $? -eq 0 ]
-			then
-				echo GIVE UP SUITE ON: $TEST
-			fi
+			echo GIVE UP SUITE ON: $TEST
+			exit 1
 		fi
 	fi
 done
+exit 0
