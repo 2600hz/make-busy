@@ -192,6 +192,7 @@ class Voicemail
         $voicemailbox->pin         = "0000";
         unset($voicemailbox->media);
         $voicemailbox->save();
+        $voicemailbox->Messages()->remove();
     }
 
     private static function callflowNodeDefaults() {
