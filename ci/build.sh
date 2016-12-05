@@ -1,4 +1,8 @@
 #!/bin/bash
+# here we assume specific folder structure:
+# $HOME/kazoo-docker
+# $HOME/make-busy
+# $HOME/tests
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 COMMIT=${1:0:10}
 export NETWORK=git-$COMMIT
@@ -22,3 +26,9 @@ TESTS_PATH=~/tests ./run.sh
 cd ~/make-busy/docker/makebusy/kazoo/
 ./configure-for-makebusy.sh
 ./setup-makebusy-prompts.sh
+cd ~/tests
+mkdir log
+echo RUN SUITE
+run-suite.sh Callflow | tee -a log/$COMMIT
+echo SUITE EXIT CODE: $?"
+docker stop $(docker ps -q -a --filter name=$COMMIT)
