@@ -9,9 +9,13 @@ if ($_SERVER('HTTP_X_GITHUB_EVENT') == 'pull_request') {
 	}
 }
 
+function get_token() {
+	return "";
+}
+
 function client() {
 	$client = new \Github\Client();
-	$client->authenticate("d7aeda7cc8417886ab0c0468de147ef54bdf3d1d", null,  Github\Client::AUTH_HTTP_TOKEN);
+	$client->authenticate(get_token(), null,  Github\Client::AUTH_HTTP_TOKEN);
 }
 
 function process_pr($pr) {
