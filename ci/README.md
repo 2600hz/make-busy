@@ -18,3 +18,4 @@
 2. retrigger tests agains specific commit
 3. clear unused docker containers (e.g. stopped)
 4. update makebusy container/test suite on commit to their repos
+5. speed-up couchdb setup with pre-created sounds/etc?
