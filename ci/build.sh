@@ -5,6 +5,7 @@
 # $HOME/tests
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 COMMIT=${1:0:10}
+REPO=$2
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 cd ~/kazoo-docker/kazoo
@@ -34,5 +35,10 @@ cd ~/make-busy/docker/makebusy/kazoo/
 cd ~/tests
 mkdir log
 run-suite.sh Callflow | tee -a log/$COMMIT
-echo SUITE EXIT CODE: $?
+if [ $? -eq 0 ]
+then
+	php update-status.php $TOKEN $REPO success
+else
+	php update-status.php $TOKEN $REPO pending
+fi
 docker stop $(docker ps -q -a --filter name=$COMMIT)

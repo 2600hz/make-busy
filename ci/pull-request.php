@@ -21,6 +21,19 @@ function client() {
 
 function process_pr($pr) {
 	$client = client();
-	error_log(sprintf("name:%s sha:%s", $pr->base->repo->full_name, $pr->head->sha));
-	$client->api('repo')->statuses()->create($pr->base->repo->owner->login, $pr->base->repo->name, $pr->head->sha, ['state' => 'pending', 'context' => 'MakeBusy']);
+	$owner = $pr->base->repo->owner->login;
+	$repo = $pr->base->repo->name;
+	$commit = $pr->head->sha;
+	error_log(sprintf("owner:%s repo:%s commit:%s", $owner, $repo, $commit));
+	$client->api('repo')->statuses()->create(
+		$owner, $repo, $commit,
+		[
+			'state' => 'pending',
+			'context' => 'MakeBusy'
+		]);
+	error_log("builder: $commit $owner:$repo:$commit");
+	if(pcntl_fork() > 0) {
+		passthru("./build.sh $commit $owner:$repo:$commit");
+		exit();
+	}
 }
