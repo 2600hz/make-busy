@@ -24,4 +24,4 @@ do
 		REEXPORT="$REEXPORT $var=$VALUE"
 	fi
 done
-docker exec -i makebusy.$NETWORK /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
+docker exec makebusy.$NETWORK /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
