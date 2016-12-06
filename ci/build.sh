@@ -22,7 +22,12 @@ cd ~/make-busy/docker/makebusy-fs
 cd ~/make-busy/docker/makebusy
 ./make-config.sh $NETWORK
 ./build.sh
-TESTS_PATH=~/tests ./run.sh
+if [ -d ~/volume ]
+then
+	TESTS_PATH=kazoo-ci ./run.sh
+else
+	TESTS_PATH=~/tests ./run.sh
+fi
 cd ~/make-busy/docker/makebusy/kazoo/
 ./configure-for-makebusy.sh
 ./setup-makebusy-prompts.sh
