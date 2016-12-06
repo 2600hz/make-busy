@@ -10,7 +10,7 @@ if ($_SERVER['HTTP_X_GITHUB_EVENT'] == 'pull_request') {
 }
 
 function get_token() {
-	return "";
+	return $_ENV['TOKEN'];
 }
 
 function client() {
