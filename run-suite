@@ -4,6 +4,7 @@ SUITE=$1
 [ -z $SUITE ] && echo "please specify a folder with tests" && exit 0
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
+echo RUN SUITE:$SUITE
 for TEST in $(find $SUITE -name '*.php' | shuf)
 do
 	echo
@@ -11,12 +12,17 @@ do
 	vendor/bin/phpunit $* $TEST
 	if [ ! $? -eq 0 ]
 	then
-		echo REPEAT TEST CLEAN: $TEST
-		CLEAN=1 vendor/bin/phpunit $* $TEST
+		echo REPEAT TEST: $TEST
+		vendor/bin/phpunit $* $TEST
 		if [ ! $? -eq 0 ]
 		then
-			echo GIVE UP SUITE ON: $TEST
-			exit 1
+			echo REPEAT TEST CLEAN: $TEST
+			CLEAN=1 vendor/bin/phpunit $* $TEST
+			if [ ! $? -eq 0 ]
+			then
+				echo GIVE UP SUITE:$SUITE ON: $TEST
+				exit 1
+			fi
 		fi
 	fi
 done
