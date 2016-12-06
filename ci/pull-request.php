@@ -31,9 +31,10 @@ function process_pr($pr) {
 			'state' => 'pending',
 			'context' => 'MakeBusy'
 		]);
-	error_log("builder: $commit $owner:$repo:$commit");
+	$short = substr($commit, 0, 10);
+	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
-		passthru("./build.sh $commit $owner:$repo:$commit");
+		exec("./build.sh $short $owner:$repo:$commit > ~/tests/log/build-$short 2>&1 &");
 		exit();
 	}
 }
