@@ -36,8 +36,8 @@ mkdir log
 run-suite.sh Callflow | tee -a log/$COMMIT
 if [ $? -eq 0 ]
 then
-	php update-status.php $TOKEN $REPO success
+	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success
 else
-	php update-status.php $TOKEN $REPO pending
+	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
 fi
 docker stop $(docker ps -q -a --filter name=$COMMIT)
