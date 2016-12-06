@@ -32,7 +32,7 @@ cd ~/make-busy/docker/makebusy/kazoo/
 ./configure-for-makebusy.sh
 ./setup-makebusy-prompts.sh
 cd ~/tests
-mkdir log
+mkdir -p log
 run-suite.sh Callflow | tee -a log/$COMMIT
 if [ $? -eq 0 ]
 then
