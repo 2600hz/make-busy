@@ -24,17 +24,18 @@ function process_pr($pr) {
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
 	$commit = $pr->head->sha;
+	$short = substr($commit, 0, 10);
 	error_log(sprintf("owner:%s repo:%s commit:%s", $owner, $repo, $commit));
 	$client->api('repo')->statuses()->create(
 		$owner, $repo, $commit,
 		[
 			'state' => 'pending',
-			'context' => 'MakeBusy'
+			'context' => 'MakeBusy',
+			'target_url' => "http://docker.2600hz.com/status.php?run=build-$short",
 		]);
-	$short = substr($commit, 0, 10);
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
 		exec("./build.sh $short $owner:$repo:$commit > ~/tests/log/build-$short 2>&1 &");
-		exit();
+		exit(0);
 	}
 }
