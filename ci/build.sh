@@ -33,7 +33,6 @@ cd ~/make-busy/docker/makebusy/kazoo/
 ./setup-makebusy-prompts.sh
 cd ~/tests
 mkdir log
-echo RUN SUITE
 run-suite.sh Callflow | tee -a log/$COMMIT
 echo SUITE EXIT CODE: $?
 docker stop $(docker ps -q -a --filter name=$COMMIT)
