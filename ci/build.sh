@@ -35,5 +35,5 @@ cd ~/tests
 mkdir log
 echo RUN SUITE
 run-suite.sh Callflow | tee -a log/$COMMIT
-echo SUITE EXIT CODE: $?"
+echo SUITE EXIT CODE: $?
 docker stop $(docker ps -q -a --filter name=$COMMIT)
