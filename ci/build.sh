@@ -20,8 +20,7 @@ cd ~/kazoo-docker
 cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
 cd ~/make-busy/docker/makebusy
-./make-config.sh $NETWORK
-./build.sh
+./run.sh
 if [ -d ~/volume ]
 then
 	TESTS_PATH=kazoo-ci ./run.sh

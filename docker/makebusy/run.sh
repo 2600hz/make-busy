@@ -18,6 +18,7 @@ docker run -td \
 	--net $NETWORK \
 	-h $NAME \
 	--name $NAME \
+	-e NETWORK=$NETWORK \
 	$VOLUME \
 	kazoo/makebusy
 
