@@ -1,18 +1,28 @@
 {
 
-// kazoo kamailio instances here
+"ssh": {
+    "targets": [{
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "logs": [
+            {"kazoo": "/var/log/freeswitch/kazoo-debug.log-????????"},
+            {"journal": "journalctl --no-pager -u sshd"}
+        ]
+    }]
+},
+
 "sip": {
     "targets": [
         "kamailio.kazoo"
     ]
 },
 
-// how kazoo can access makebusy instance
 "webhooks": {
     "uri": "http://makebusy.kazoo/make-busy/webhook.php"
 },
 
-// how makebusy can access kazoo
 "sdk": {
     "base_url": "http://kazoo.kazoo:8000",
     "auth_username": "admin",
@@ -20,8 +30,6 @@
     "auth_realm": "kamailio.kazoo"
 },
 
-
-// makebusy automated freeswitch instances
 "esl": {
     "auth": {
         "ip_address": "makebusy-fs-auth.kazoo",
@@ -41,10 +49,9 @@
 },
 
 "media": {
-    "welcome_prompt_path": "make-busy/prompts/prompts/welcome.wav"
+    "welcome_prompt_path": "/var/www/html/make-busy/prompts/prompts/welcome.wav"
 },
 
-// where to store makebusy log file
 "log": {
     "log_type": "file",
     "log_file": "/tmp/makebusy.log",
