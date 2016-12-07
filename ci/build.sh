@@ -10,7 +10,7 @@ export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
 cd ~/kazoo-docker/rabbitmq && ./run.sh
-cd ~/kazoo-docker/couchdb -td kazoo/couchdb-mkbs && ./run.sh
+cd ~/kazoo-docker/couchdb && ./run.sh -td kazoo/couchdb-mkbs
 cd ~/kazoo-docker/kamailio && ./run.sh
 cd ~/kazoo-docker/freeswitch && ./run.sh
 
