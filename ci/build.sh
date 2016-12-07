@@ -40,7 +40,7 @@ cd ~/tests
 
 mkdir -p log
 run-suite.sh Callflow | tee -a log/$COMMIT
-# docker stop $(docker ps -q -a --filter name=$COMMIT)
+docker stop $(docker ps -q -a --filter name=$COMMIT)
 
 grep 'GIVE UP SUITE' log/$COMMIT > /dev/null
 if [ $? -eq 0 ]
