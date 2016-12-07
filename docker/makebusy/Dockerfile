@@ -14,8 +14,6 @@ WORKDIR /home/user
 COPY build/setup.sh build/setup.sh
 RUN build/setup.sh
 
-COPY etc/config.json make-busy/config.json
-
 RUN setcap CAP_NET_BIND_SERVICE+ep /usr/local/bin/php
 
 RUN chown -R user:user make-busy
