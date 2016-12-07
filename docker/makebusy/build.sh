@@ -1,7 +1,7 @@
 #!/bin/sh
 COMMIT=${1:-"HEAD"}
 REPO=${2:-"https://github.com/2600hz/make-busy.git"}
-FLAGS=${3:-""}
+FLAGS=${3:-"-q"}
 echo repo: $COMMIT $REPO
 mkdir -p etc
 echo $COMMIT > etc/commit
