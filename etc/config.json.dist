@@ -27,7 +27,7 @@
     "base_url": "http://kazoo.kazoo:8000",
     "auth_username": "admin",
     "auth_password": "admin",
-    "auth_realm": "kamailio.kazoo"
+    "auth_realm": "admin"
 },
 
 "esl": {
