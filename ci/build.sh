@@ -34,10 +34,24 @@ cd ~/make-busy/docker/makebusy/kazoo/
 cd ~/tests
 mkdir -p log
 run-suite.sh Callflow | tee -a log/$COMMIT
+docker stop $(docker ps -q -a --filter name=$COMMIT)
+
+grep 'GIVE UP SUITE' log/$COMMIT
 if [ $? -eq 0 ]
 then
-	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success
-else
+	echo SET ERROR STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
+	exit 1
 fi
-docker stop $(docker ps -q -a --filter name=$COMMIT)
+
+grep 'COMPLETE SUITE' log/$COMMIT
+if  [ $? -eq 0 ]
+then
+	echo SET SUCCESS STATUS
+	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success
+	exit 0
+fi
+
+echo SET FAILURE STATUS
+cd ~/make-busy/ci && php update-status.php $TOKEN $REPO failure
+exit 2
