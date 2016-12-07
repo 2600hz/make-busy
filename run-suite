@@ -4,7 +4,7 @@ SUITE=$1
 [ -z $SUITE ] && echo "please specify a folder with tests" && exit 0
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
-echo RUN SUITE:$SUITE
+echo START SUITE:$SUITE
 for TEST in $(find $SUITE -name '*.php' | shuf)
 do
 	echo
@@ -26,4 +26,5 @@ do
 		fi
 	fi
 done
+echo COMPLETE SUITE:$SUITE
 exit 0
