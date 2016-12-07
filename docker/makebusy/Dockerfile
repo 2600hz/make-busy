@@ -22,6 +22,8 @@ RUN chown -R user:user make-busy
 WORKDIR /home/user/make-busy
 USER user
 
+COPY build/make-config.sh build/make-config.sh
+
 COPY etc/commit commit
 COPY build/rebuild.sh build/rebuild.sh
 RUN build/rebuild.sh
