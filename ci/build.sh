@@ -42,16 +42,14 @@ mkdir -p log
 run-suite.sh Callflow | tee -a log/$COMMIT
 docker stop $(docker ps -q -a --filter name=$COMMIT)
 
-grep -q 'GIVE UP SUITE' log/$COMMIT 
-if [ $? -eq 0 ]
+if grep -q 'GIVE UP SUITE' log/$COMMIT 
 then
 	echo SET ERROR STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
 	exit 1
 fi
 
-grep -q 'COMPLETE SUITE' log/$COMMIT
-if  [ $? -eq 0 ]
+if grep -q 'COMPLETE SUITE' log/$COMMIT
 then
 	echo SET SUCCESS STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success
