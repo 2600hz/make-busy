@@ -9,6 +9,13 @@ REPO=$2
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
+while [ -f /tmp/build.lock ]
+do
+	echo wait in queue for $(cat /tmp/build.lock)
+	sleep 5
+done
+echo $COMMIT > /tmp/build.lock
+
 cd ~/kazoo-docker/rabbitmq && ./run.sh
 cd ~/kazoo-docker/couchdb && ./run.sh -td kazoo/couchdb-mkbs
 cd ~/kazoo-docker/kamailio && ./run.sh
@@ -23,6 +30,8 @@ cd ~/make-busy/docker/makebusy/kazoo
 
 cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
+# need to wait for fs drone to start
+watch -g "docker logs makebusy-fs-auth.$NETWORK | grep 'FreeSWITCH Started'" > /dev/null
 
 cd ~/make-busy/docker/makebusy
 ./build.sh $(git rev-parse HEAD)
@@ -38,6 +47,9 @@ cd ~/tests
 mkdir -p log
 run-suite.sh Callflow | tee -a log/$COMMIT
 docker stop $(docker ps -q -a --filter name=$COMMIT)
+
+# release lock
+rm -f /tmp/build.lock
 
 if grep -q 'GIVE UP SUITE' log/$COMMIT 
 then
