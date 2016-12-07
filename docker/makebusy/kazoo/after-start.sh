@@ -21,6 +21,8 @@ sup kazoo_media_maintenance import_prompts /home/user/mk-bs/ mk-bs
 cd ../
 rm -rf mk-bs
 
+# wait kazoo to digest files
+sleep 10
 # save it for future use (e.g. clear things)
 docker commit couchdb.$NETWORK kazoo/couchdb-mkbs
 cd ../
