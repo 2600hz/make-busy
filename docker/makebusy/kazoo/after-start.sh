@@ -4,7 +4,7 @@ echo Waiting for kazoo.$NETWORK to start '(you may check docker logs if impatien
 watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 
 echo Init the system
-sup crossbar_maintenance create_account admin kamailio.$NETWORK admin admin
+sup crossbar_maintenance create_account admin admin admin admin
 
 git clone --depth 1 --no-single-branch https://github.com/2600hz/kazoo-sounds
 docker cp kazoo-sounds/kazoo-core/en/us kazoo.$NETWORK:/home/user
