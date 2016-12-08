@@ -12,7 +12,7 @@ docker network create $NETWORK
 while [ -f /tmp/build.lock ]
 do
 	echo wait in queue for $(cat /tmp/build.lock)
-	sleep 5
+	sleep 30
 done
 echo $COMMIT > /tmp/build.lock
 
