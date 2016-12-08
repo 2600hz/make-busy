@@ -50,6 +50,7 @@ docker stop $(docker ps -q -a --filter name=$COMMIT)
 
 # release lock
 rm -f /tmp/build.lock
+docker network rm $NETWORK
 
 if grep -q 'GIVE UP SUITE' log/$COMMIT 
 then
