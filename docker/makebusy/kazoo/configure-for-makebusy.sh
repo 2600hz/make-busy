@@ -5,8 +5,8 @@ echo Waiting for kazoo.$NETWORK to start
 timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 if [ $? -ne 0 ]
 then
-	echo Failed to wait for Kazoo to start, network:$NETWORK status:$?
-	exit $?
+	echo Failed to wait for Kazoo to start, network:$NETWORK
+	exit 1
 fi
 sup ecallmgr_maintenance add_fs_node freeswitch@freeswitch.$NETWORK
 sup kapps_config set token_buckets tokens_fill_rate 100
