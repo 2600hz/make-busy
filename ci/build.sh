@@ -4,15 +4,21 @@
 # $HOME/make-busy
 # $HOME/tests
 
+export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
+COMMIT=${1:0:10}
+REPO=$2
+if [ -z $COMMIT ]
+then
+	echo Usage: $0 commit_ref repo_ref
+	exit 1
+fi
+
 while [ -f /tmp/build.lock ]
 do
 	echo wait in queue for $(cat /tmp/build.lock)
 	sleep 30
 done
 
-export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
-COMMIT=${1:0:10}
-REPO=$2
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
