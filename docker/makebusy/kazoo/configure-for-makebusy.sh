@@ -2,7 +2,7 @@
 TIMEOUT=${1:-"60"}
 NETWORK=${NETWORK:-"kazoo"}
 echo Waiting for kazoo.$NETWORK to start
-timeout $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
+timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 if [ $? -ne 0 ]
 then
 	echo Failed to wait for Kazoo to start, network:$NETWORK status:$?

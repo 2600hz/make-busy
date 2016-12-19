@@ -45,7 +45,8 @@ cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
 
 # need to wait for fs drone to start
-timeout 20 watch -g "docker logs makebusy-fs-auth.$NETWORK | grep 'FreeSWITCH Started'" > /dev/null
+echo Wait for FreeSwitch drones to start
+timeout --foreground 20 watch -g "docker logs makebusy-fs-auth.$NETWORK | grep 'FreeSWITCH Started'" > /dev/null
 if [ $? -ne 0 ]
 then
 	echo Failure to start FreeSwitch Drones, exit code: $?
