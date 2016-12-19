@@ -39,7 +39,7 @@ cd ~/kazoo-docker/kazoo
 
 if [ "$(docker ps -q --filter name=kazoo.$NETWORK)" = ""  ]
 then
-	echo No Kazoo image, exiting
+	echo No Kazoo image, exiting...
 	stop_segment
 	exit 1
 fi
@@ -49,7 +49,7 @@ cd ~/make-busy/docker/makebusy/kazoo
 ./configure-for-makebusy.sh
 if [ $? -ne 0 ]
 then
-	echo Failure to start Kazoo, exit code: $?
+	echo Failure to start Kazoo image, exiting...
 	stop_segment
 	exit 1
 fi
