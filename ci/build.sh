@@ -9,12 +9,12 @@ do
 	echo wait in queue for $(cat /tmp/build.lock)
 	sleep 30
 done
-docker network create $NETWORK
 
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 COMMIT=${1:0:10}
 REPO=$2
 export NETWORK=git-$COMMIT
+docker network create $NETWORK
 
 function stop {
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
