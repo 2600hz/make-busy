@@ -85,7 +85,7 @@ stop_segment
 
 if [ -z $REPO ]
 then
-	SHA=$(cd /tmp && rm -rf kazoo && git clone -q --depth 1000 -n https://github.com/2600hz/kazoo && cd kazoo && git rev-parse $COMMIT && cd ../ && rm -rf kazoo)
+	SHA=$(cd /tmp && rm -rf kazoo && git clone -q https://github.com/2600hz/kazoo && cd kazoo && git rev-parse $COMMIT && cd ../ && rm -rf kazoo)
 	REPO=2600hz:kazoo:$SHA
 	echo Guessed repo: $REPO
 fi
