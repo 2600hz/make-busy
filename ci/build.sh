@@ -76,6 +76,13 @@ run-suite.sh Callflow | tee -a log/$COMMIT
 
 stop_segment
 
+if [ -z $REPO ]
+then
+	SHA=$(git ls-remote https://github.com/2600hz/kazoo | grep $COMMIT | grep refs | cut -d$'\t' -f1)
+	REPO=2600hz:kazoo:$SHA
+	echo Guessed repo: $REPO
+fi
+
 if grep -q 'GIVE UP SUITE' log/$COMMIT 
 then
 	echo SET ERROR STATUS
