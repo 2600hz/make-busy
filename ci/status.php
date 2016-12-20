@@ -1,5 +1,3 @@
-<html>
-<body>
 <?php
 	require_once 'vendor/autoload.php';
 	$ref = $_GET['ref'];
@@ -11,8 +9,12 @@
 	} else {
 		$log = "build";
 	}
+	if ($log == "build") {
+		header("Refresh: 5");
+	}
 ?>
-
+<html>
+<body>
 <table width="100%">
 <tr><td>
 <form action="action.php" method="POST">
