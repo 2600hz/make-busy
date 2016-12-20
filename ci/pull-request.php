@@ -7,6 +7,9 @@ if ($_SERVER['HTTP_X_GITHUB_EVENT'] == 'pull_request') {
 	if ($req->action == 'opened') {
 		process_pr($req->pull_request);
 	}
+	elseif ($req->action == 'edited') {
+		process_pr($req->pull_request);
+	}
 }
 
 function get_token() {
