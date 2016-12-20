@@ -3,6 +3,9 @@
 <?php
 	require_once 'vendor/autoload.php';
 	$ref = $_GET['ref'];
+	if (preg_match('/^[\w|\d]{40}$/', $ref)) {
+		$ref = substr($ref, 0, 10);
+	}
 	if (isset($_GET['type'])) {
 		$log = $_GET['type'];
 	} else {
