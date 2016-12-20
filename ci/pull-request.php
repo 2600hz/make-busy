@@ -31,11 +31,12 @@ function process_pr($pr) {
 		[
 			'state' => 'pending',
 			'context' => 'MakeBusy',
-			'target_url' => "http://docker.2600hz.com/status.php?run=build-$short",
+			'target_url' => "http://docker.2600hz.com/status.php?ref=$short",
 		]);
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
-		exec("./build.sh $short $owner:$repo:$commit > ~/tests/log/build-$short 2>&1 &");
+		exec("mkdir -p ~/tests/log/$short");
+		exec("./build.sh $short $owner:$repo:$commit > ~/tests/log/$short/build.log 2>&1 &");
 		exit(0);
 	}
 }
