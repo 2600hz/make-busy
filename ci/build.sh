@@ -24,9 +24,9 @@ export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
 function stop_segment {
-	docker logs kazoo.$NETWORK > ~/volume/log/$COMMIT/kazoo.log
-	docker logs kamailio.$NETWORK > ~/volume/log/$COMMIT/kamailio.log
-	docker logs freeswitch.$NETWORK > ~/volume/log/$COMMIT/freeswitch.log
+	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
+	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
+	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
 	docker network rm $NETWORK
 	rm -f /tmp/build.lock
