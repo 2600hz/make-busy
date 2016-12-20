@@ -102,11 +102,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     // channel a is calling (originating), channel b is ringing
-    public static function ensureAnswer($ch_a, $ch_b) {
-        $ch_b->answer();
-        self::ensureEvent($ch_b->waitAnswer());
-        self::ensureEvent($ch_a->waitAnswer());
-        Log::info("call %s has answered call %s", $ch_b->getUuid(), $ch_a->getUuid());
+    public static function ensureAnswer($channel_a, $channel_b) {
+        $channel_b->answer();
+        self::ensureEvent($channel_b->waitAnswer());
+        self::ensureEvent($channel_a->waitAnswer());
+        Log::info("call %s has answered call %s", $channel_b->getUuid(), $channel_a->getUuid());
     }
 
     public static function ensureTalking($first_channel, $second_channel, $freq = 600) {
