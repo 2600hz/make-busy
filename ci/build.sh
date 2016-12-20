@@ -79,6 +79,7 @@ fi
 cd ~/tests
 
 mkdir -p log
+rm -f log/$COMMIT
 run-suite.sh Callflow | tee -a log/$COMMIT
 
 stop_segment
