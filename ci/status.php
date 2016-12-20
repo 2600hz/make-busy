@@ -37,7 +37,7 @@
 
 <?php
 function show_log($ref, $log) {
-	$path = sprintf("../../tests/log/%s/%s.log", $ref, $log);
+	$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
 	if (file_exists($path)) {
 		echo("<pre>");
 		readfile($path);

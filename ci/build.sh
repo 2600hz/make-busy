@@ -23,9 +23,9 @@ export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
 function stop_segment {
-	docker logs kazoo.$NETWROK > ~/tests/log/$COMMIT/kazoo.log
-	docker logs kamailio.$NETWROK > ~/tests/log/$COMMIT/kamailio.log
-	docker logs freeswitch.$NETWROK > ~/tests/log/$COMMIT/freeswitch.log
+	docker logs kazoo.$NETWROK > ~/volume/log/$COMMIT/kazoo.log
+	docker logs kamailio.$NETWROK > ~/volume/log/$COMMIT/kamailio.log
+	docker logs freeswitch.$NETWROK > ~/volume/log/$COMMIT/freeswitch.log
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
 	docker network rm $NETWORK
 	rm -f /tmp/build.lock
@@ -81,10 +81,10 @@ fi
 
 cd ~/tests
 
-mkdir -p log/$COMMIT
-rm -f log/$COMMIT/suite.log
-run-suite.sh Callflow | tee -a log/$COMMIT/suite.log
-grep TEST\|SUITE log/$COMMIT/suite.log > log/$COMMIT/run.log
+mkdir -p ~/volume/log/$COMMIT
+rm -f ~/volume/log/$COMMIT/suite.log
+run-suite.sh Callflow | tee -a ~/volume/log/$COMMIT/suite.log
+grep TEST\|SUITE ~/volume/log/$COMMIT/suite.log > ~/volume/log/$COMMIT/run.log
 
 stop_segment
 
@@ -95,14 +95,14 @@ then
 	echo Guessed repo: $REPO
 fi
 
-if grep -q 'GIVE UP SUITE' log/$COMMIT/suite.log
+if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/suite.log
 then
 	echo SET ERROR STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
 	exit 1
 fi
 
-if grep -q 'COMPLETE SUITE' log/$COMMIT/suite.log
+if grep -q 'COMPLETE SUITE' ~/volume/log/$COMMIT/suite.log
 then
 	echo SET SUCCESS STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success

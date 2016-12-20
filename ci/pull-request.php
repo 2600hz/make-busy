@@ -35,8 +35,8 @@ function process_pr($pr) {
 		]);
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
-		exec("mkdir -p ~/tests/log/$short");
-		exec("./build.sh $short $owner:$repo:$commit > ~/tests/log/$short/build.log 2>&1 &");
+		exec("mkdir -p ~/volume/log/$short");
+		exec("./build.sh $short $owner:$repo:$commit > ~/volume/log/$short/build.log 2>&1 &");
 		exit(0);
 	}
 }
