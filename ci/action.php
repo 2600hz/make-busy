@@ -10,6 +10,12 @@ if ($action == "run_again") {
 	}
 } elseif ($action == "remove_lock") {
 	exec("rm -f /tmp/build.lock");
+} elseif ($action == "rebuild") {
+	if(pcntl_fork() > 0) {
+		exec("mkdir -p ~/volume/log/$ref");
+		exec("KZ_BUILD=--no-cache ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
+		exit(0);
+	}
 }
 
 header(sprintf("Location: status.php?ref=%s", $ref));

@@ -16,14 +16,22 @@
 <html>
 <body>
 <table width="100%">
-<tr><td>
+<tr>
+<td>
 <form action="action.php" method="POST">
 	<input type="hidden" name="action" value="run_again">
 	<input type="hidden" name="ref" value="<?php echo $ref ?>">
 	<input type="submit" value="Run again">
 </form>
 </td>
-<td colspan=4>
+<td>
+<form action="action.php" method="POST">
+	<input type="hidden" name="action" value="rebuild">
+	<input type="hidden" name="ref" value="<?php echo $ref ?>">
+	<input type="submit" value="Rebuild and run">
+</form>
+</td>
+<td colspan=3>
 <form action="action.php" method="POST">
 	<input type="hidden" name="action" value="remove_lock">
 	<input type="hidden" name="ref" value="<?php echo $ref ?>">
