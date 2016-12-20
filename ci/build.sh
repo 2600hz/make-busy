@@ -19,6 +19,7 @@ do
 	sleep 30
 done
 
+echo $COMMIT > /tmp/build.lock
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 
@@ -84,7 +85,7 @@ cd ~/tests
 mkdir -p ~/volume/log/$COMMIT
 rm -f ~/volume/log/$COMMIT/suite.log
 run-suite.sh Callflow | tee -a ~/volume/log/$COMMIT/suite.log
-grep TEST\|SUITE ~/volume/log/$COMMIT/suite.log > ~/volume/log/$COMMIT/run.log
+grep -P TEST\|SUITE ~/volume/log/$COMMIT/suite.log > ~/volume/log/$COMMIT/run.log
 
 stop_segment
 
