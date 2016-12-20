@@ -13,3 +13,4 @@ docker/makebusy/etc/commit
 docker/makebusy/etc/api_key
 docker/makebusy/export/makebusy.tar
 ci/vendor
+docker/makebusy/kazoo/kazoo-sounds
