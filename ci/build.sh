@@ -22,6 +22,7 @@ done
 echo $COMMIT > /tmp/build.lock
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
+cd ~/kazoo-docker/kazoo && ./build-commit.sh $COMMIT
 
 function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
@@ -36,10 +37,7 @@ cd ~/kazoo-docker/rabbitmq && ./run.sh
 cd ~/kazoo-docker/couchdb && ./run.sh -td kazoo/couchdb-mkbs
 cd ~/kazoo-docker/kamailio && ./run.sh
 cd ~/kazoo-docker/freeswitch && ./run.sh
-
-cd ~/kazoo-docker/kazoo
-./build-commit.sh $COMMIT
-./run-commit.sh $COMMIT
+cd ~/kazoo-docker/kazoo && ./run-commit.sh $COMMIT
 
 if [ "$(docker ps -q --filter name=kazoo.$NETWORK)" = ""  ]
 then
