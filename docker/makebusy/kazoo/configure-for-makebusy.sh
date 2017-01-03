@@ -1,5 +1,5 @@
 #!/bin/bash
-TIMEOUT=${1:-"60"}
+TIMEOUT=${1:-"120"}
 NETWORK=${NETWORK:-"kazoo"}
 echo Waiting for kazoo.$NETWORK to start
 timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
