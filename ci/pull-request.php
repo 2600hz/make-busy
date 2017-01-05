@@ -24,6 +24,10 @@ function process_pr($action, $pr) {
 	$commit = $pr->head->sha;
 	$short = substr($commit, 0, 10);
 	error_log(sprintf("action:%s owner:%s repo:%s commit:%s", $action, $owner, $repo, $commit));
+	if ($action == "closed") {
+		error_log("skipping action");
+		return;
+	}
 	$client->api('repo')->statuses()->create(
 		$owner, $repo, $commit,
 		[
