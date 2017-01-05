@@ -4,12 +4,7 @@ require_once 'vendor/autoload.php';
 $content = file_get_contents("php://input");
 $req = json_decode($content);
 if ($_SERVER['HTTP_X_GITHUB_EVENT'] == 'pull_request') {
-	if ($req->action == 'opened') {
-		process_pr($req->pull_request);
-	}
-	elseif ($req->action == 'edited') {
-		process_pr($req->pull_request);
-	}
+	process_pr($req->action, $req->pull_request);
 }
 
 function get_token() {
@@ -22,13 +17,13 @@ function client() {
 	return $client;
 }
 
-function process_pr($pr) {
+function process_pr($action, $pr) {
 	$client = client();
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
 	$commit = $pr->head->sha;
 	$short = substr($commit, 0, 10);
-	error_log(sprintf("owner:%s repo:%s commit:%s", $owner, $repo, $commit));
+	error_log(sprintf("action:%s owner:%s repo:%s commit:%s", $action, $owner, $repo, $commit));
 	$client->api('repo')->statuses()->create(
 		$owner, $repo, $commit,
 		[
