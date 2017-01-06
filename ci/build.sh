@@ -79,7 +79,7 @@ else
 fi
 
 echo Restarting kamailio dispatcher
-docker exec -ti kamailio.$NETWORK kamctl dispatcher reload
+docker exec kamailio.$NETWORK kamctl dispatcher reload
 
 cd ~/tests
 
