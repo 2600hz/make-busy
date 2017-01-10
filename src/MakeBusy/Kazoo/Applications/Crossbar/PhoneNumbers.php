@@ -35,7 +35,6 @@ class PhoneNumbers
 
         $account = $this->getAccount();
         $phone_number = $account->PhoneNumber();
-        $phone_number->fetch($number);
         $this->setPhoneNumber($phone_number);
 
         if (isset($options['cnam'])) {
