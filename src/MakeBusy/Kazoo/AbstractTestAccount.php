@@ -136,6 +136,11 @@ abstract class AbstractTestAccount
         return new PhoneNumbers($this, $number, $options);
     }
 
+    public static function nukeMakeBusyEntities() {
+        self::nukeTestAccounts();
+        self::nukeGlobalResources();
+    }
+
     public static function nukeTestAccounts($type = null) {
         Log::debug("Reset Kazoo Makebusy config");
         if (is_null($type)) {
@@ -146,18 +151,26 @@ abstract class AbstractTestAccount
 
         foreach(SDK::getInstance()->Accounts($filter) as $element) {
             $account = $element->fetch();
-            Log::debug("nuking old makebusy account %s (%s)", $account->getId(), $account->name);
+            Log::debug("delete makebusy account %s (%s)", $account->getId(), $account->name);
+            self::deletePhoneNumbers($account);
             $account->remove();
        }
     }
 
     public static function nukeGlobalResources() {
-       $filter = array('filter_makebusyresource' => "true");
-       foreach(SDK::getInstance()->Resources($filter) as $element) {
+        $filter = array('filter_makebusyresource' => "true");
+        foreach(SDK::getInstance()->Resources($filter) as $element) {
             $resource = $element->fetch();
-            Log::debug("nuking old makebusy resource %s (%s)", $resource->getId(), $resource->name);
+            Log::debug("delete old makebusy resource %s (%s)", $resource->getId(), $resource->name);
             $resource->remove();
-       }
+        }
+    }
+
+    public static function deletePhoneNumbers($account) {
+        foreach($account->PhoneNumbers() as $element) {
+            $item = $element->fetch();
+            $account->PhoneNumber()->remove($item->getId() . "?hard=true");
+        }
     }
 
     public static function load($filter = array('has_key' => 'makebusy')) {
