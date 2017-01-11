@@ -75,11 +75,11 @@ class Gateway
     private function createChannelVariables($args) {
         if (empty($args)) return "";
 
-        $vars = "{";
+        $vars = [];
         foreach($args as $key => $value) {
-            $vars .= $key . "=" . $value;
+            $vars[] = $key . "=" . $value;
         }
-        return $vars . "}";
+        return "{" . join(",", $vars) . "}";
     }
 
     public function fromDevice($device, $realm) {
