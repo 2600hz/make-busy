@@ -78,8 +78,8 @@ else
 	TESTS_PATH=~/tests ./run.sh
 fi
 
-echo Restarting kamailio dispatcher
-docker exec kamailio.$NETWORK kamctl dispatcher reload
+echo Reloading kamailio dispatcher
+docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
 
