@@ -6,6 +6,9 @@ watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 echo Init the system
 sup crossbar_maintenance create_account admin admin admin admin
 
+echo Allow Kamailio
+sup ecallmgr_maintenance allow_carrier kamailio $(gethostip -d kamailio.$NETWORK)
+
 git clone --depth 1 --no-single-branch https://github.com/2600hz/kazoo-sounds
 docker cp kazoo-sounds/kazoo-core/en/us kazoo.$NETWORK:/home/user
 sup kazoo_media_maintenance import_prompts /home/user/us en-us
