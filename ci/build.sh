@@ -70,6 +70,13 @@ then
 	exit $?
 fi
 
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").IPAddress }}" makebusy-fs-carrier.$NETWORK)
+echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
+sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
+
+echo -n "reload acls: "
+sup ecallmgr_maintenance reloadacl
+
 cd ~/make-busy/docker/makebusy
 ./build.sh $(git rev-parse HEAD)
 if [ -d ~/volume ]
