@@ -23,8 +23,8 @@ then
 	exit 1
 fi
 
-IP=$(docker inspect --format "{{ .NetworkSettings.Networks.$NETWORK.IPAddress }}" kamailio.$NETWORK)
-echo -n "add kamailio.$NETWORK to kazoo.$NETWORK acl with ip $IP: "
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").IPAddress }}" kamailio.$NETWORK)
+echo -n "add kamailio.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
 sup ecallmgr_maintenance allow_carrier kamailio.$NETWORK $IP
 
 echo -n "set config token_buckets.token_fill_rate: "
