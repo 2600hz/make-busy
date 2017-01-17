@@ -55,7 +55,6 @@ then
 	stop_segment
 	exit 1
 fi
-./sanity-check.sh
 
 cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
@@ -75,7 +74,10 @@ echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
 sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
 
 echo -n "reload acls: "
-sup ecallmgr_maintenance reloadacl
+sup ecallmgr_maintenance reload_acls
+
+echo sanity check
+cd ~/make-busy/docker/makebusy/kazoo && ./sanity-check.sh
 
 cd ~/make-busy/docker/makebusy
 ./build.sh $(git rev-parse HEAD)
