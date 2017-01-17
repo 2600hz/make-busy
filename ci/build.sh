@@ -55,6 +55,7 @@ then
 	stop_segment
 	exit 1
 fi
+./sanity-check.sh
 
 cd ~/make-busy/docker/makebusy-fs
 ./run-all.sh
