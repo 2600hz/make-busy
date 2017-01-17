@@ -5,10 +5,15 @@ NETWORK=${NETWORK:-"kazoo"}
 MAKEBUSY_CONTAINER=${3:-"makebusy.$NETWORK"}
 NAME=makebusy-fs-$TYPE.$NETWORK
 
-echo :: starting $NAME instance
+if [ -n "$(docker ps -aq -f name=$NAME)" ]
+then
+   echo -n "stopping: "
+   docker stop -t 1 $NAME
+   echo -n "removing: "
+   docker rm -f $NAME
+fi
 
-docker stop -t 1 $NAME
-docker rm -f $NAME
+echo -n "starting: $NAME "
 docker run $FLAGS \
 	--restart unless-stopped \
 	--net $NETWORK \
