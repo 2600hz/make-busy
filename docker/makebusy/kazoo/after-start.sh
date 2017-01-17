@@ -3,17 +3,16 @@ NETWORK=${NETWORK:-"kazoo"}
 echo Waiting for kazoo.$NETWORK to start '(you may check docker logs if impatient)'
 watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 
-echo Init the system
+echo -n "create master account: "
 sup crossbar_maintenance create_account admin admin admin admin
 
-echo Allow Kamailio
-sup ecallmgr_maintenance allow_carrier kamailio $(gethostip -d kamailio.$NETWORK)
-
+echo "import kazoo sounds"
 git clone --depth 1 --no-single-branch https://github.com/2600hz/kazoo-sounds
 docker cp kazoo-sounds/kazoo-core/en/us kazoo.$NETWORK:/home/user
 sup kazoo_media_maintenance import_prompts /home/user/us en-us
 docker exec --user root kazoo.$NETWORK rm -rf us
 
+echo "import makebusy sounds"
 mkdir mk-bs
 docker cp makebusy.$NETWORK:/home/user/make-busy/prompts/make-busy-media.tar.gz mk-bs/
 cd mk-bs
