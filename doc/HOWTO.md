@@ -34,19 +34,12 @@ class DeviceTestCase extends TestCase
     const A_NUMBER = '5552221001';
     const B_NUMBER = '5552221002';
 
-    public static function setUpBeforeClass() {
-        parent::setUpBeforeClass();
-
-        $acc = new TestAccount("DeviceTestCase");
-
-        self::$a_device = $acc->createDevice("auth");
+    public static function setUpCase() {
+        self::$a_device = self::$account->createDevice("auth");
         self::$a_device->createCallflow([self::A_EXT, self::A_NUMBER]);
 
-        self::$b_device = $acc->createDevice("auth");
+        self::$b_device = self::$account->createDevice("auth");
         self::$b_device->createCallflow([self::B_EXT, self::B_NUMBER]);
-
-        // create virtual devices in managed FreeSwitch type "auth"
-        self::syncSofiaProfile("auth", $acc->isLoaded());
     }
 }
 ```
@@ -61,11 +54,11 @@ use \MakeBusy\Common\Log;
 class Call extends DeviceTestCase {
 
     // here you do changes to your setup required to run the test, like updating Kazoo's Device properties
-    public function setUp() {
+    public function setUpTest() {
     }
 
     // here you revert all the changes made in setUp()
-    public function tearDown() {
+    public function tearDownTest() {
     }
 
     // here you can test SomethingElse, test function names must begin with test prefix

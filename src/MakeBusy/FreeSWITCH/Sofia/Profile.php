@@ -4,6 +4,7 @@ namespace MakeBusy\FreeSWITCH\Sofia;
 
 use \DOMDocument;
 use \MakeBusy\Common\Log;
+use \Exception;
 
 class Profile
 {
@@ -175,7 +176,7 @@ class Profile
             $event = $this->getEsl()->recvEvent();
             if ((time() - $start) >= $timeout){
                 Log::error("fs %s timeout waiting register, remains: %s", $this->getEsl()->getType(), count($waitMap));
-                return null;
+                return count($waitMap);
             }
 
             if (!$event) {
@@ -185,11 +186,12 @@ class Profile
             if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_state") {
                 if ($event->getHeader("State") == "REGED") {
                     unset($waitMap[$event->getHeader("Gateway")]);
-                    Log::debug("Gateway %s registered, remains: %s", $event->getHeader("Gateway"), count($waitMap));
+                    Log::debug("fs %s gateway %s registered, remains: %s", $this->getEsl()->getType(), $event->getHeader("Gateway"), count($waitMap));
                 }
             }
         }
         Log::debug("fs %s has all registrations", $this->getEsl()->getType());
+        return 0;
     }
 
     public function waitForAdd($counter = 1, $timeout = 10){
