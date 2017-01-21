@@ -59,7 +59,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         Log::truncateLog();
     }
 
-    public static function syncSofiaProfile($profile_name, $loaded = false, int $counter = null) {
+    public static function syncSofiaProfile($profile_name, $loaded = false) {
         $profile = self::getProfile($profile_name);
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
@@ -73,9 +73,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         } else {
             $profile->restart();
         }
-        if ($counter > 0) {
-            $profile->waitForRegister($profile->getRegistered());
-        }
+        $profile->waitForRegister($profile->getRegistered());
         return $profile;
     }
 

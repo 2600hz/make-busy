@@ -46,7 +46,7 @@ class DeviceTestCase extends TestCase
         self::$b_device->createCallflow([self::B_EXT, self::B_NUMBER]);
 
         // create virtual devices in managed FreeSwitch type "auth"
-        self::syncSofiaProfile("auth", $acc->isLoaded(), 2);
+        self::syncSofiaProfile("auth", $acc->isLoaded());
     }
 }
 ```
