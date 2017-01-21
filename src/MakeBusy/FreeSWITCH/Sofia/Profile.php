@@ -86,6 +86,16 @@ class Profile
         }
     }
 
+    public function getRegistered() {
+        $re = [];
+        foreach($this->getGateways()->getGateways() as $gateway) {
+            if ($gateway->getParam('register')) {
+                $re[] = $gateway;
+            }
+        }
+        return $re;
+    }
+
     public function rescan() {
         $this->esl->api_f('sofia profile %s rescan', $this->getName());
     }
@@ -151,15 +161,20 @@ class Profile
         return $dom;
     }
 
-    public function waitForRegister($counter = 1, $timeout = 10){
-        Log::debug("fs %s wait: for registration events:%d for %d seconds", $this->getEsl()->getType(), $counter, $timeout);
+    public function waitForRegister($gateways, $timeout = 10){
+        Log::debug("fs %s wait: for registration events:%d for %d seconds", $this->getEsl()->getType(), count($gateways), $timeout);
         $this->getEsl()->events("CUSTOM sofia::gateway_state");
         $start = time();
 
-        while($counter > 0){
+        $waitMap = [];
+        foreach($gateways as $gw) {
+            $waitMap[$gw->getName()] = 1;
+        }
+
+        while(count($waitMap) > 0){
             $event = $this->getEsl()->recvEvent();
             if ((time() - $start) >= $timeout){
-                Log::error("fs %s timeout waiting register", $this->getEsl()->getType());
+                Log::error("fs %s timeout waiting register, remains: %s", $this->getEsl()->getType(), count($waitMap));
                 return null;
             }
 
@@ -169,7 +184,8 @@ class Profile
 
             if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_state") {
                 if ($event->getHeader("State") == "REGED") {
-                    $counter--;
+                    unset($waitMap[$event->getHeader("Gateway")]);
+                    Log::debug("Gateway %s registered, remains: %s", $event->getHeader("Gateway"), count($waitMap));
                 }
             }
         }

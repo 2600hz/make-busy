@@ -9,17 +9,17 @@ for TEST in $(find $SUITE -name '*.php' | shuf)
 do
 	echo
 	echo TEST:$TEST
-	vendor/bin/phpunit $* $TEST
+	LOG_CONSOLE=1 vendor/bin/phpunit $* $TEST
 	if [ ! $? -eq 0 ]
 	then
 		echo
 		echo REPEAT TEST:$TEST
-		vendor/bin/phpunit $* $TEST
+		LOG_CONSOLE=1 RESTART_PROFILE=1 vendor/bin/phpunit $* $TEST
 		if [ ! $? -eq 0 ]
 		then
 			echo
 			echo REPEAT TEST CLEAN:$TEST
-			CLEAN=1 vendor/bin/phpunit $* $TEST
+			LOG_CONSOLE=1 CLEAN=1 vendor/bin/phpunit $* $TEST
 			if [ ! $? -eq 0 ]
 			then
 				echo

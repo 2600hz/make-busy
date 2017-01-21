@@ -64,17 +64,17 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
-            } else if (! isset($_ENV['SKIP_REGISTER'])) {
-                $profile->register(false);
-                if ($counter > 0) {
-                    $profile->waitForRegister($counter);
+            } else {
+                if (isset($_ENV['SKIP_REGISTER'])) {
+                    return $profile;
                 }
+                $profile->register(false);
             }
         } else {
             $profile->restart();
-            if ($counter > 0) {
-                $profile->waitForRegister($counter);
-            }
+        }
+        if ($counter > 0) {
+            $profile->waitForRegister($profile->getRegistered());
         }
         return $profile;
     }
