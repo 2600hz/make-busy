@@ -10,7 +10,6 @@
 		$log = "build";
 	}
 	if ($log == "build") {
-		header("Refresh: 5");
 	}
 ?>
 <html>
