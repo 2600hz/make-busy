@@ -46,18 +46,8 @@ then
 	exit 1
 fi
 
-cd ~/make-busy/docker/makebusy/kazoo
 
-./configure-for-makebusy.sh
-if [ $? -ne 0 ]
-then
-	echo Failure to start Kazoo image, exiting...
-	stop_segment
-	exit 1
-fi
-
-cd ~/make-busy/docker/makebusy-fs
-./run-all.sh
+cd ~/make-busy/docker/makebusy-fs && ./run-all.sh
 
 # need to wait for fs drone to start
 echo Wait for FreeSwitch drones to start
@@ -69,9 +59,13 @@ then
 	exit $?
 fi
 
-IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").IPAddress }}" makebusy-fs-carrier.$NETWORK)
-echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
-sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
+cd ~/make-busy/docker/makebusy/kazoo && ./configure-for-makebusy.sh
+if [ $? -ne 0 ]
+then
+	echo Failure to start Kazoo image, exiting...
+	stop_segment
+	exit 1
+fi
 
 echo -n "reload acls: "
 sup ecallmgr_maintenance reload_acls

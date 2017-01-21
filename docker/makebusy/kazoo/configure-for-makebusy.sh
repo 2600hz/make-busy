@@ -27,6 +27,10 @@ IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").
 echo -n "add kamailio.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
 sup ecallmgr_maintenance allow_sbc kamailio.$NETWORK $IP
 
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").IPAddress }}" makebusy-fs-carrier.$NETWORK)
+echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
+sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
+
 echo -n "set config token_buckets.token_fill_rate: "
 sup kapps_config set token_buckets tokens_fill_rate 100
 
