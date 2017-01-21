@@ -28,13 +28,6 @@ function process_pr($action, $pr) {
 		error_log("skipping action");
 		return;
 	}
-	$client->api('repo')->statuses()->create(
-		$owner, $repo, $commit,
-		[
-			'state' => 'pending',
-			'context' => 'MakeBusy',
-			'target_url' => "http://docker.2600hz.com/status.php?ref=$short",
-		]);
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$short");

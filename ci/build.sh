@@ -13,11 +13,20 @@ then
 	exit 1
 fi
 
+if [ -z $REPO ]
+then
+	SHA=$(curl -s https://api.github.com/repos/2600hz/kazoo/commits/$COMMIT | jq -r '.sha')
+	REPO=2600hz:kazoo:$SHA
+	echo Guessed repo: $REPO
+fi
+
 while [ -f /tmp/build.lock ]
 do
 	echo wait in queue for $(cat /tmp/build.lock)
 	sleep 30
 done
+
+cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
 
 echo $COMMIT > /tmp/build.lock
 export NETWORK=git-$COMMIT
@@ -93,13 +102,6 @@ run-suite.sh Callflow | tee -a ~/volume/log/$COMMIT/suite.log
 grep -P TEST\|SUITE ~/volume/log/$COMMIT/suite.log > ~/volume/log/$COMMIT/run.log
 
 stop_segment
-
-if [ -z $REPO ]
-then
-	SHA=$(curl -s https://api.github.com/repos/2600hz/kazoo/commits/$COMMIT | jq -r '.sha')
-	REPO=2600hz:kazoo:$SHA
-	echo Guessed repo: $REPO
-fi
 
 if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/suite.log
 then
