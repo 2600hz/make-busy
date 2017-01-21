@@ -61,6 +61,7 @@ function show_log($ref, $log) {
 
 if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 	if ($log == "build") {
+		echo("Hit reload to see updates.<br>");
 		show_log($ref, "build");
 	}
 	elseif ($log == "run") {
