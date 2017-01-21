@@ -96,7 +96,7 @@ stop_segment
 
 if [ -z $REPO ]
 then
-	SHA=$(cd /tmp && rm -rf kazoo && git clone -q https://github.com/2600hz/kazoo && cd kazoo && git rev-parse $COMMIT && cd ../ && rm -rf kazoo)
+	SHA=$(curl -s https://api.github.com/repos/2600hz/kazoo/commits/$COMMIT | jq -r '.sha')
 	REPO=2600hz:kazoo:$SHA
 	echo Guessed repo: $REPO
 fi
