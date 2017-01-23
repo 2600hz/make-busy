@@ -1,3 +1,2 @@
 #!/bin/sh
-FLAGS=${1:-""}
-docker build $FLAGS -t 2600hz/makebusy-fs .
+docker build $BUILD_FLAGS -t 2600hz/makebusy-fs .
