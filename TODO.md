@@ -18,12 +18,7 @@
 3. Conference callflow update/cache/load?
 4. Reduce tone timeouts to speed up testing
 5. Abstract cached entities constructors (__construct/initialize pairs)
-7. When HTTP REST API fails display sane and complete error message (not a dump)
 9. list and hup test case channels only
-
-## Immediate
-
-5. Slow number creation, need to investigate
 
 ## Bugs
 

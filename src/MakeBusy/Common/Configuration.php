@@ -12,7 +12,21 @@ class Configuration
     private $config;
 
     private function __construct(){
-        $this->from_json();
+        $config = $this->from_json();
+        if (isset($_ENV['KAZOO_URI'])) {
+            $config = $this->override_sdk($config, $_ENV['KAZOO_URI']);
+        }
+        $this->config = $config;
+    }
+
+    // KAZOO_URI: user password realm url
+    private function override_sdk($config, $uri) {
+        list($user, $password, $realm, $uri) = explode(' ', $uri);
+        $config['sdk']['auth_username'] = $user;
+        $config['sdk']['auth_password'] = $password;
+        $config['sdk']['auth_realm'] = $realm;
+        $config['sdk']['base_url'] = $uri;
+        return $config;
     }
 
     private function __clone(){
@@ -44,8 +58,7 @@ class Configuration
             $file = dirname(__FILE__) . self::CONFIG_FILE;
         }
 
-        $config = json_decode(file_get_contents(realpath($file)), true);
-        $this->config = $config;
+        return json_decode(file_get_contents(realpath($file)), true);
     }
 
     public static function getSection($section) {

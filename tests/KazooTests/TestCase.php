@@ -14,9 +14,15 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Device;
 use \MakeBusy\Kazoo\Applications\Crossbar\Resource;
 use \MakeBusy\Kazoo\AbstractTestAccount;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
+use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
+use \Exception;
+use Kazoo\Api\Exception\ApiException;
+use Kazoo\HttpClient\Exception\NotFound;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
+    protected static $account;
+
     /**
     * @dataProvider sipUriProvider
     */
@@ -26,6 +32,22 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     // override this to run a test
     public function main($sip_uri) {
+    }
+
+    // override this to set up case
+    public static function setUpCase() {
+    }
+
+    // override this to cleanup after case
+    public static function tearDownCase() {
+    }
+
+    // override this to set up particular test
+    public function setUpTest() {
+    }
+
+    // override this to tear down particular test
+    public function tearDownTest() {
     }
 
     public function sipUriProvider() {
@@ -48,15 +70,61 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         return self::getProfile($profile)->getGateways();
     }
 
+    public static function safeCall($callable) {
+        try {
+            $callable();
+        }
+        catch(ApiException $e) {
+            $error = json_decode((string) $e->getResponse()->getBody());
+            unset($error->auth_token);
+            self::assertTrue(false, "Kazoo API error: " . json_encode($error, JSON_PRETTY_PRINT));
+        }
+        catch(NotFound $e) {
+            $error = json_decode((string) $e->getResponse()->getBody());
+            unset($error->auth_token);
+            self::assertTrue(false, "Kazoo resource error: " . json_encode($error, JSON_PRETTY_PRINT));
+        }
+        catch(Exception $e) {
+            print
+            self::assertTrue(false, "Generic exception: " . $e->getMessage() . " code: " . $e->getCode());
+        }
+    }
+
+    public function setUp() {
+        self::safeCall(function() {
+            $this->setUpTest();
+        });
+    }
+
+    public function tearDown() {
+        self::safeCall(function() {
+            $this->tearDownTest();
+        });
+    }
+
     public static function setUpBeforeClass() {
         if (isset($_ENV['CLEAN'])) {
             AbstractTestAccount::nukeTestAccounts();
             // TODO: hup only test channels (e.g. BS-.*)
             self::getEsl("auth")->api("hupall");
         } else {
-            Log::debug("Use existing Kazoo Makebusy config");
+            Log::debug("use existing Kazoo's MakeBusy setup");
         }
-        Log::truncateLog();
+
+        self::safeCall(function() {
+            self::$account = new TestAccount(get_called_class());
+            static::setupCase();
+        });
+
+        self::syncSofiaProfile("auth", self::$account->isLoaded());
+        self::syncSofiaProfile("carrier", self::$account->isLoaded());
+        self::syncSofiaProfile("pbx", self::$account->isLoaded());
+    }
+
+    public static function tearDownAfterClass() {
+        self::safeCall(function() {
+            static::tearDownCase();
+        });
     }
 
     public static function syncSofiaProfile($profile_name, $loaded = false) {
@@ -66,15 +134,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 $profile->restart();
             } else {
                 if (isset($_ENV['SKIP_REGISTER'])) {
-                    return $profile;
+                    return;
                 }
                 $profile->register(false);
             }
         } else {
             $profile->restart();
         }
-        $profile->waitForRegister($profile->getRegistered());
-        return $profile;
+        self::assertTrue(0 == $profile->waitForRegister($profile->getRegistered()), "some gateways weren't registered");
     }
 
     public static function getSipTargets() {
