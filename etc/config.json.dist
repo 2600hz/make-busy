@@ -1,18 +1,5 @@
 {
 
-"ssh": {
-    "targets": [{
-        "host": "",
-        "port": "",
-        "username": "",
-        "password": "",
-        "logs": [
-            {"kazoo": "/var/log/freeswitch/kazoo-debug.log-????????"},
-            {"journal": "journalctl --no-pager -u sshd"}
-        ]
-    }]
-},
-
 "sip": {
     "targets": [
         "kamailio.kazoo"
