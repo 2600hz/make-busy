@@ -104,18 +104,18 @@ rm -f ~/volume/log/$COMMIT/*.log
 
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
-LOG_CONSOLE=1 run-suite.sh Callflow 2> ~/volume/log/$COMMIT/suite.log
+LOG_CONSOLE=1 run-suite.sh Callflow 2> ~/volume/log/$COMMIT/suite.log | tee ~/volume/log/$COMMIT/run.log
 
 stop_segment
 
-if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/suite.log
+if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/run.log
 then
 	echo SET ERROR STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
 	exit 1
 fi
 
-if grep -q 'COMPLETE SUITE' ~/volume/log/$COMMIT/suite.log
+if grep -q 'COMPLETE SUITE' ~/volume/log/$COMMIT/run.log
 then
 	echo SET SUCCESS STATUS
 	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success

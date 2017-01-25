@@ -41,6 +41,7 @@
 <tr>
 <td><a href="?ref=<?php echo $ref ?>&type=build">build.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=suite">suite.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=suite">run.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kazoo">kazoo.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=freeswitch">freeswitch.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kamailio">kamailio.log</a></td>
