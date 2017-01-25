@@ -107,7 +107,7 @@ docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
 
-for $file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier
+for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier
 do
 	echo "Remove old log file $file"
 	rm -f ~/volume/log/$COMMIT/$file.log
