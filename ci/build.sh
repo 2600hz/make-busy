@@ -94,13 +94,14 @@ else
 	TESTS_PATH=~/tests ./run.sh
 fi
 
-echo Reloading kamailio dispatcher
+echo Reloading kamailio dispatcher...
 docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
 
+echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
-LOG_CONSOLE=1 run-suite.sh Callflow 2>&1 | tee ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE\|STATUS
+LOG_CONSOLE=1 run-suite.sh Callflow 2> ~/volume/log/$COMMIT/suite.log
 
 stop_segment
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 export NETWORK=${1:-"kazoo"}
 
-echo -n "starting network: $NETWORK "
+echo Starting network: $NETWORK
 docker network create $NETWORK
 
 cd makebusy-fs
