@@ -15,7 +15,9 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Resource;
 use \MakeBusy\Kazoo\AbstractTestAccount;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
+use \MakeBusy\Kazoo\Gateways;
 use \Exception;
+use \stdClass;
 use Kazoo\Api\Exception\ApiException;
 use Kazoo\HttpClient\Exception\NotFound;
 
@@ -127,8 +129,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         });
     }
 
-    public static function syncSofiaProfile($profile_name, $loaded = false) {
+    public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
+        self::waitKazooForGateways($profile, $timeout);
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
@@ -142,6 +145,33 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             $profile->restart();
         }
         self::assertTrue(0 == $profile->waitForRegister($profile->getRegistered()), "some gateways weren't registered");
+    }
+
+    public static function waitKazooForGateways($profile, $timeout = 10) {
+        $not_seen = [];
+        foreach($profile->getRegistered() as $r) {
+            $name = $r->getName();
+            $not_seen[$name] = true;
+        }
+        while(($timeout>0) && (($unseen = self::notSeenInKazoo($not_seen)) > 0)) {
+            Log::debug("%d gateways are not present in kazoo, wait", $unseen);
+            sleep(1);
+            $timeout--;
+        }
+        self::assertTrue($timeout > 0, "error waiting for one or more gateways in Kazoo");
+    }
+
+    public static function notSeenInKazoo($not_seen) {
+        $kazoo_devices = Gateways::loadFromKazoo(self::$account->getAccount(), 'Devices');
+        $kazoo_resources = Gateways::loadFromKazoo(self::$account->getAccount(), 'Resources');
+
+        foreach(array_merge($kazoo_devices, $kazoo_resources) as $r) {
+            $name = $r->id;
+            if(isset($not_seen[$name])) {
+                unset($not_seen[$name]);
+            }
+        }
+        return count($not_seen);
     }
 
     public static function getSipTargets() {
