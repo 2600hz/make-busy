@@ -37,6 +37,9 @@ function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
 	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
+	docker logs makebusy-fs-auth.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-auth.log
+	docker logs makebusy-fs-pbx.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-pbx.log
+	docker logs makebusy-fs-carrier.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-carrier.log
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
 	docker network rm $NETWORK
 	rm -f /tmp/build.lock
@@ -54,7 +57,6 @@ then
 	stop_segment
 	exit 1
 fi
-
 
 cd ~/make-busy/docker/makebusy-fs && ./run-all.sh
 

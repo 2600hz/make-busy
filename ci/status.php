@@ -44,6 +44,9 @@
 <td><a href="?ref=<?php echo $ref ?>&type=kazoo">kazoo.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=freeswitch">freeswitch.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kamailio">kamailio.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-auth">makebusy-fs-auth.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-carrier">makebusy-fs-carrier.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-pbx">makebusy-fs-pbx.log</a></td>
 </tr>
 </table>
 
