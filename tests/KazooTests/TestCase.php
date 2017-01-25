@@ -107,14 +107,13 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass() {
         if (isset($_ENV['CLEAN'])) {
             AbstractTestAccount::nukeTestAccounts();
-            // TODO: hup only test channels (e.g. BS-.*)
-            self::getEsl("auth")->api("hupall");
         } else {
             Log::debug("use existing Kazoo's MakeBusy setup");
         }
 
         self::safeCall(function() {
             self::$account = new TestAccount(get_called_class());
+            Log::info("starting test case: %s", self::$account->getType(), self::$account->getBaseType());
             static::setupCase();
         });
 
@@ -125,12 +124,17 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass() {
         self::safeCall(function() {
+            Log::info("teardown test case type:%s base:%s\n\n", self::$account->getType(), self::$account->getBaseType());
             static::tearDownCase();
         });
     }
 
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
+        if(isset($_ENV['CLEAN'])) {
+            // TODO: hup only test channels (e.g. BS-.*)
+            $profile->getEsl()->api("hupall");
+        }
         self::waitKazooForGateways($profile, $timeout);
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
@@ -158,7 +162,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             sleep(1);
             $timeout--;
         }
-        self::assertTrue($timeout > 0, "error waiting for one or more gateways in Kazoo");
+        self::assertFalse($timeout == 0, "error waiting for one or more gateways in Kazoo");
     }
 
     public static function notSeenInKazoo($not_seen) {
