@@ -53,13 +53,13 @@
 <?php
 function show_log($ref, $log) {
 	$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
+	echo("<pre>");
 	if (file_exists($path)) {
-		echo("<pre>");
 		readfile($path);
-		echo("</pre>");
 	} else {
-		echo("Log:$log not found\n");
+		echo shell_exec(sprintf("docker logs %s.git-%s", $log, $ref));
 	}
+	echo("</pre>");
 }
 
 if (preg_match('/^[\w|\d]{10}$/', $ref)) {
