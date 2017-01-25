@@ -61,7 +61,7 @@ fi
 cd ~/make-busy/docker/makebusy-fs && ./run-all.sh
 
 # need to wait for fs drone to start
-echo Wait for FreeSwitch drones to start
+echo Wait for FreeSwitch drones to start...
 timeout --foreground 20 watch -g "docker logs makebusy-fs-auth.$NETWORK | grep 'FreeSWITCH Started'" > /dev/null
 if [ $? -ne 0 ]
 then
@@ -78,14 +78,15 @@ then
 	exit 1
 fi
 
-echo -n "reload acls: "
+echo -n "Reload acls: "
 sup ecallmgr_maintenance reload_acls
 
-echo sanity check
+echo Sanity check...
 cd ~/make-busy/docker/makebusy/kazoo && ./sanity-check.sh
 
+echo Build makebusy...
 cd ~/make-busy/docker/makebusy
-./build.sh $(git rev-parse HEAD)
+BUILD_FLAGS=-q ./build.sh $(git rev-parse HEAD)
 if [ -d ~/volume ]
 then
 	TESTS_PATH=kazoo-ci ./run.sh
@@ -99,8 +100,7 @@ docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 cd ~/tests
 
 mkdir -p ~/volume/log/$COMMIT
-rm -f ~/volume/log/$COMMIT/suite.log
-LOG_CONSOLE=1 run-suite.sh Callflow 2>&1 | tee ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE
+LOG_CONSOLE=1 run-suite.sh Callflow 2>&1 | tee ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE\|STATUS
 
 stop_segment
 
