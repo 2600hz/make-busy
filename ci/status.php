@@ -70,6 +70,9 @@ if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 	elseif ($log == "run") {
 		show_log($ref, "run");
 	}
+	elseif ($log == "suite") {
+		show_log($ref, "suite");
+	}
 	elseif ($log == "kazoo") {
 		show_log($ref, "kazoo");
 	}
@@ -78,6 +81,15 @@ if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 	}
 	elseif ($log == "kamailio") {
 		show_log($ref, "kamailio");
+	}
+	elseif ($log == "makebusy-fs-auth") {
+		show_log($ref, "makebusy-fs-auth");
+	}
+	elseif ($log == "makebusy-fs-carrier") {
+		show_log($ref, "makebusy-fs-carrier");
+	}
+	elseif ($log == "makebusy-fs-pbx") {
+		show_log($ref, "makebusy-fs-pbx");
 	}
 	else {
 		echo("Bad type\n");
