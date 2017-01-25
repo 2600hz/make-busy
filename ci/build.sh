@@ -100,7 +100,7 @@ cd ~/tests
 
 mkdir -p ~/volume/log/$COMMIT
 rm -f ~/volume/log/$COMMIT/suite.log
-LOG_CONSOLE=1 run-suite.sh Callflow | tee -a ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE
+LOG_CONSOLE=1 run-suite.sh Callflow 2>&1 | tee ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE
 
 stop_segment
 
