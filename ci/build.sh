@@ -37,9 +37,17 @@ function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
 	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
-	docker logs makebusy-fs-auth.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-auth.log
-	docker logs makebusy-fs-pbx.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-pbx.log
-	docker logs makebusy-fs-carrier.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy-fs-carrier.log
+
+	# Makebusy Post-Mortem (just in case)
+	for fs in makebusy-fs-auth makebusy-fs-carrier makebusy-fs-pbx
+	do
+		docker logs $fs.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/$fs.log
+		echo "Post-Mortem" >> ~/volume/log/$COMMIT/$fs.log
+		docker exec $fs.$NETWORK bin/fs_cli -x "sofia status" 2>&1 >> ~/volume/log/$COMMIT/$fs.log
+		TYPE=$(echo $fs | sed s/makebusy-fs-//)
+		curl http://makebusy.$NETWORK/gateways.php/gateways.php?type=$TYPE 2>&1 >> ~/volume/log/$COMMIT/$fs.log
+	done
+
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
 	docker network rm $NETWORK
 	rm -f /tmp/build.lock
