@@ -99,6 +99,9 @@ docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
 
+echo Remove old logs...
+rm -f ~/volume/log/$COMMIT/*.log
+
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
 LOG_CONSOLE=1 run-suite.sh Callflow 2> ~/volume/log/$COMMIT/suite.log
