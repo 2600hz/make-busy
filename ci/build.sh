@@ -45,7 +45,7 @@ function stop_segment {
 		echo "Post-Mortem" >> ~/volume/log/$COMMIT/$fs.log
 		docker exec $fs.$NETWORK bin/fs_cli -x "sofia status" 2>&1 >> ~/volume/log/$COMMIT/$fs.log
 		TYPE=$(echo $fs | sed s/makebusy-fs-//)
-		curl http://makebusy.$NETWORK/gateways.php/gateways.php?type=$TYPE 2>&1 >> ~/volume/log/$COMMIT/$fs.log
+		docker exec $fs.$NETWORK curl http://makebusy.$NETWORK/gateways.php/gateways.php?type=$TYPE 2>&1 >> ~/volume/log/$COMMIT/$fs.log
 	done
 
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
