@@ -58,7 +58,7 @@ function show_log($ref, $log) {
 	if (file_exists($path)) {
 		readfile($path);
 	} else {
-		echo shell_exec(sprintf("docker logs %s.git-%s", $log, $ref));
+		echo shell_exec(sprintf("docker logs %s.git-%s | ~/kazoo-docker/bin/uncolor", $log, $ref));
 	}
 	echo("</pre>");
 }
