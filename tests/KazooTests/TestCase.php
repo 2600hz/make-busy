@@ -110,7 +110,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $base_type = AbstractTestAccount::shortName(get_parent_class($class));
         Log::info("\nStart test: %s case: %s", $type, $base_type);
         if (isset($_ENV['CLEAN'])) {
-            Log::debug("Cleaning MakeBusy traces from Kazoo")
+            Log::debug("Cleaning MakeBusy traces from Kazoo");
             AbstractTestAccount::nukeTestAccounts();
         } else {
             Log::debug("Trying to use pre-created Kazoo's MakeBusy setup, creating entities if necessary");
