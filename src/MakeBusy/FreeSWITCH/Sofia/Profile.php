@@ -180,7 +180,7 @@ class Profile
             $waitMap[$gw->getName()] = 1;
         }
 
-        while(count($waitMap) > 0) {
+        while( (count($waitMap) > 0) && ($timeout > 0) ) {
             $ev = $this->esl->api_f('sofia profile %s gwlist', $this->getName());
             foreach(explode(" ", $ev->getBody()) as $name) {
                 unset($waitMap[$name]);
@@ -188,6 +188,7 @@ class Profile
             if (($gw_count = count($waitMap)) > 0) {
                 Log::debug("fs %s %d gateways missing from fs, wait", $this->getEsl()->getType(), $gw_count);
                 sleep(1);
+                $timeout--;
             }
         }
         return count($waitMap);
