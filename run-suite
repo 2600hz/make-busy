@@ -14,7 +14,7 @@ do
 	then
 		echo
 		echo REPEAT TEST:$TEST
-		RESTART_PROFILE=1 vendor/bin/phpunit $* $TEST
+		RESCAN_PROFILE=1 vendor/bin/phpunit $* $TEST
 		if [ ! $? -eq 0 ]
 		then
 			echo

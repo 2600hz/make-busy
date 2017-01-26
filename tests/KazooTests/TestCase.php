@@ -142,12 +142,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         // probably unnecessary
         // self::waitKazooForGateways($profile, $timeout);
         if ($loaded) {
+            if (isset($_ENV['SKIP_REGISTER'])) {
+                return;
+            }
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
+            } else if(isset($_ENV['RESCAN_PROFILE'])) {
+                $profile->rescan();
             } else {
-                if (isset($_ENV['SKIP_REGISTER'])) {
-                    return;
-                }
                 $profile->register(false);
             }
         } else {
