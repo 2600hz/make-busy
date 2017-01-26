@@ -116,7 +116,7 @@ done
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
 
-DIR=../../tests/Callflow
+DIR=~/tests/Callflow
 PREFIX=Callflow
 
 TESTS=$(ls $DIR)
