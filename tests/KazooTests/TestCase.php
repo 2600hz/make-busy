@@ -29,9 +29,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     * @dataProvider sipUriProvider
     */
     public function testMain($sipUri) {
-        self::safeCall(function() {
-            $this->main($sipUri);
-        });
+        $this->main($sipUri);
     }
 
     // override this to run a test
