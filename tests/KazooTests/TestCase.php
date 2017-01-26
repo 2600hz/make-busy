@@ -156,6 +156,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 $profile->restart();
             } else if(isset($_ENV['RESCAN_PROFILE'])) {
                 $profile->rescan();
+                $profile->register(false);
             } else {
                 $profile->register(false);
             }
