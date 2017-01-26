@@ -174,7 +174,7 @@ class Profile
 
     public function waitForGateways($gateways, $timeout = 10) {
         Log::debug("fs %s check for %d gateways present in profile for %d seconds", $this->getEsl()->getType(), count($gateways), $timeout);
-        $this->esl->api_f('sofia profile %s siptrace off', $this->getName());
+
         $waitMap = [];
         foreach($gateways as $gw) {
             $waitMap[$gw->getName()] = 1;
