@@ -84,17 +84,17 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             $error = json_decode((string) $e->getResponse()->getBody());
             unset($error->auth_token);
             Log::error("Kazoo API error: %s", json_encode($error, JSON_PRETTY_PRINT));
-            self::assertTrue(false, "API error");
+            throw($e);
         }
         catch(NotFound $e) {
             $error = json_decode((string) $e->getResponse()->getBody());
             unset($error->auth_token);
             Log::error("Kazoo resource error: %s", json_encode($error, JSON_PRETTY_PRINT));
-            self::assertTrue(false, "Resource error");
+            throw($e); // test suite uses it
         }
         catch(Exception $e) {
             Log::error("Generic exception error: %s, code: %d", $e->getMessage(), $e->getCode());
-            self::assertTrue(false, "Generic error");
+            throw($e); // test suite uses it
         }
     }
 
