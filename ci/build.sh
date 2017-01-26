@@ -124,12 +124,15 @@ for FILE in $TESTS
 do
 if [ -d $DIR/$FILE ]
 	then
-		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE | tee -a ~/volume/log/$COMMIT/run.log
+		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
 		CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $PREFIX/EmptyTestCase.php
 	fi
 done
 
 stop_segment
+
+cp ~/volume/log/$COMMIT/run.log ~/volume/log/$COMMIT/run.log.tmp
+cat ~/volume/log/$COMMIT/run.tmp | grep -P TEST\|SUITE > ~/volume/log/$COMMIT/run.log
 
 if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/run.log
 then
