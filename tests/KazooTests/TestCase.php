@@ -139,7 +139,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             // TODO: hup only test channels (e.g. BS-.*)
             $profile->getEsl()->api("hupall");
         }
-        self::waitKazooForGateways($profile, $timeout);
+        // probably unnecessary
+        // self::waitKazooForGateways($profile, $timeout);
         if ($loaded) {
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->restart();
