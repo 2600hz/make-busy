@@ -108,7 +108,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $class = get_called_class();
         $type = AbstractTestAccount::shortName($class);
         $base_type = AbstractTestAccount::shortName(get_parent_class($class));
-        Log::info("\nStart test: %s case: %s", $type, $base_type);
+        Log::info("Start test: %s case: %s", $type, $base_type);
         if (isset($_ENV['CLEAN'])) {
             Log::debug("Cleaning MakeBusy traces from Kazoo");
             AbstractTestAccount::nukeTestAccounts();
@@ -128,7 +128,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass() {
         self::safeCall(function() {
-            Log::info("Teardown test: %s case: %s\n", self::$account->getType(), self::$account->getBaseType());
+            Log::info("Teardown test: %s case: %s\n\n", self::$account->getType(), self::$account->getBaseType());
             static::tearDownCase();
         });
     }
