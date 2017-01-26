@@ -108,15 +108,19 @@ class Profile
     }
 
     public function rescan() {
-        $this->esl->api_f('sofia profile %s rescan', $this->getName());
+        return$this->esl->api_f('sofia profile %s rescan', $this->getName());
     }
 
     public function restart() {
-        $this->esl->api_f('sofia profile %s restart', $this->getName());
+        return $this->esl->api_f('sofia profile %s restart', $this->getName());
+    }
+
+    public function status() {
+        return $this->esl->api_f('sofia status');
     }
 
     public function stop() {
-        $this->esl->api_f('sofia profile %s stop', $this->getName());
+        return $this->esl->api_f('sofia profile %s stop', $this->getName());
     }
 
     public function start() {

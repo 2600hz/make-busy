@@ -170,8 +170,16 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         } else {
             $profile->restart();
         }
-        self::assertTrue(0 == $profile->waitForRegister($profile->getRegistered()), "Some gateways weren't registered");
-        self::assertTrue(0 == $profile->waitForGateways($profile->getUnregistered()), "Some gateways are absent in FreeSWITCH");
+        if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
+            Log::error("fs %s %d gateways are not registered", $profile_name, $wait);
+            Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
+            throw new Exception("gateways weren't registered");
+        }
+        if ( ($wait = $profile->waitForGateways($profile->getUnregistered())) > 0) {
+            Log::error("fs %s %d gateways are absent in profile", $profile_name, $wait);
+            Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
+            throw new Exception("gateways are absent");
+        }
     }
 
     public static function waitKazooForGateways($profile, $timeout = 10) {
