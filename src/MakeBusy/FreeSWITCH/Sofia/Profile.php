@@ -111,6 +111,18 @@ class Profile
         return$this->esl->api_f('sofia profile %s rescan', $this->getName());
     }
 
+    public function register_all() {
+        return$this->esl->api_f('sofia profile %s register all', $this->getName());
+    }
+
+    public function unregister_all() {
+        return$this->esl->api_f('sofia profile %s unregister all', $this->getName());
+    }
+
+    public function killgw_all() {
+        return$this->esl->api_f('sofia profile %s killgw _all_', $this->getName());
+    }
+
     public function restart() {
         return $this->esl->api_f('sofia profile %s restart', $this->getName());
     }
@@ -126,6 +138,15 @@ class Profile
     public function start() {
         $this->esl->api_f('sofia profile %s start', $this->getName());
         return $this;
+    }
+
+    public function safe_restart() {
+        $ev = $this->restart();
+        if (preg_match('/wait\s(\d+)/s', $ev->getBody(), $match)) {
+            Log::debug("profile hot, waiting for %d seconds", $match[1]);
+            sleep($match[1] + 1);
+            $this->restart();
+        }
     }
 
     public function capture($enable) {

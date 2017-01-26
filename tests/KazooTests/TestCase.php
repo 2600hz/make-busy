@@ -149,29 +149,29 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
+
         if(isset($_ENV['CLEAN'])) {
             // TODO: hup only test channels (e.g. BS-.*)
             $profile->getEsl()->api("hupall");
         }
-        // probably unnecessary
-        // self::waitKazooForGateways($profile, $timeout);
+
         if ($loaded) {
             if (isset($_ENV['SKIP_REGISTER'])) {
                 return;
             }
+
             if (isset($_ENV['RESTART_PROFILE'])) {
-                $ev = $profile->restart();
-                Log::debug("fs %s restart response: %s", $profile_name, $ev->getBody());
+                $profile->safe_restart();
             } else if(isset($_ENV['RESCAN_PROFILE'])) {
                 $profile->rescan();
-                $profile->register(false);
+                $profile->register_all();
             } else {
-                $profile->register(false);
+                $profile->register_all();
             }
         } else {
-            $ev = $profile->restart();
-            Log::debug("fs %s restart response: %s", $profile_name, $ev->getBody());
+            $profile->safe_restart();
         }
+
         if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
             Log::error("fs %s %d gateways are not registered", $profile_name, $wait);
             Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
