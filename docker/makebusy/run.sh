@@ -19,7 +19,7 @@ then
    docker rm -f $NAME
 fi
 
-echo -n "starting: $NAME tests: $TESTS_PATH"
+echo -n "starting: $NAME tests: $TESTS_PATH "
 docker run -td \
 	--net $NETWORK \
 	-h $NAME \
