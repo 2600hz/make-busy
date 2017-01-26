@@ -103,7 +103,7 @@ else
 fi
 
 echo Reloading kamailio dispatcher...
-docker exec kamailio.$NETWORK kamcmd dispatcher.reload
+docker exec kamailio.$NETWORK kamcmd dispatcher.reload | grep URI
 
 cd ~/tests
 
