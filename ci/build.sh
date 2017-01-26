@@ -26,7 +26,7 @@ do
 	sleep 30
 done
 
-for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite
+for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite makebusy
 do
 	echo "Remove old log file $file"
 	rm -f ~/volume/log/$COMMIT/$file.log
@@ -43,6 +43,7 @@ function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
 	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
+	docker logs makebusy.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy.log
 
 	# Makebusy Post-Mortem (just in case)
 	for fs in makebusy-fs-auth makebusy-fs-carrier makebusy-fs-pbx

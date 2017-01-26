@@ -45,6 +45,7 @@
 <td><a href="?ref=<?php echo $ref ?>&type=kazoo">kazoo.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=freeswitch">freeswitch.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kamailio">kamailio.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=makebusy">makebusy.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-auth">makebusy-fs-auth.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-carrier">makebusy-fs-carrier.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-pbx">makebusy-fs-pbx.log</a></td>
@@ -82,6 +83,9 @@ if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 	}
 	elseif ($log == "kamailio") {
 		show_log($ref, "kamailio");
+	}
+	elseif ($log == "makebusy") {
+		show_log($ref, "makebusy");
 	}
 	elseif ($log == "makebusy-fs-auth") {
 		show_log($ref, "makebusy-fs-auth");

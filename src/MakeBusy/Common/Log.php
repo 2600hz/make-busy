@@ -130,7 +130,11 @@ class Log
 
     protected static function writeConsole($message) {
         if (isset($_ENV['LOG_CONSOLE'])) {
-            fwrite(STDERR, $message . "\n");
+            if(defined('STDERR')) {
+                fwrite(STDERR, $message . "\n");
+            } else {
+                error_log($message);
+            }
         }
     }
 
