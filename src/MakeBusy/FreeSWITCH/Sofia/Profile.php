@@ -97,6 +97,16 @@ class Profile
         return $re;
     }
 
+    public function getUnregistered() {
+        $re = [];
+        foreach($this->getGateways()->getGateways() as $gateway) {
+            if (! $gateway->getParam('register')) {
+                $re[] = $gateway;
+            }
+        }
+        return $re;
+    }
+
     public function rescan() {
         $this->esl->api_f('sofia profile %s rescan', $this->getName());
     }
@@ -161,6 +171,28 @@ class Profile
 
         return $dom;
     }
+
+    public function waitForGateways($gateways, $timeout = 10) {
+        Log::debug("fs %s check for %d gateways present in profile for %d seconds", $this->getEsl()->getType(), count($gateways), $timeout);
+        $this->esl->api_f('sofia profile %s siptrace off', $this->getName());
+        $waitMap = [];
+        foreach($gateways as $gw) {
+            $waitMap[$gw->getName()] = 1;
+        }
+
+        while(count($waitMap) > 0) {
+            $ev = $this->esl->api_f('sofia profile %s gwlist', $this->getName());
+            foreach(explode(" ", $ev->getBody()) as $name) {
+                unset($waitMap[$name]);
+            }
+            if (($gw_count = count($waitMap)) > 0) {
+                Log::debug("fs %s %d gateways missing from fs, wait", $gw_count);
+                sleep(1);
+            }
+        }
+        return count($waitMap);
+    }
+
 
     public function waitForRegister($gateways, $timeout = 10){
         Log::debug("fs %s wait: for registration events:%d for %d seconds", $this->getEsl()->getType(), count($gateways), $timeout);

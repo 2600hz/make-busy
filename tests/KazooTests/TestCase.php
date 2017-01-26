@@ -117,7 +117,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
 
         self::safeCall(function() {
-            self::$account = new TestAccount($class);
+            self::$account = new TestAccount(get_called_class());
             static::setupCase();
         });
 
@@ -152,7 +152,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         } else {
             $profile->restart();
         }
-        self::assertTrue(0 == $profile->waitForRegister($profile->getRegistered()), "some gateways weren't registered");
+        self::assertTrue(0 == $profile->waitForRegister($profile->getRegistered()), "Some gateways weren't registered");
+        self::assertTrue(0 == $profile->waitForGateways($profile->getUnregistered()), "Some gateways are absent in FreeSWITCH");
     }
 
     public static function waitKazooForGateways($profile, $timeout = 10) {
