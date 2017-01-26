@@ -160,7 +160,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 return;
             }
             if (isset($_ENV['RESTART_PROFILE'])) {
-                $profile->restart();
+                $ev = $profile->restart();
+                Log::debug("fs %s restart response: %s", $profile_name, $ev->getBody());
             } else if(isset($_ENV['RESCAN_PROFILE'])) {
                 $profile->rescan();
                 $profile->register(false);
@@ -168,7 +169,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 $profile->register(false);
             }
         } else {
-            $profile->restart();
+            $ev = $profile->restart();
+            Log::debug("fs %s restart response: %s", $profile_name, $ev->getBody());
         }
         if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
             Log::error("fs %s %d gateways are not registered", $profile_name, $wait);

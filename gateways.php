@@ -17,5 +17,5 @@ $include = EslConnection::getInstance($type)
 	->getGateways()
 	->asXmlInclude(); 
 
-error_log("response:\n$include");
+error_log("response:\n" . htmlentities($include"));
 echo $include;
