@@ -89,7 +89,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             self::assertTrue(false, "Kazoo resource error: " . json_encode($error, JSON_PRETTY_PRINT));
         }
         catch(Exception $e) {
-            print
             self::assertTrue(false, "Generic exception: " . $e->getMessage() . " code: " . $e->getCode());
         }
     }
