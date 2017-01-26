@@ -7,4 +7,4 @@ echo Kazoo ACL
 sup ecallmgr_maintenance acl_summary
 
 echo Kamailio Dispatcher
-docker exec kamailio.$NETWORK kamcmd dispatcher.list
+docker exec kamailio.$NETWORK kamcmd dispatcher.list | grep URI | sed "s/^[ \t]*//"
