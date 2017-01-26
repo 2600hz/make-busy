@@ -81,13 +81,12 @@ class Socket
             throw new SocketException("connection to {$host}:{$port} failed: {$errorString}");
         }
 
-        $this->setTimeOut($timeOut, 0);
-
         // initialize our stream blocking setting
         stream_set_blocking($this->connection, $blocking);
 
         // set this stream as connected
         $this->connectionState = TRUE;
+        $this->setTimeOut($timeOut, 0);
     }
 
     /**
