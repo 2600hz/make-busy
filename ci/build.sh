@@ -107,7 +107,7 @@ docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
 
-for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run
+for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite
 do
 	echo "Remove old log file $file"
 	rm -f ~/volume/log/$COMMIT/$file.log
@@ -122,11 +122,11 @@ PREFIX=Callflow
 TESTS=$(ls $DIR)
 for FILE in $TESTS
 do
-   if [ -d $DIR/$FILE ]
-   then
+if [ -d $DIR/$FILE ]
+	then
 		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log
-		CLEAN=1 LOG_CONSOLE=1 run-test.sh $PREFIX/IncomingTestCase.php
-   fi
+		CLEAN=1 run-test.sh $PREFIX/IncomingTestCase.php
+	fi
 done
 
 stop_segment
