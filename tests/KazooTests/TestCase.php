@@ -117,13 +117,18 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
 
         self::safeCall(function() {
-            self::$account = new TestAccount(get_called_class());
+            if( ! isset($_ENV['SKIP_ACCOUNT'])) {
+                self::$account = new TestAccount(get_called_class());
+                $is_loaded = self::$account->isLoaded();
+            } else {
+                $is_loaded = false;
+            }
             static::setupCase();
         });
 
-        self::syncSofiaProfile("auth", self::$account->isLoaded());
-        self::syncSofiaProfile("carrier", self::$account->isLoaded());
-        self::syncSofiaProfile("pbx", self::$account->isLoaded());
+        self::syncSofiaProfile("auth", $is_loaded);
+        self::syncSofiaProfile("carrier", $is_loaded);
+        self::syncSofiaProfile("pbx", $is_loaded);
     }
 
     public static function tearDownAfterClass() {
