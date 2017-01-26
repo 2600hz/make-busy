@@ -119,12 +119,15 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         self::safeCall(function() {
             if( ! isset($_ENV['SKIP_ACCOUNT'])) {
                 self::$account = new TestAccount(get_called_class());
-                $is_loaded = self::$account->isLoaded();
-            } else {
-                $is_loaded = false;
             }
             static::setupCase();
         });
+
+        if(isset(self::$account)) {
+            $is_loaded = self::$account->isLoaded();
+        } else {
+            $is_loaded = false;
+        }
 
         self::syncSofiaProfile("auth", $is_loaded);
         self::syncSofiaProfile("carrier", $is_loaded);
