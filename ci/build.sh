@@ -132,7 +132,7 @@ done
 stop_segment
 
 cp ~/volume/log/$COMMIT/run.log ~/volume/log/$COMMIT/run.log.tmp
-cat ~/volume/log/$COMMIT/run.tmp | grep -P TEST\|SUITE > ~/volume/log/$COMMIT/run.log
+cat ~/volume/log/$COMMIT/run.log.tmp | grep -P TEST\|SUITE > ~/volume/log/$COMMIT/run.log
 
 if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/run.log
 then
