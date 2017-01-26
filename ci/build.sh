@@ -124,7 +124,7 @@ for FILE in $TESTS
 do
 if [ -d $DIR/$FILE ]
 	then
-		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log
+		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | grep -P TEST\|SUITE | tee -a ~/volume/log/$COMMIT/run.log
 		CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $PREFIX/EmptyTestCase.php
 	fi
 done
