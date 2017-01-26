@@ -26,6 +26,12 @@ do
 	sleep 30
 done
 
+for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite
+do
+	echo "Remove old log file $file"
+	rm -f ~/volume/log/$COMMIT/$file.log
+done
+
 cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
 
 echo $COMMIT > /tmp/build.lock
@@ -106,12 +112,6 @@ echo Reloading kamailio dispatcher...
 docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 cd ~/tests
-
-for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite
-do
-	echo "Remove old log file $file"
-	rm -f ~/volume/log/$COMMIT/$file.log
-done
 
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
