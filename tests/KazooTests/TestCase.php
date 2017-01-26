@@ -24,12 +24,16 @@ use Kazoo\HttpClient\Exception\NotFound;
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
     protected static $account;
+    protected static $type;
+    protected static $base_type;
 
     /**
     * @dataProvider sipUriProvider
     */
     public function testMain($sipUri) {
-        $this->main($sipUri);
+        self::safeCall(function() use ($sipUri) {
+            $this->main($sipUri);
+        });
     }
 
     // override this to run a test
@@ -79,15 +83,18 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         catch(ApiException $e) {
             $error = json_decode((string) $e->getResponse()->getBody());
             unset($error->auth_token);
-            self::assertTrue(false, "Kazoo API error: " . json_encode($error, JSON_PRETTY_PRINT));
+            Log::error("Kazoo API error: %s", json_encode($error, JSON_PRETTY_PRINT));
+            self::assertTrue(false, "API error");
         }
         catch(NotFound $e) {
             $error = json_decode((string) $e->getResponse()->getBody());
             unset($error->auth_token);
-            self::assertTrue(false, "Kazoo resource error: " . json_encode($error, JSON_PRETTY_PRINT));
+            Log::error("Kazoo resource error: %s", json_encode($error, JSON_PRETTY_PRINT));
+            self::assertTrue(false, "Resource error");
         }
         catch(Exception $e) {
-            self::assertTrue(false, "Generic exception: " . $e->getMessage() . " code: " . $e->getCode());
+            Log::error("Generic exception error: %s, code: %d", $e->getMessage(), $e->getCode());
+            self::assertTrue(false, "Generic error");
         }
     }
 
@@ -105,9 +112,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass() {
         $class = get_called_class();
-        $type = AbstractTestAccount::shortName($class);
-        $base_type = AbstractTestAccount::shortName(get_parent_class($class));
-        Log::info("Start test: %s case: %s", $type, $base_type);
+        self::$type = AbstractTestAccount::shortName($class);
+        self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
+        Log::info("Start test: %s case: %s", self::$type, self::$base_type);
         if (isset($_ENV['CLEAN'])) {
             Log::debug("Cleaning MakeBusy traces from Kazoo");
             AbstractTestAccount::nukeTestAccounts();
@@ -134,8 +141,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function tearDownAfterClass() {
+        Log::info("Teardown test: %s case: %s\n\n", self::$type, self::$base_type);
         self::safeCall(function() {
-            Log::info("Teardown test: %s case: %s\n\n", self::$account->getType(), self::$account->getBaseType());
             static::tearDownCase();
         });
     }

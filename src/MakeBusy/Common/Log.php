@@ -113,48 +113,45 @@ class Log
         return $string;
     }
 
-    /*
-
-        Logs to syslog
-
-    */
-    protected static function writeLog($severity, $message) {
+    protected static function writeLog($severity, $message, $format = true) {
         if (!empty($_SESSION['REQUEST_ID'])) {
             $message = '[' . $_SESSION['REQUEST_ID'] .'] '. $message;
         }
-
-        switch(Configuration::getFromSection('log', 'log_type')) {
-            case 'file':
-                self::fileLog($severity, $message);
-                return;
-            case 'syslog':
-                self::syslog($severity, $message);
-                return;
-        }
+        $formatted = $format? self::formatLogMessage($severity, $message) : $message;
+        self::writeConsole($formatted);
+        self::writeFile($formatted);
+        self::writeSyslog($severity, $message);
     }
 
-    protected static function fileLog($severity, $message) {
+    protected static function formatLogMessage($severity, $message) {
         $time = strftime("%F %T", time());
-        $message = $time ." [" . self::$severity_map[$severity] . "] ". $message;
+        return $time ." [" . self::$severity_map[$severity] . "] ". $message;
+    }
 
-        $log_file = Configuration::getFromSection('log', 'log_file');
+    protected static function writeConsole($message) {
         if (isset($_ENV['LOG_CONSOLE'])) {
             fwrite(STDERR, $message . "\n");
         }
-        file_put_contents($log_file, $message."\n", FILE_APPEND);
     }
 
-    public static function truncateLog() {
-        $log_file = Configuration::getFromSection('log', 'log_file');
-        file_put_contents($log_file, '');
+    protected static function writeFile($message) {
+        if(Configuration::getFromSection('log', 'log_type') == 'file') {
+            $log_file = Configuration::getFromSection('log', 'log_file');
+            file_put_contents($log_file, $message."\n", FILE_APPEND);
+        }
     }
 
-    protected static function syslog($severity, $message) {
+    protected static function writeSyslog($severity, $message) {
         $log_name   = Configuration::getFromSection('log', 'log_name');
         $log_stream = Configuration::getFromSection('log', 'log_stream');
         openlog($log_name, LOG_PID, $log_stream);
         syslog($severity, $message);
         closelog();
+    }
+
+    public static function truncateLog() {
+        $log_file = Configuration::getFromSection('log', 'log_file');
+        file_put_contents($log_file, '');
     }
 
     protected static function formatMessage($arguments) {
