@@ -162,20 +162,22 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
             if (isset($_ENV['RESTART_PROFILE'])) {
                 $profile->safe_restart();
-            } else if(isset($_ENV['RESCAN_PROFILE'])) {
-                $profile->rescan();
-                $profile->register_all();
             } else {
-                $profile->register_all();
+                $profile->register(false);
             }
         } else {
             $profile->safe_restart();
         }
 
         if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
-            Log::error("fs %s %d gateways are not registered", $profile_name, $wait);
-            Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
-            throw new Exception("gateways weren't registered");
+            Log::error("fs %s %d gateways are not registered, repeat registration after 5 seconds", $profile_name, $wait);
+            sleep(5);
+            $profile->register(false);
+            if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
+                Log::error("fs %s %d gateways are not registered again, giving up", $profile_name, $wait);
+                Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
+                throw new Exception("gateways weren't registered");
+            }
         }
         if ( ($wait = $profile->waitForGateways($profile->getUnregistered())) > 0) {
             Log::error("fs %s %d gateways are absent in profile", $profile_name, $wait);
