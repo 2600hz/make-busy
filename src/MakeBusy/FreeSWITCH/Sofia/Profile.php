@@ -186,7 +186,7 @@ class Profile
                 unset($waitMap[$name]);
             }
             if (($gw_count = count($waitMap)) > 0) {
-                Log::debug("fs %s %d gateways missing from fs, wait", $gw_count);
+                Log::debug("fs %s %d gateways missing from fs, wait", $this->getEsl()->getType(), $gw_count);
                 sleep(1);
             }
         }
