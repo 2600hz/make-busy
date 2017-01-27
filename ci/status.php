@@ -14,9 +14,9 @@
 	function tail($ref, $log) {
 		$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
 		$handle = fopen($path, 'r');
-		$seek = isset($_SESSION[$ref.$log]) ? $_SESSION[$ref.$log] : SEEK_END;
+		$seek = isset($_SESSION[$ref.$log]) ? $_SESSION[$ref.$log] : -1;
 		$data = stream_get_contents($handle, -1, $seek);
-		echo(" " . $data);
+		echo($data);
 		$_SESSION[$ref.$log] = ftell($handle);
 	}
 	if (preg_match('/^[\w|\d]{10}$/', $ref) && isset($_GET['tail']) && ($_GET['tail'] == "build" || $_GET['tail'] == "suite")) {
