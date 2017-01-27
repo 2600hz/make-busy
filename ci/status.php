@@ -1,5 +1,6 @@
 <?php
 	require_once 'vendor/autoload.php';
+	session_start();
 	$ref = $_GET['ref'];
 	if (preg_match('/^[\w|\d]{40}$/', $ref)) {
 		$ref = substr($ref, 0, 10);
@@ -11,20 +12,17 @@
 	}
 
 	function tail($ref, $log) {
-		session_start();
 		$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
 		$handle = fopen($path, 'r');
-		if (isset($_SESSION[$ref . $log])) {
-			$data = stream_get_contents($handle, -1, $_SESSION[$ref.$log]);
-			echo $data;
-		} else {
-			fseek($handle, 0, SEEK_END);
-			$_SESSION[$ref.$log] = ftell($handle);
-		}
+		$seek = isset($_SESSION[$ref.$log]) ? $_SESSION[$ref.$log] : SEEK_END;
+		$data = stream_get_contents($handle, -1, $seek);
+		echo($data);
+		$_SESSION[$ref.$log] = ftell($handle);
 	}
-	if (preg_match('/^[\w|\d]{10}$/', $ref) && isset($_GET['tail']) && $_GET['tail'] == "build") {
+	if (preg_match('/^[\w|\d]{10}$/', $ref) && isset($_GET['tail']) && ($_GET['tail'] == "build" || $_GET['tail'] == "suite")) {
 		tail($ref, $log);
-	}
+		exit();
+	} 
 ?>
 <html>
 <head>
@@ -83,25 +81,23 @@ function show_log($ref, $log) {
 }
 
 if (preg_match('/^[\w|\d]{10}$/', $ref)) {
-	if ($log == "build") {
+	if ($log == "build" || $log == "suite") {
+		unset($_SESSION[$ref.$log]);
 echo <<<EOT
 <script>
 $(function() {
 	$.repeat(1000, function() {
-		$.get('?ref=$ref&tail=build', function(data) {
-			$('#build').append(data);
+		$.get('?ref=$ref&tail=$log', function(data) {
+			$('#$log').append(data);
 		});
 	});
 });
 </script>
-<pre id=build></pre>
-EOT
+<pre id=$log></pre>
+EOT;
 	}
 	elseif ($log == "run") {
 		show_log($ref, "run");
-	}
-	elseif ($log == "suite") {
-		show_log($ref, "suite");
 	}
 	elseif ($log == "kazoo") {
 		show_log($ref, "kazoo");
