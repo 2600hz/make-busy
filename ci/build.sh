@@ -117,17 +117,18 @@ mkdir -p ~/volume/log/$COMMIT
 TESTS=~/tests
 cd $TESTS
 for APP in $(ls $TESTS)
-if [ -d $APP ]
-then
-	for CASE in $(ls $APP)
-	do
-	if [ -d $APP/$CASE ]
-		then
-			LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
-			CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $APP/EmptyTestCase.php
-		fi
-	done
-fi
+do
+	if [ -d $APP ]
+	then
+		for CASE in $(ls $APP)
+		do
+			if [ -d $APP/$CASE ]
+			then
+				LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
+				CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $APP/EmptyTestCase.php
+			fi
+		done
+	fi
 done
 
 stop_segment
