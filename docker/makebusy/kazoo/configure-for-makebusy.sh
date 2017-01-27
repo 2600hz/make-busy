@@ -43,8 +43,8 @@ sup kapps_config set callflow.park default_ringback_timeout 5000
 echo -n "set config conferences.route_win_timeout: "
 sup kapps_config set conferences route_win_timeout 3000
 
-echo -n "set config stepswitch.block_anonymous_caller_id: "
-sup kapps_config set stepswitch block_anonymous_caller_id false
+echo -n "set config privacy.block_anonymous_caller_id: "
+sup kapps_config set privacy block_anonymous_caller_id false
 
 echo -n "start crossbar cb_system_configs: "
 sup crossbar_init start_mod cb_system_configs
