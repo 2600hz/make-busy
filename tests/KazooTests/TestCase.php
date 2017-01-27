@@ -26,6 +26,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     protected static $account;
     protected static $type;
     protected static $base_type;
+    protected static $printer;
 
     /**
     * @dataProvider sipUriProvider
@@ -174,7 +175,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             sleep(5);
             $profile->register(false);
             if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
-                Log::error("fs %s %d gateways are not registered again, giving up", $profile_name, $wait);
+                Log::error("fs %s %d gateways are not registered still, giving up", $profile_name, $wait);
                 Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
                 throw new Exception("gateways weren't registered");
             }

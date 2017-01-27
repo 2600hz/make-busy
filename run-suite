@@ -7,22 +7,15 @@ shift
 echo START SUITE:$SUITE
 for TEST in $(find $SUITE -name '*.php' | shuf)
 do
-	echo
-	echo TEST:$TEST
-	vendor/bin/phpunit $* $TEST
+	./run-test $TEST
 	if [ ! $? -eq 0 ]
 	then
-		echo
-		echo REPEAT TEST:$TEST
-		RESCAN_PROFILE=1 vendor/bin/phpunit $* $TEST
+		RESCAN_PROFILE=1 ./run-test $TEST
 		if [ ! $? -eq 0 ]
 		then
-			echo
-			echo REPEAT TEST CLEAN:$TEST
-			CLEAN=1 vendor/bin/phpunit $* $TEST
+			CLEAN=1 ./run-test $TEST
 			if [ ! $? -eq 0 ]
 			then
-				echo
 				echo GIVE UP SUITE:$SUITE ON:$TEST
 				exit 1
 			fi
