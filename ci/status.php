@@ -88,8 +88,10 @@ echo <<<EOT
 $(function() {
 	$.repeat(3000, function() {
 		$.get('?ref=$ref&tail=$log', function(data) {
-			$('#$log').append(data);
-			$("html, body").animate({ scrollTop: $(document).height() }, 500);
+			if(data.length > 0) {
+				$('#$log').append(data);
+				$("html, body").animate({ scrollTop: $(document).height() }, 500);
+			}
 		});
 	});
 });
