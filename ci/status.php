@@ -86,7 +86,7 @@ if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 echo <<<EOT
 <script>
 $(function() {
-	$.repeat(1000, function() {
+	$.repeat(3000, function() {
 		$.get('?ref=$ref&tail=$log', function(data) {
 			$('#$log').append(data);
 		});
