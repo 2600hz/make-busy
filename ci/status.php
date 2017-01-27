@@ -88,7 +88,7 @@ echo <<<EOT
 <script>
 $(function() {
 	$.repeat(1000, function() {
-		$.get('?tail=build', function(data) {
+		$.get('?ref=$ref&tail=build', function(data) {
 			$('#build').append(data);
 		});
 	});
