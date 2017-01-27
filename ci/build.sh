@@ -112,22 +112,22 @@ fi
 echo Reloading kamailio dispatcher...
 docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
-cd ~/tests
-
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT
-
-DIR=~/tests/Callflow
-PREFIX=Callflow
-
-TESTS=$(ls $DIR)
-for FILE in $TESTS
-do
-if [ -d $DIR/$FILE ]
-	then
-		LOG_CONSOLE=1 run-suite.sh $PREFIX/$FILE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
-		CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $PREFIX/EmptyTestCase.php
-	fi
+TESTS=~/tests
+cd $TESTS
+for APP in $(ls $TESTS)
+if [ -d $APP ]
+then
+	for CASE in $(ls $APP)
+	do
+	if [ -d $APP/$CASE ]
+		then
+			LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
+			CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $APP/EmptyTestCase.php
+		fi
+	done
+fi
 done
 
 stop_segment
