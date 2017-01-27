@@ -90,7 +90,7 @@ $(function() {
 		$.get('?ref=$ref&tail=$log', function(data) {
 			if(data.length > 0) {
 				$('#$log').append(data);
-				$("html, body").animate({ scrollTop: $(document).height() }, 500);
+//				$("html, body").animate({ scrollTop: $(document).height() }, 500);
 			}
 		});
 	});
