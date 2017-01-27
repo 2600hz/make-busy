@@ -9,10 +9,28 @@
 	} else {
 		$log = "build";
 	}
-	if ($log == "build") {
+
+	function tail($ref, $log) {
+		session_start();
+		$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
+		$handle = fopen($path, 'r');
+		if (isset($_SESSION[$ref . $log])) {
+			$data = stream_get_contents($handle, -1, $_SESSION[$ref.$log]);
+			echo $data;
+		} else {
+			fseek($handle, 0, SEEK_END);
+			$_SESSION[$ref.$log] = ftell($handle);
+		}
+	}
+	if (preg_match('/^[\w|\d]{10}$/', $ref) && isset($_GET['tail']) && $_GET['tail'] == "build") {
+		tail($ref, $log);
 	}
 ?>
 <html>
+<head>
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://creativecouple.github.com/jquery-timing/jquery-timing.min.js"></script>
+</head>
 <body>
 <table width="100%">
 <tr>
@@ -66,8 +84,18 @@ function show_log($ref, $log) {
 
 if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 	if ($log == "build") {
-		echo("<b>Hit reload to see updates. See suite log for verbose makebusy output.</b><br>");
-		show_log($ref, "build");
+echo <<<EOT
+<script>
+$(function() {
+	$.repeat(1000, function() {
+		$.get('?tail=build', function(data) {
+			$('#build').append(data);
+		});
+	});
+});
+</script>
+<pre id=build></pre>
+EOT
 	}
 	elseif ($log == "run") {
 		show_log($ref, "run");
