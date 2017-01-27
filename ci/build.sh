@@ -20,6 +20,8 @@ then
 	echo Guessed repo: $REPO
 fi
 
+cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
+
 while [ -f /tmp/build.lock ]
 do
 	echo wait in queue for $(cat /tmp/build.lock)
@@ -31,8 +33,6 @@ do
 	echo "Remove old log file $file"
 	rm -f ~/volume/log/$COMMIT/$file.log
 done
-
-cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
 
 echo $COMMIT > /tmp/build.lock
 export NETWORK=git-$COMMIT
