@@ -46,7 +46,8 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
 
     public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
         if (! preg_match('/::/', $suite->getName())) {
-            $this->currentTestSuiteName = preg_replace('/\\\\/', '/', $suite->getName());
+            $re = new ReflectionClass($suite->getName());
+            $this->currentTestSuiteName = sprintf("test: %s case: %s", $re->getShortName(), $re->getParentClass()->getShortName());
             $this->currentTestName = '';
             $this->write(sprintf("RUN %s\n", $this->currentTestSuiteName));
             $this->start_time = microtime();
