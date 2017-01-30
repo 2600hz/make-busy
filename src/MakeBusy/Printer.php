@@ -59,7 +59,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         if (isset($_ENV[$key])) {
             return $_ENV[$key];
         } else {
-            return 0;
+            return '';
         }
     }
 
