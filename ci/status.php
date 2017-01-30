@@ -1,5 +1,6 @@
 <?php
 	require_once 'vendor/autoload.php';
+	ob_start("ob_gzhandler");
 	session_start();
 	$ref = $_GET['ref'];
 	if (preg_match('/^[\w|\d]{40}$/', $ref)) {
