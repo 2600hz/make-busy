@@ -5,5 +5,6 @@ then
 	echo Please specify the network segment to run tests in
 	exit
 fi
-cp etc/config.json.dist config.json
+
+jq -M '.media.welcome_prompt_path="/home/user/make-busy/prompts/prompts/welcome.wav"' etc/config.json > config.json
 /bin/sed -i "s/\.kazoo/\.$NETWORK/g" config.json
