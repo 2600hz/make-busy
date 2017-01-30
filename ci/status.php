@@ -81,7 +81,7 @@ function show_log($ref, $log) {
 }
 
 if (preg_match('/^[\w|\d]{10}$/', $ref)) {
-	if ($log == "build") {
+	if ($log == "build" || $log == "suite") {
 		unset($_SESSION[$ref.$log]);
 echo <<<EOT
 <script>
@@ -98,9 +98,6 @@ $(getContent);
 </script>
 <pre id=$log></pre>
 EOT;
-	}
-	elseif ($log == "suite") {
-		show_log($ref, "suite");
 	}
 	elseif ($log == "run") {
 		show_log($ref, "run");
