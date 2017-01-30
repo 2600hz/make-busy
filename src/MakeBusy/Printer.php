@@ -55,12 +55,14 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         $this->currentTestName = '';
     }
 
-    private function getEnv($key) {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        } else {
-            return '';
+    private function getEnv($keys) {
+        $re = [];
+        foreach($keys as $key) {
+            if (isset($_ENV[$key])) {
+                $re[] = sprintf("%s:%s", $key, $_ENV[$key]);
+            }
         }
+        return join(" ", $re);
     }
 
     public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
@@ -68,8 +70,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
             $re = new ReflectionClass($suite->getName());
             $this->currentTestSuiteName = sprintf("test: %s case: %s", $re->getShortName(), $re->getParentClass()->getShortName());
             $this->currentTestName = '';
-            $this->write(sprintf("RUN %s CLEAN:%s RESTART_PROFILE:%s SKIP_REGISTER:%s\n", $re->getFileName(),
-                                 $this->getEnv('CLEAN'), $this->getEnv('RESTART_PROFILE'), $this->getEnv('SKIP_REGISTER')));
+            $this->write(sprintf("RUN %s %s\n", $re->getFileName(), $this->getEnv(['CLEAN','RESTART_PROFILE', 'SKIP_REGISTER'])));
         }
     }
 
