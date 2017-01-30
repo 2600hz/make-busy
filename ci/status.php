@@ -26,8 +26,7 @@
 ?>
 <html>
 <head>
-	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-	<script src="http://creativecouple.github.com/jquery-timing/jquery-timing.min.js"></script>
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
 </head>
 <body>
 <table width="100%">
@@ -85,16 +84,16 @@ if (preg_match('/^[\w|\d]{10}$/', $ref)) {
 		unset($_SESSION[$ref.$log]);
 echo <<<EOT
 <script>
-$(function() {
-	$.repeat(3000, function() {
-		$.get('?ref=$ref&tail=$log', function(data) {
-			if(data.length > 0) {
-				$('#$log').append(data);
-//				$("html, body").animate({ scrollTop: $(document).height() }, 500);
-			}
-		});
+function getContent() {
+	$.get('?ref=$ref&tail=$log', function(data) {
+		if(data.length > 0) {
+			$('#$log').append(data);
+		}
+		setTimeout(getContent, 3000);
 	});
-});
+}
+
+$(getContent);
 </script>
 <pre id=$log></pre>
 EOT;
