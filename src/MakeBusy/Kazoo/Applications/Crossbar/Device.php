@@ -163,9 +163,6 @@ class Device
     }
 
     public function createCallflow(array $numbers, array $options = array()) {
-        if ($this->loaded) {
-            return;
-        }
 
         $builder = new Builder($numbers);
         $device_callflow = new DeviceNode($this->getId());

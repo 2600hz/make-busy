@@ -80,11 +80,8 @@ class Conference
     }
 
     public function createCallflow(array $numbers, array $options = array()) { // Need Language for test call from PSTN
-        if ($this->loaded) {
-            return;
-        }
         $builder = new Builder($numbers);
-        $mkbs    = new Language("mk-bs");
+        $mkbs = new Language("mk-bs");
         $conference_callflow = new ConferenceNode($this->getId());
         $mkbs->addChild($conference_callflow);
         $data = $builder->build($mkbs);
@@ -95,11 +92,8 @@ class Conference
     }
 
     public function createServiceCallflow(array $numbers, array $options = array()) { // Create Callflow for ConferenceService without data_id
-        if ($this->loaded) {
-            return;
-        }
         $builder = new Builder($numbers);
-        $mkbs    = new Language("mk-bs");
+        $mkbs = new Language("mk-bs");
         $conference_callflow = new ConferenceNode();
         $mkbs->addChild($conference_callflow);
         $data = $builder->build($mkbs);
@@ -108,7 +102,7 @@ class Conference
 
     public function setWelcomePrompt($media_id=NULL) { // Set Welcome Prompt for Conference Module
         $callflow = $this->getCallflow();
-        if ($callflow->flow->children->_) {   //if conferencenode last than set path with children (getLast)
+        if (isset($callflow->flow->children->_)) {   //if conferencenode last than set path with children (getLast)
             $path=$callflow->flow->children->_;
         } else {
             $path=$callflow->flow;
@@ -125,7 +119,7 @@ class Conference
 
     public function enableWelcomePrompt($enable=TRUE) { // Set Welcome Prompt for Conference Module
         $callflow = $this->getCallflow();
-        if ($callflow->flow->children->_) {   //if conferencenode last than set path with children (getLast)
+        if (isset($callflow->flow->children->_)) {   //if conferencenode last than set path with children (getLast)
             $path=$callflow->flow->children->_;
         } else {
             $path=$callflow->flow;
@@ -237,7 +231,15 @@ class Conference
     }
 
     public function reset() {
-        $this->setMemberOption("join_muted", false);
-        $this->setMemberOption("join_deaf", false);
+        $this->setWelcomePrompt();
+        $conference = $this->getConference();
+        foreach(['member', 'moderator'] as $part) {
+            $conference->$part->join_muted = false;
+            $conference->$part->join_deaf = false;
+            $conference->$part->pins = [];
+        }
+        unset($conference->max_participants);
+        $conference->save();
     }
+
 }

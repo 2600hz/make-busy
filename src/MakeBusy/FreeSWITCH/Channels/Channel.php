@@ -16,6 +16,12 @@ class Channel
         Log::debug("channel:%s is new %s", $this->getUuid(), $event->getHeader('Call-Direction'));
     }
 
+    public function __destruct() {
+        Log::debug("channel:%s is destructing, issuing uuid_kill", $this->getUuid());
+        // oob destruction
+        $this->esl->clone()->api_f("uuid_kill %s", $this->getUuid());
+    }
+
     public function __toString() {
         return $this->getUuid();
     }

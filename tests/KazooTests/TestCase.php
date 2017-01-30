@@ -20,13 +20,13 @@ use \Exception;
 use \stdClass;
 use Kazoo\Api\Exception\ApiException;
 use Kazoo\HttpClient\Exception\NotFound;
+use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
     protected static $account;
     protected static $type;
     protected static $base_type;
-    protected static $printer;
 
     /**
     * @dataProvider sipUriProvider
@@ -43,6 +43,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     // override this to set up case
     public static function setUpCase() {
+        FeatureCodes::create(self::$account);
+        self::$account->createOffnetNoMatch();
+        self::$account->createAccountMetaflow();
     }
 
     // override this to cleanup after case
@@ -127,7 +130,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             if( ! isset($_ENV['SKIP_ACCOUNT'])) {
                 self::$account = new TestAccount(get_called_class());
             }
-            static::setupCase();
+            static::setUpCase();
         });
 
         if(isset(self::$account)) {

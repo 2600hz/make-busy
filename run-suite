@@ -10,7 +10,7 @@ do
 	./run-test $TEST
 	if [ ! $? -eq 0 ]
 	then
-		RESCAN_PROFILE=1 ./run-test $TEST
+		RESTART_PROFILE=1 ./run-test $TEST
 		if [ ! $? -eq 0 ]
 		then
 			CLEAN=1 ./run-test $TEST

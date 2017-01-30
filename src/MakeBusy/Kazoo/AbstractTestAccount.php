@@ -46,9 +46,8 @@ abstract class AbstractTestAccount
             KazooGateways::loadFromAccount($this); // get all devices, create gateways, keep devices in $devices cache for later use
         } else {
             $this->create($name);
-            $this->setup();
         }
-        $system_configs = new SystemConfigs($this);
+        $this->system_configs = new SystemConfigs($this);
     }
 
     public function SystemConfigs() {
@@ -67,14 +66,13 @@ abstract class AbstractTestAccount
         return substr($namespace, strrpos($namespace, '\\')+1);
     }
 
-
     public function getBaseType() {
         return $this->base_type;
     }
 
     function addToCache($collection, $item) {
-        // fucking oop (special case for users (no name, first_name instead) and phone_number (no name, id only))
-        $name = isset($item->first_name)? $item->first_name : (isset($item->name)? $item->name : $item->id);
+        // fucking oop (special case for users (no name, first_name instead) and phone_number (no name, id only) and for callflows (no name, only in makebusy))
+        $name = isset($item->makebusy->id)? $item->makebusy->id : (isset($item->first_name)? $item->first_name : (isset($item->name)? $item->name : $item->id));
         Log::debug("caching name:%s in collection:%s", $name, $collection);
         $this->cache[$collection][$name] = $item;
     }

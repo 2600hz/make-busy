@@ -18,6 +18,9 @@ class Connection extends Socket
     private $channels;
     private $profiles;
     private $ip_address;
+    private $ip_port;
+    private $connect_options;
+    private $auth_key;
     private $type;
     private $listen_for = []; // cache of events subscribed to
 
@@ -43,15 +46,22 @@ class Connection extends Socket
         $this->channels = new Channels($this);
         $this->profiles = new Profiles($this);
         $this->ip_address = $host;
+        $this->ip_port = $port;
+        $this->auth_key = $auth;
+        $this->connect_options = $options;
         $this->type = $type;
+        $this->do_connect();
+    }
 
-        $this->connect($host, $port, $options);
+    public function do_connect() {
+        $this->connect($this->ip_address, $this->ip_port, $this->connect_options);
         $event = $this->recvEvent();
 
         if ($event->getHeader('Content-Type') != 'auth/request') {
             throw new ConnectionException("unexpected header recieved during authentication: " . $event->getType());
         }
 
+        $auth = $this->auth_key;
         $event = $this->sendRecv("auth {$auth}");
 
         $reply = $event->getHeader('Reply-Text');
@@ -61,6 +71,11 @@ class Connection extends Socket
         $this->events("all");
 
         $this->authenticated = TRUE;
+        return $this;
+    }
+
+    public function clone() {
+        return new Connection($this->ip_address, $this->ip_port, $this->auth_key, $this->connect_options, $this->type);
     }
 
     public function __destruct() {

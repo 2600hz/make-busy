@@ -125,7 +125,7 @@ do
 			if [ -d $APP/$CASE ]
 			then
 				LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log 
-				CLEAN=1 SKIP_ACCOUNT=1 run-test.sh $APP/EmptyTestCase.php
+				CLEAN=1 SKIP_ACCOUNT=1 run-test.sh ../EmptyTestCase.php
 			fi
 		done
 	fi
