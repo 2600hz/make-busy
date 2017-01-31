@@ -3,14 +3,21 @@
 ## Overview
 
 To write a test you need to define a test case by subclassing TestCase class. In test case you can define a number of
-TestAccount instances. Each TestAccount can have several instances of Device, User, Resource and Voicemail as class
+TestAccount instances representing Kazoo's accounts (usually one).
+Each TestAccount descendant class in turn can have several instances of Device, User, Resource, Voicemail and other Kazoo entities as class
 static members. After setting up testing environment you need to define actual tests, by subclassing your defined TestCase.
 
-## FreeSwitch types
+## FreeSWITCH types
 
-You can have several (at least one) FreeSwitch instances that will simulate various SIP devices distinguished by "type".
+You can have several (at least one) FreeSWITCH instances that will simulate various SIP devices distinguished by "type".
 Recommended is two, one for "auth" type devices like Devices, and another for "carrier" type devices, like Resources.
 Please see supplied [config.json.dist](../etc/config.json.dist) for details.
+
+## Programming notes
+
+FreeSWITCH channels represented by Channel php class. When Channel object is destroyed it tries to hang up corresponding
+FreeSWITCH channel by issuing uuid_kill command out of band (in separate FreeSWITCH connection), so pay attention for
+channels instances to be in scope.
 
 ## Complete example
 
@@ -22,7 +29,6 @@ Class DeviceTestCase:
 namespace KazooTests\Applications\Callflow;
 
 use \KazooTests\TestCase;
-use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 
 class DeviceTestCase extends TestCase
 {
@@ -88,7 +94,7 @@ for additional information.
 
 Function main() will be called as many Kazoo's Kamailio targets are defined in config.json file, function testSomehtingElse()
 will be called once without any arguments, and you basically should use only what you have defined in TestCase subclass,
-functions setUp() and tearDown() will be called before and after test functions respectively.
+functions setUpTest() and tearDownTest() will be called before and after test functions respectively.
 
 Please see [Channel](../src/MakeBusy/FreeSWITCH/Channels/Channel.php) for methods defined for channel
 (waitAnswer, waitHangup, sendDtmf, playTone, etc.)
