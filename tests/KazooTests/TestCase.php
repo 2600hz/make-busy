@@ -8,18 +8,14 @@ use \MakeBusy\Common\Configuration;
 use \MakeBusy\Common\Utils;
 use \MakeBusy\Common\Log;
 
-use \MakeBusy\FreeSWITCH\Channels\Channels;
-use \MakeBusy\FreeSWITCH\Channels\Channel;
-use \MakeBusy\Kazoo\Applications\Crossbar\Device;
-use \MakeBusy\Kazoo\Applications\Crossbar\Resource;
+use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\Kazoo\AbstractTestAccount;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
-use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
-use \MakeBusy\Kazoo\Gateways;
+use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
+
 use \Exception;
 use Kazoo\Api\Exception\ApiException;
 use Kazoo\HttpClient\Exception\NotFound;
-use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
