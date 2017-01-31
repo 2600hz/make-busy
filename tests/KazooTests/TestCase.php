@@ -17,7 +17,6 @@ use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\Kazoo\Gateways;
 use \Exception;
-use \stdClass;
 use Kazoo\Api\Exception\ApiException;
 use Kazoo\HttpClient\Exception\NotFound;
 use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
