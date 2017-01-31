@@ -48,6 +48,11 @@ Don't cache Kazoo entities:
 CLEAN=1 ./run-test path_to_test.php
 ```
 
+Hang up all drone channels before running test:
+```
+HUPALL=1 ./run-test path_to_test.php
+```
+
 Restart existing FreeSWITCH sofia profile before running test:
 ```
 RESTART_PROFILE=1 ./run-test path_to_test.php

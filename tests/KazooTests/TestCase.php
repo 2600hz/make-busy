@@ -153,8 +153,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
 
-        if(isset($_ENV['CLEAN'])) {
-            // TODO: hup only test channels (e.g. BS-.*)
+        if(isset($_ENV['HUPALL'])) {
             $profile->getEsl()->api("hupall");
         }
 
