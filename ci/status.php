@@ -15,11 +15,13 @@
 
 	function tail($ref, $log) {
 		$path = sprintf("../../volume/log/%s/%s.log", $ref, $log);
-		$handle = fopen($path, 'r');
-		$seek = isset($_SESSION[$ref.$log]) ? $_SESSION[$ref.$log] : -1;
-		$data = stream_get_contents($handle, -1, $seek);
-		echo($data);
-		$_SESSION[$ref.$log] = ftell($handle);
+		if (file_exists($path)) {
+			$handle = fopen($path, 'r');
+			$seek = isset($_SESSION[$ref.$log]) ? $_SESSION[$ref.$log] : -1;
+			$data = stream_get_contents($handle, -1, $seek);
+			echo($data);
+			$_SESSION[$ref.$log] = ftell($handle);
+		}
 	}
 
 	if (isset($_GET['tail'])) {
