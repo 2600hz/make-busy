@@ -24,6 +24,8 @@
 
 	if (isset($_GET['tail'])) {
 		$tail = $_GET['tail'];
+	} else {
+		$tail = '';
 	}
 
 	if (preg_match('/^[\w|\d]{10}$/', $ref) && ($tail == "log" || $tail == "build")) {
