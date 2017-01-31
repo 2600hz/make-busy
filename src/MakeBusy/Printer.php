@@ -70,7 +70,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
             $re = new ReflectionClass($suite->getName());
             $this->currentTestSuiteName = sprintf("test: %s case: %s", $re->getShortName(), $re->getParentClass()->getShortName());
             $this->currentTestName = '';
-            $this->write(sprintf("RUN %s %s\n", $re->getFileName(), $this->getEnv(['CLEAN','RESTART_PROFILE', 'SKIP_REGISTER'])));
+            $this->write(sprintf("RUN %s %s\n", $re->getFileName(), $this->getEnv(['CLEAN','RESTART_PROFILE', 'SKIP_REGISTER', 'SKIP_ACCOUNT'])));
         }
     }
 
