@@ -188,33 +188,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
     }
 
-    public static function waitKazooForGateways($profile, $timeout = 10) {
-        $not_seen = [];
-        foreach($profile->getRegistered() as $r) {
-            $name = $r->getName();
-            $not_seen[$name] = true;
-        }
-        while(($timeout>0) && (($unseen = self::notSeenInKazoo($not_seen)) > 0)) {
-            Log::debug("%d gateways are not present in kazoo, wait", $unseen);
-            sleep(1);
-            $timeout--;
-        }
-        self::assertFalse($timeout == 0, "error waiting for one or more gateways in Kazoo");
-    }
-
-    public static function notSeenInKazoo($not_seen) {
-        $kazoo_devices = Gateways::loadFromKazoo(self::$account->getAccount(), 'Devices');
-        $kazoo_resources = Gateways::loadFromKazoo(self::$account->getAccount(), 'Resources');
-
-        foreach(array_merge($kazoo_devices, $kazoo_resources) as $r) {
-            $name = $r->id;
-            if(isset($not_seen[$name])) {
-                unset($not_seen[$name]);
-            }
-        }
-        return count($not_seen);
-    }
-
     public static function getSipTargets() {
         return Configuration::sipTargets();
     }
