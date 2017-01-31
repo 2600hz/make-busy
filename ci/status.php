@@ -6,6 +6,7 @@
 	if (preg_match('/^[\w|\d]{40}$/', $ref)) {
 		$ref = substr($ref, 0, 10);
 	}
+
 	if (isset($_GET['type'])) {
 		$log = $_GET['type'];
 	} else {
@@ -20,8 +21,13 @@
 		echo($data);
 		$_SESSION[$ref.$log] = ftell($handle);
 	}
-	if (preg_match('/^[\w|\d]{10}$/', $ref) && isset($_GET['tail']) && ($_GET['tail'] == "build" || $_GET['tail'] == "suite")) {
-		tail($ref, $log);
+
+	if (isset($_GET['tail'])) {
+		$tail = $_GET['tail'];
+	}
+
+	if (preg_match('/^[\w|\d]{10}$/', $ref) && ($tail == "log" || $tail == "build")) {
+		tail($ref, $tail);
 		exit();
 	} 
 ?>
