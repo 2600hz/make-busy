@@ -30,7 +30,7 @@
 		$tail = '';
 	}
 
-	if (preg_match('/^[\w|\d]{10}$/', $ref) && ($tail == "log" || $tail == "build")) {
+	if (preg_match('/^[\w|\d]{10}$/', $ref) && ($tail == "suite" || $tail == "build")) {
 		tail($ref, $tail);
 		exit();
 	} 
