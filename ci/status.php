@@ -71,6 +71,8 @@
 <td><a href="?ref=<?php echo $ref ?>&type=kazoo">kazoo.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=freeswitch">freeswitch.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kamailio">kamailio.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=couchdb">couchdb.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=rabbitmq">rabbitmq.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy">makebusy.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-auth">makebusy-fs-auth.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=makebusy-fs-carrier">makebusy-fs-carrier.log</a></td>
@@ -120,6 +122,12 @@ EOT;
 	}
 	elseif ($log == "kamailio") {
 		show_log($ref, "kamailio");
+	}
+	elseif ($log == "couchdb") {
+		show_log($ref, "couchdb");
+	}
+	elseif ($log == "rabbitmq") {
+		show_log($ref, "rabbitmq");
 	}
 	elseif ($log == "makebusy") {
 		show_log($ref, "makebusy");

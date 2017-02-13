@@ -43,6 +43,8 @@ function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
 	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
+	docker logs rabbitmq.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/rabbitmq.log
+	docker logs couchdb.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/couchdb.log
 	docker logs makebusy.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy.log
 
 	# Makebusy Post-Mortem (just in case)
