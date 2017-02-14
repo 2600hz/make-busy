@@ -84,4 +84,13 @@ class TestAccount extends AbstractTestAccount
         $account = $this->getAccount();
         return $account->$item_name();
     }
+
+    public function config($config) {
+        return $this->getAccount()->Config($config);
+    }
+
+    public function system_config($config) {
+        return $this->getAccount()->SystemConfig($config);
+    }
+
 }

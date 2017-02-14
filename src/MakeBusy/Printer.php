@@ -87,7 +87,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         }
         $time = microtime(true) - $this->start_time;
         Log::debug("STATUS: %s", $status);
-        $this->write(sprintf("TEST %s %.02fs %s\n%s\n", $status, $time, $this->currentTestSuiteName, $message));
+        $this->write(sprintf("TEST %s %.02fs %s function: %s\n%s\n", $status, $time, $this->currentTestSuiteName, $this->currentTestName, $message));
     }
 
 }
