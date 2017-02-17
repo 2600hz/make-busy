@@ -1,6 +1,10 @@
 #!/bin/bash
 TIMEOUT=${1:-"120"}
 NETWORK=${NETWORK:-"kazoo"}
+
+# sanity check
+command -v sup >/dev/null 2>&1 || { echo "sup is required, but missing"; exit 1; }
+
 echo Waiting for kazoo.$NETWORK to start
 timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 if [ $? -ne 0 ]
@@ -16,7 +20,7 @@ echo -n "adding freeswitch to kazoo: "
 sup ecallmgr_maintenance add_fs_node freeswitch@freeswitch.$NETWORK
 
 echo wait for freeswitch to complete connect
-timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'max_channel_cleanup_timeout_ms'" > /dev/null
+timeout --foreground $TIMEOUT watch -g "docker logs kazoo.$NETWORK | grep 'fs sync complete'" > /dev/null
 if [ $? -ne 0 ]
 then
 	echo Failed to wait for FreeSwitch to connect, network:$NETWORK
