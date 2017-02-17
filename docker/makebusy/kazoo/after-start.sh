@@ -1,5 +1,11 @@
 #!/bin/sh
 NETWORK=${NETWORK:-"kazoo"}
+# sanity check
+for cmd in docker sup git
+do
+	command -v $cmd >/dev/null 2>&1 || { echo "$cmd is required, but missing"; exit 1; }
+done
+
 echo Waiting for kazoo.$NETWORK to start '(you may check docker logs if impatient)'
 watch -g "docker logs kazoo.$NETWORK | grep 'auto-started kapps'" > /dev/null
 
