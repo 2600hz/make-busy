@@ -21,6 +21,7 @@ fi
 
 echo -n "starting: $NAME tests: $TESTS_PATH "
 docker run -td \
+	--restart unless-stopped \
 	--net $NETWORK \
 	-h $NAME \
 	--name $NAME \
