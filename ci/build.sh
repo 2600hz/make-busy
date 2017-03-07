@@ -5,7 +5,7 @@
 # $HOME/tests
 
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
-PARALLEL=${PARALLEL:-"0"}
+PARALLEL=${PARALLEL:-"2"}
 COMMIT=${1:0:10}
 REPO=$2
 if [ -z $COMMIT ]
