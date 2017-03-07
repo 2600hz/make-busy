@@ -58,9 +58,9 @@
 </td>
 <td colspan=3>
 <form action="action.php" method="POST">
-	<input type="hidden" name="action" value="remove_lock">
+	<input type="hidden" name="action" value="remove_locks">
 	<input type="hidden" name="ref" value="<?php echo $ref ?>">
-	<input type="submit" value="Remove lock">
+	<input type="submit" value="Remove locks">
 </form>
 </td>
 </tr>

@@ -8,8 +8,8 @@ if ($action == "run_again") {
 		exec("./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
 	}
-} elseif ($action == "remove_lock") {
-	exec("rm -f /tmp/build.lock");
+} elseif ($action == "remove_locks") {
+	exec("rm -f /tmp/makebusy/*");
 } elseif ($action == "rebuild") {
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$ref");
