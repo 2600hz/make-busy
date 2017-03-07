@@ -5,6 +5,7 @@
 # $HOME/tests
 
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
+PARALLEL=${PARALLEL:-"3"}
 COMMIT=${1:0:10}
 REPO=$2
 if [ -z $COMMIT ]
@@ -22,9 +23,12 @@ fi
 
 cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
 
-while [ -f /tmp/build.lock ]
+LOCK=/tmp/makebusy
+mkdir -p $LOCK
+
+while [ $(ls -1 $LOCK | wc -l) -gt $PARALLEL ]
 do
-	echo wait in queue for $(cat /tmp/build.lock)
+	echo wait in queue for $(ls $LOCK)
 	sleep 30
 done
 
@@ -34,7 +38,8 @@ do
 	rm -f ~/volume/log/$COMMIT/$file.log
 done
 
-echo $COMMIT > /tmp/build.lock
+touch $LOCK/$COMMIT
+
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 cd ~/kazoo-docker/kazoo && ./build-commit.sh $COMMIT
@@ -59,7 +64,7 @@ function stop_segment {
 
 	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
 	docker network rm $NETWORK
-	rm -f /tmp/build.lock
+	rm -f $LOCK/$COMMIT
 }
 
 cd ~/kazoo-docker/rabbitmq && ./run.sh
