@@ -50,6 +50,9 @@ sup kapps_config set conferences route_win_timeout 3000
 echo -n "set config privacy.block_anonymous_caller_id: "
 sup kapps_config set privacy block_anonymous_caller_id false
 
+echo -n "set config number_manager.local_feature_override "
+sup kapps_config set number_manager local_feature_override true
+
 echo -n "start crossbar cb_system_configs: "
 sup crossbar_init start_mod cb_system_configs
 
