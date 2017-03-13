@@ -35,6 +35,8 @@ class Conference
         $conference->name = $name;
 
         $conference->member = new stdClass();
+        $conference->moderator = new stdClass();
+
         $conference->member->pins = array();
         $conference->member->pins = $pins;
         $conference->member->join_muted = FALSE;
