@@ -7,7 +7,7 @@ use \stdClass;
 use \CallflowBuilder\Builder;
 use \CallflowBuilder\Node\Conference as ConferenceNode;
 use \CallflowBuilder\Node\Language;
-use \MakeBusy\Common\Log;
+use \MakeBusy\Common\Utils;
 
 class Conference
 {
@@ -136,11 +136,11 @@ class Conference
     public function clearPins() { //clear Pins after each test
         $conference = $this->getConference();
 
-        if (isset($conference->member->pins)) {
+        if (isset($conference->member) && isset($conference->member->pins)) {
             unset($conference->member->pins);
         }
 
-        if (isset($conference->moderator->pins)) {
+        if (isset($conference->moderator) && isset($conference->moderator->pins)) {
             unset($conference->moderator->pins);
         }
 
@@ -185,26 +185,22 @@ class Conference
 
     public function setMemberOption($option,$value) {
         $conference = $this->getConference();
-        $conference->member->$option=$value;
+        Utils::mset($conference, ["member", $option], $value);
         $conference->save();
     }
 
     public function setModeratorOption($option,$value) {
         $conference = $this->getConference();
-        $conference->moderator->$option=$value;
+        Utils::mset($conference, ["moderator", $option], $value);
         $conference->save();
     }
 
     public function setMemberPin(array $pins = array()) {
-        $conference = $this->getConference();
-        $conference->member->pins = $pins;
-        $conference->save();
+        $this->setMemberOption("pins", $pins);
     }
 
     public function setModeratorPin(array $pins = array()) {
-        $conference = $this->getConference();
-        $conference->moderator->pins = $pins;
-        $conference->save();
+        $this->setModeratorOption("pins", $pins);
     }
 
     public function setMaxUsers($value) {
