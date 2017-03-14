@@ -232,7 +232,7 @@ class Conference
         $this->setWelcomePrompt();
         $conference = $this->getConference();
         foreach(['member', 'moderator'] as $part) {
-            if(! property_exists($conference, $part)) {
+            if(! isset($conference->$part)) {
                 continue;
             }
             $conference->$part->join_muted = false;
