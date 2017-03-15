@@ -353,14 +353,15 @@ class Connection extends Socket
 
         $event_name = $event->getHeader('Event-Name');
         $fs_type = $this->getType();
+
+        $event_uuid = $event->getUuid();
+
         if (isset($_ENV['DUMP_EVENTS'])) {
             Log::dump("fs $fs_type incoming: $event_name", $event);
         } else {
-            Log::debug("fs %s incoming: %s", $fs_type, $event_name);
+            Log::debug("fs %s incoming: %s %s", $fs_type, $event_name, $event_uuid);
         }
         $this->channels->newEvent($event);
-
-        $event_uuid = $event->getUuid();
 
         // return our ESLevent object
         if ( ! $uuid && ! $event_uuid ) {
