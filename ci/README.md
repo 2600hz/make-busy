@@ -10,12 +10,12 @@
 # Unclear
 
 1. How to indicate full rebuild? (e.g. build fails)
-2. How to indicate to re-use/re-create couchdb settings?
+2. How to indicate to re-use/re-create CouchDB settings?
 
 # TODO
 
-1. make a container of ci 'server' alike kazoo-meta
-2. retrigger tests agains specific commit
-3. clear unused docker containers (e.g. stopped)
-4. update makebusy container/test suite on commit to their repos
-5. speed-up couchdb setup with pre-created sounds/etc?
+1. Make a container of CI 'server' alike kazoo-meta
+2. Re-trigger tests against specific commit
+3. Clear unused docker containers (e.g. stopped)
+4. Update MakeBusy container/test suite on commit to their repos
+5. Speed up CouchDB setup with pre-created sounds/etc?
