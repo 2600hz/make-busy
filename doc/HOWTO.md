@@ -15,9 +15,9 @@ Please see supplied [config.json.dist](../etc/config.json.dist) for details.
 
 ## Programming notes
 
-FreeSWITCH channels represented by Channel php class. When Channel object is destroyed it tries to hang up corresponding
-FreeSWITCH channel by issuing uuid_kill command out of band (in separate FreeSWITCH connection), so pay attention for
-channels instances to be in scope.
+FreeSWITCH channels are represented by the [Channel](../src/MakeBusy/FreeSWITCH/Channels/Channel.php) class.
+
+When a Channel object is destroyed, it tries to hang up the corresponding FreeSWITCH channel by issuing `uuid_kill` out of band (in separate FreeSWITCH connection), so pay attention for channel instances to be in scope.
 
 ## Complete example
 
@@ -50,7 +50,7 @@ class DeviceTestCase extends TestCase
 }
 ```
 
-class Call (wher we're going to ensure Devices can call each other):
+Class Call (where we're going to ensure Devices can call each other):
 
 ```PHP
 <?php
@@ -86,15 +86,20 @@ class Call extends DeviceTestCase {
 }
 ```
 
-For convinience there are number of checks and utility functions defined in TestCase class, namely: ensureChannel
-checks the result to be a Channel, and fails if it is not, ensureAnswer answers for $channel_b and ensures both channels
-are answered, ensureEvent ensures the event was received, ensureTwoWayAudio checks channels can hear each other,
-and hangupBridged ensures channels are properly hanged up. Please see [TestCase.php](../tests/KazooTests/TestCase.php)
-for additional information.
+For convenience there are number of checks and utility functions defined in TestCase class, namely:
 
-Function main() will be called as many Kazoo's Kamailio targets are defined in config.json file, function testSomehtingElse()
-will be called once without any arguments, and you basically should use only what you have defined in TestCase subclass,
-functions setUpTest() and tearDownTest() will be called before and after test functions respectively.
+* `ensureChannel` - checks the result to be a Channel, and fails if it is not
+* `ensureAnswer` - answers for $channel_b and ensures both channels are answered
+* `ensureEvent` - ensures the event was received
+* `ensureTwoWayAudio` - checks channels can hear each other
+* `hangupBridged` ensures channels are properly hung up.
 
-Please see [Channel](../src/MakeBusy/FreeSWITCH/Channels/Channel.php) for methods defined for channel
-(waitAnswer, waitHangup, sendDtmf, playTone, etc.)
+Please see [TestCase.php](../tests/KazooTests/TestCase.php) for additional information.
+
+Function `main()` will be called with as many Kazoo-Kamailio targets are defined in config.json file
+
+Function `testSomethingElse()` will be called once without any arguments and you basically should use only what you have defined in TestCase subclass.
+
+Functions `setUpTest()` and `tearDownTest()` will be called before and after test functions respectively.
+
+Please see [Channel](../src/MakeBusy/FreeSWITCH/Channels/Channel.php) for methods defined for channel (`waitAnswer`, `waitHangup`, `sendDtmf`, `playTone`, etc.)
