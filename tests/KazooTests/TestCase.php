@@ -15,7 +15,14 @@ use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
 
 use \Exception;
 use Kazoo\Api\Exception\ApiException;
-use Kazoo\HttpClient\Exception\NotFound;
+use Kazoo\HttpClient\Exception\HttpException;
+
+function handleError($e) {
+    $error = json_decode((string) $e->getResponse()->getBody());
+    unset($error->auth_token);
+    Log::error("Kazoo API error: %s", json_encode($error, JSON_PRETTY_PRINT));
+    throw($e);
+}
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
@@ -80,20 +87,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             $callable();
         }
         catch(ApiException $e) {
-            $error = json_decode((string) $e->getResponse()->getBody());
-            unset($error->auth_token);
-            Log::error("Kazoo API error: %s", json_encode($error, JSON_PRETTY_PRINT));
-            throw($e);
+            handleError($e);
         }
-        catch(NotFound $e) {
-            $error = json_decode((string) $e->getResponse()->getBody());
-            unset($error->auth_token);
-            Log::error("Kazoo resource error: %s", json_encode($error, JSON_PRETTY_PRINT));
-            throw($e); // test suite uses it
+        catch(HttpException $e) {
+            handleError($e);
         }
         catch(Exception $e) {
             Log::error("Generic exception error: %s, code: %d", $e->getMessage(), $e->getCode());
-            throw($e); // test suite uses it
+            throw($e);
         }
     }
 
