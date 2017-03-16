@@ -70,7 +70,7 @@ SKIP_ACCOUNT=1 ./run-test path_to_test.php
 
 Dump FreeSwitch events content to MakeBusy log file:
 ```
-LOG_EVENTS=1 ./run-test path_to_test.php
+DUMP_EVENTS=1 ./run-test path_to_test.php
 ```
 
 Dump HTTP REST API content:
