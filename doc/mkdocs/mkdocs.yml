@@ -1,0 +1,14 @@
+site_name: Testing
+
+pages:
+- 'index.md'
+- 'Make-Busy':
+    - 'README.md'
+    - './CONTRIBUTING.md'
+    - './TODO.md'
+- 'Tests':
+    - 'How to write tests': './doc/HOWTO.md'
+- 'Docker':
+    - './docker/README.md'
+- 'CI':
+    - './ci/README.md'
