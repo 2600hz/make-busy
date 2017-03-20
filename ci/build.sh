@@ -8,7 +8,6 @@ export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 PARALLEL=${PARALLEL:-"4"}
 COMMIT=${1:0:10}
 REPO=$2
-REPO_URL=$3
 if [ -z $COMMIT ]
 then
 	echo Usage: $0 commit_ref repo_ref
@@ -43,7 +42,7 @@ touch $LOCK/$COMMIT
 
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
-cd ~/kazoo-docker/kazoo && ./build-commit.sh $COMMIT $REPO_URL
+cd ~/kazoo-docker/kazoo && ./build-commit.sh $COMMIT
 
 function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log

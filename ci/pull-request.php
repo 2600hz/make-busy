@@ -21,10 +21,9 @@ function process_pr($action, $pr) {
 	$client = client();
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
-	$repo_url = $pr->base->repo->url;
 	$commit = $pr->head->sha;
 	$short = substr($commit, 0, 10);
-	error_log(sprintf("action:%s owner:%s repo:%s repo_url:%s commit:%s", $action, $owner, $repo, $repo_url, $commit));
+	error_log(sprintf("action:%s owner:%s repo:%s commit:%s", $action, $owner, $repo, $commit));
 	if ($action == "closed") {
 		error_log("skipping action");
 		return;
@@ -32,7 +31,7 @@ function process_pr($action, $pr) {
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$short");
-		exec("./build.sh $short $owner:$repo:$commit $repo_url > ~/volume/log/$short/build.log 2>&1 &");
+		exec("./build.sh $short $owner:$repo:$commit > ~/volume/log/$short/build.log 2>&1 &");
 		exit(0);
 	}
 }
