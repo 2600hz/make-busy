@@ -6,6 +6,8 @@ $req = json_decode($content);
 if ($_SERVER['HTTP_X_GITHUB_EVENT'] == 'pull_request') {
 	$pr = $req->pull_request;
 	$repo = $pr->base->repo->name;
+	$action = $req->action;
+	error_log(sprintf("repo:%s action:%s", $repo, $action));
 	switch ($repo) {
 		case "kazoo":
 			kazoo($action, $pr);
