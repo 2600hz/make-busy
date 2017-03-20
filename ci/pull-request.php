@@ -4,7 +4,28 @@ require_once 'vendor/autoload.php';
 $content = file_get_contents("php://input");
 $req = json_decode($content);
 if ($_SERVER['HTTP_X_GITHUB_EVENT'] == 'pull_request') {
-	process_pr($req->action, $req->pull_request);
+	$pr = $req->pull_request;
+	$repo = $pr->base->repo->name;
+	switch ($repo) {
+		case "kazoo":
+			kazoo($action, $pr);
+			break;
+		case "make-busy":
+			make_busy($action, $pr);
+			break;
+		case "kazoo-docker":
+			kazoo_docker($action, $pr);
+			break;
+		case "make-busy-callflow":
+			make_busy_callflow($action, $pr);
+			break;
+		case "make-busy-crossbar":
+			make_busy_callflow($action, $pr);
+			break;
+		case "make-busy-conference":
+			make_busy_conference($action, $pr);
+			break;
+	}
 }
 
 function get_token() {
@@ -17,7 +38,7 @@ function client() {
 	return $client;
 }
 
-function process_pr($action, $pr) {
+function kazoo($action, $pr) {
 	$client = client();
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
@@ -33,5 +54,35 @@ function process_pr($action, $pr) {
 		exec("mkdir -p ~/volume/log/$short");
 		exec("./build.sh $short $owner:$repo:$commit > ~/volume/log/$short/build.log 2>&1 &");
 		exit(0);
+	}
+}
+
+function make_busy($action, $pr) {
+	if ($action == "closed") {
+		exec("cd ~/make-busy && git fetch && git rebase origin/master");
+	}
+}
+
+function kazoo_docker($action, $pr) {
+	if ($action == "closed") {
+		exec("cd ~/kazoo-docker && git fetch && git rebase origin/master");
+	}
+}
+
+function make_busy_callflow($action, $pr) {
+	if ($action == "closed") {
+		exec("cd ~/tests/Callflow && git fetch && git rebase origin/master");
+	}
+}
+
+function make_busy_crossbar($action, $pr) {
+	if ($action == "closed") {
+		exec("cd ~/tests/Crossbar && git fetch && git rebase origin/master");
+	}
+}
+
+function make_busy_conference($action, $pr) {
+	if ($action == "closed") {
+		exec("cd ~/tests/Conference && git fetch && git rebase origin/master");
 	}
 }
