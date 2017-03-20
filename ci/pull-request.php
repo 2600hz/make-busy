@@ -21,7 +21,7 @@ function process_pr($action, $pr) {
 	$client = client();
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
-	$repo_url = $pr->head->repo->url;
+	$repo_url = $pr->base->repo->url;
 	$commit = $pr->head->sha;
 	$short = substr($commit, 0, 10);
 	error_log(sprintf("action:%s owner:%s repo:%s repo_url:%s commit:%s", $action, $owner, $repo, $repo_url, $commit));
