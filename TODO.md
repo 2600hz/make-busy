@@ -14,7 +14,6 @@
 
 ## Urgent
 
-2. Reset Conferences to initial state systematically
 3. Conference callflow update/cache/load?
 4. Reduce tone timeouts to speed up testing
 5. Abstract cached entities constructors (__construct/initialize pairs)
