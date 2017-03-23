@@ -11,7 +11,6 @@ use \MakeBusy\Common\Configuration;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\FreeSWITCH\Sofia\Gateway;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
-use \MakeBusy\Common\Log;
 
 class Connectivity
 {
@@ -239,7 +238,7 @@ class Connectivity
 
     public function removeCarrierAcl($carrier_name) {
         $cfg = $this->getTestAccount()->system_config("ecallmgr/default");
-        $cfg->set['acls', $carrier_name], {});
+        $cfg->set(['acls', $carrier_name], new \stdClass);
         $cfg->save();
     }
 
