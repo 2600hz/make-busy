@@ -21,7 +21,6 @@ use \MakeBusy\Kazoo\Applications\Crossbar\Webhook;
 use \MakeBusy\Kazoo\Applications\Crossbar\Connectivity;
 use \MakeBusy\Kazoo\Applications\Crossbar\PhoneNumbers;
 use \MakeBusy\Kazoo\Applications\Crossbar\Registrations;
-use \MakeBusy\Kazoo\Applications\Crossbar\SystemConfigs;
 
 abstract class AbstractTestAccount
 {
@@ -47,11 +46,6 @@ abstract class AbstractTestAccount
         } else {
             $this->create($name);
         }
-        $this->system_configs = new SystemConfigs($this);
-    }
-
-    public function SystemConfigs() {
-        return $this->system_configs;
     }
 
     public function isLoaded() {
@@ -237,4 +231,9 @@ abstract class AbstractTestAccount
     protected function setAccount($account_id) {
         $this->account = SDK::getInstance()->Account($account_id);
     }
+
+    public function system_config($config, array $arguments = array()) {
+        return SDK::getInstance()->SystemConfig($config, $arguments);
+    }
+
 }
