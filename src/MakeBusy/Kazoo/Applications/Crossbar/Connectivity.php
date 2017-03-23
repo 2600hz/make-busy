@@ -9,7 +9,6 @@ use \MakeBusy\Kazoo\SDK;
 use \MakeBusy\Common\Utils;
 use \MakeBusy\Common\Configuration;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
-use \MakeBusy\Kazoo\Applications\Crossbar\SystemConfigs;
 use \MakeBusy\FreeSWITCH\Sofia\Gateway;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 use \MakeBusy\Common\Log;
@@ -162,14 +161,14 @@ class Connectivity
     public function setAcl($name, $ip) {
         $test_account = $this->getTestAccount();
         $cidr = $ip . "/32";
-        $test_account->SystemConfigs()->setCarrierAcl($name, $cidr, "allow", "trusted");
+        $this->setCarrierAcl($name, $cidr, "allow", "trusted");
         return $this;
     }
 
     public function removeAcl($name, $ip){
         $test_account = $this->getTestAccount();
         $cidr = $ip . "/32";
-        $test_account->SystemConfigs()->removeCarrierAcl($name, $cidr);
+        $this->removeCarrierAcl($name, $cidr);
         return $this;
     }
 
@@ -227,6 +226,21 @@ class Connectivity
         $connectivity = $this->getConnectivity();
         $connectivity->servers[$gatewayid]->makebusy->port=$port;
         $connectivity->save();
+    }
+
+    public function setCarrierAcl($carrier_name, $cidr, $type, $networklist) {
+        $cfg = $this->getTestAccount()->system_config("ecallmgr/default");
+        $cfg->set(['acls', $carrier_name, 'type'], $type);
+        $cfg->set(['acls', $carrier_name, 'network-list-name'], $networklist);
+        $cfg->set(['acls', $carrier_name, 'cidr'], $cidr);
+        $cfg->set(['acls', $carrier_name, 'makebusy', 'test'], true);
+        $cfg->save();
+    }
+
+    public function removeCarrierAcl($carrier_name) {
+        $cfg = $this->getTestAccount()->system_config("ecallmgr/default");
+        $cfg->set['acls', $carrier_name], {});
+        $cfg->save();
     }
 
 }
