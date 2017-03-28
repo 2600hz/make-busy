@@ -36,22 +36,22 @@ echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
 sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
 
 echo -n "set config token_buckets.token_fill_rate: "
-sup kapps_config set token_buckets tokens_fill_rate 100
+sup kapps_config set_integer token_buckets tokens_fill_rate 100
 
 echo -n "set config token_buckets.crossbar: "
-sup kapps_config set token_buckets crossbar {}
+sup kapps_config set_json token_buckets crossbar {}
 
 echo -n "set config callflow.park.default_ringback_timeout: "
-sup kapps_config set callflow.park default_ringback_timeout 5000
+sup kapps_config set_integer callflow.park default_ringback_timeout 5000
 
 echo -n "set config conferences.route_win_timeout: "
-sup kapps_config set conferences route_win_timeout 3000
+sup kapps_config set_integer conferences route_win_timeout 3000
 
 echo -n "set config privacy.block_anonymous_caller_id: "
-sup kapps_config set privacy block_anonymous_caller_id false
+sup kapps_config set_boolean privacy block_anonymous_caller_id false
 
 echo -n "set config number_manager.local_feature_override "
-sup kapps_config set number_manager local_feature_override true
+sup kapps_config set_boolean number_manager local_feature_override true
 
 echo -n "start crossbar cb_system_configs: "
 sup crossbar_init start_mod cb_system_configs
