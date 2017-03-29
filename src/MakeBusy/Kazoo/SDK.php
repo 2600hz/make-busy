@@ -36,13 +36,15 @@ class SDK
                 Log::$severity("sdk %s", $message);
             };
 
-            $entity_logger = function() {
-                $args = func_get_args();
-                $severity = array_shift($args);
-                $header = array_shift($args);
-                $entity = array_shift($args);
+            $entity_logger = function($type, $request) {
                 if (isset($_ENV["LOG_ENTITIES"])) {
-                    Log::dump("sdk $severity $header", print_r($entity, true));
+                    try {
+                        $object = self::substituteVars(json_decode($request->getBody()));
+                        Log::debug("%s:\n%s", $type, json_encode($object, JSON_PRETTY_PRINT) );
+                    }
+                    catch (Exception $e) {
+                        Log::debug("%s:\n%s", $type, $request->getBody() );
+                    }
                 }
             };
 
@@ -55,4 +57,19 @@ class SDK
 
         return self::$sdk;
     }
+
+    private static function substituteVars($object) {
+        $vars = [
+            "auth_token" => "{AUTH_TOKEN}",
+            "node" => "{NODE}",
+            "revision" => "{REVISION}"
+        ];
+        foreach($vars as $k => $v) {
+            if (isset($object->$k)) {
+                $object->$k = $v;
+            }
+        }
+        return $object;
+    }
+
 }
