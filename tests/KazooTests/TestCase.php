@@ -253,13 +253,12 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         self::assertEquals($expected, $tone);
     }
 
-    public static function assertIsSet($object, $key, $message) {
+    public static function assertIsSet($object, $key, $message = null) {
         self::assertTrue(isset($object->$key), $message);
     }
 
-    public static function assertNotSet($object, $key, $message) {
+    public static function assertNotSet($object, $key, $message = null) {
         self::assertFalse(isset($object->$key), $message);
     }
-
 
 }
