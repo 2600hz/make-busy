@@ -9,6 +9,21 @@ use \MakeBusy\Common\Log;
 
 use \MakeBusy\Common\Configuration;
 
+function substitute_vars($object) {
+    $vars = [
+        "auth_token" => "{AUTH_TOKEN}",
+        "node" => "{NODE}",
+        "revision" => "{REVISION}",
+        "request_id" => "{REQUEST_ID}"
+    ];
+    foreach($vars as $k => $v) {
+        if (isset($object->$k)) {
+            $object->$k = $v;
+        }
+    }
+    return $object;
+}
+
 class SDK
 {
     private static $sdk;
@@ -36,13 +51,15 @@ class SDK
                 Log::$severity("sdk %s", $message);
             };
 
-            $entity_logger = function() {
-                $args = func_get_args();
-                $severity = array_shift($args);
-                $header = array_shift($args);
-                $entity = array_shift($args);
+            $entity_logger = function($type, $request) {
                 if (isset($_ENV["LOG_ENTITIES"])) {
-                    Log::dump("sdk $severity $header", print_r($entity, true));
+                    try {
+                        $object = substitute_vars(json_decode($request->getBody()));
+                        Log::debug("%s:\n%s", $type, json_encode($object, JSON_PRETTY_PRINT) );
+                    }
+                    catch (Exception $e) {
+                        Log::debug("%s:\n%s", $type, $request->getBody() );
+                    }
                 }
             };
 
