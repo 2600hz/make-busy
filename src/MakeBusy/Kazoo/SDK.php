@@ -13,8 +13,7 @@ function substitute_vars($object) {
     $vars = [
         "auth_token" => "{AUTH_TOKEN}",
         "node" => "{NODE}",
-        "revision" => "{REVISION}",
-        "request_id" => "{REQUEST_ID}"
+        "revision" => "{REVISION}"
     ];
     foreach($vars as $k => $v) {
         if (isset($object->$k)) {
