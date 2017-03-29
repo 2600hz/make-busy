@@ -9,20 +9,6 @@ use \MakeBusy\Common\Log;
 
 use \MakeBusy\Common\Configuration;
 
-function substitute_vars($object) {
-    $vars = [
-        "auth_token" => "{AUTH_TOKEN}",
-        "node" => "{NODE}",
-        "revision" => "{REVISION}"
-    ];
-    foreach($vars as $k => $v) {
-        if (isset($object->$k)) {
-            $object->$k = $v;
-        }
-    }
-    return $object;
-}
-
 class SDK
 {
     private static $sdk;
@@ -53,7 +39,7 @@ class SDK
             $entity_logger = function($type, $request) {
                 if (isset($_ENV["LOG_ENTITIES"])) {
                     try {
-                        $object = substitute_vars(json_decode($request->getBody()));
+                        $object = self::substituteVars(json_decode($request->getBody()));
                         Log::debug("%s:\n%s", $type, json_encode($object, JSON_PRETTY_PRINT) );
                     }
                     catch (Exception $e) {
@@ -71,4 +57,19 @@ class SDK
 
         return self::$sdk;
     }
+
+    private static function substituteVars($object) {
+        $vars = [
+            "auth_token" => "{AUTH_TOKEN}",
+            "node" => "{NODE}",
+            "revision" => "{REVISION}"
+        ];
+        foreach($vars as $k => $v) {
+            if (isset($object->$k)) {
+                $object->$k = $v;
+            }
+        }
+        return $object;
+    }
+
 }
