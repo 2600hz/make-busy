@@ -62,11 +62,14 @@ class SDK
         $vars = [
             "auth_token" => "{AUTH_TOKEN}",
             "node" => "{NODE}",
-            "revision" => "{REVISION}"
+            "revision" => "{REVISION}",
+            "request_id" => "{REQUEST_ID}"
         ];
-        foreach($vars as $k => $v) {
-            if (isset($object->$k)) {
-                $object->$k = $v;
+        if (isset($_ENV["SKIP_SOME_RESPONSE_VARS"])) {
+            foreach($vars as $k => $v) {
+                if (isset($object->$k)) {
+                    $object->$k = $v;
+                }
             }
         }
         return $object;
