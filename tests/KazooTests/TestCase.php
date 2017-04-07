@@ -118,7 +118,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function setUpBeforeClass() {
+        self::saveSystemConfigs();
+        self::SystemConfig("token_buckets/default")->fetch()->patch(["tokens_fill_rate"], 100);
+
         $class = get_called_class();
+
         self::$type = AbstractTestAccount::shortName($class);
         self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
         Log::info("Start test: %s case: %s", self::$type, self::$base_type);
@@ -133,7 +137,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             if( ! isset($_ENV['SKIP_ACCOUNT'])) {
                 self::$account = new TestAccount(get_called_class());
             }
-            self::saveSystemConfigs();
             static::setUpCase();
         });
 
@@ -271,14 +274,16 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     private static function saveSystemConfigs() {
-        foreach(static::system_configs() as $config) {
-            self::$system_configs[$config] = SDK::getInstance()->SystemConfig($config)->fetch();
+        $configs = array_merge(static::system_configs(), ["token_buckets"]);
+        foreach($configs as $config) {
+            self::$system_configs[$config] = self::SystemConfig($config)->fetch();
             self::deleteSystemConfig($config);
         }
     }
 
     private static function restoreSystemConfigs() {
-        foreach(static::system_configs() as $config) {
+        $configs = array_merge(static::system_configs(), ["token_buckets"]);
+        foreach($configs as $config) {
             self::deleteSystemConfig($config);
             self::$system_configs[$config]->save();
         }
@@ -286,10 +291,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function deleteSystemConfig($config) {
        try {
-            SDK::getInstance()->SystemConfig($config)->remove();
+            self::SystemConfig($config)->remove();
         }
         catch(Exception $e) {
         }
+    }
+
+    public static function SystemConfig($config) {
+        return SDK::getInstance()->SystemConfig($config);
     }
 
 }
