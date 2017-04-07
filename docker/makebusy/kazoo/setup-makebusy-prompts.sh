@@ -8,4 +8,4 @@ rm -f make-busy-media.tar.gz
 docker cp ../mk-bs kazoo.$NETWORK:/home/user
 sup kazoo_media_maintenance import_prompts /home/user/mk-bs/ mk-bs
 cd ../
-rm -rf mk-bs
+# rm -rf mk-bs

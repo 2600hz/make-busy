@@ -35,27 +35,10 @@ IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"$NETWORK\").
 echo -n "add makebusy-fs-carrier.$NETWORK to kazoo.$NETWORK ACL with ip $IP: "
 sup ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$NETWORK $IP
 
-echo -n "set config token_buckets.token_fill_rate: "
-sup kapps_config set_integer token_buckets tokens_fill_rate 100
-
-echo -n "set config token_buckets.crossbar: "
-sup kapps_config set_json token_buckets crossbar {}
-
-echo -n "set config callflow.park.default_ringback_timeout: "
-sup kapps_config set_integer callflow.park default_ringback_timeout 5000
-
-echo -n "set config conferences.route_win_timeout: "
-sup kapps_config set_integer conferences route_win_timeout 3000
-
-echo -n "set config privacy.block_anonymous_caller_id: "
-sup kapps_config set_boolean privacy block_anonymous_caller_id false
-
-echo -n "set config number_manager.local_feature_override "
-sup kapps_config set_boolean number_manager local_feature_override true
-
 echo -n "start crossbar cb_system_configs: "
-sup crossbar_init start_mod cb_system_configs
+sup crossbar_maintenance start_module cb_system_configs
 
 echo -n "flush cache docs: "
 sup kz_datamgr flush_cache_docs
+
 exit 0
