@@ -12,6 +12,7 @@ use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\Kazoo\AbstractTestAccount;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
 use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
+use \MakeBusy\Kazoo\SDK;
 
 use \Exception;
 use Kazoo\Api\Exception\ApiException;
@@ -29,6 +30,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     protected static $account;
     protected static $type;
     protected static $base_type;
+    protected static $system_configs = [];
 
     /**
     * @dataProvider sipUriProvider
@@ -41,6 +43,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     // override this to run a test
     public function main($sip_uri) {
+    }
+
+    // override this to save system configs
+    protected static function system_configs() {
+        return [];
     }
 
     // override this to set up case
@@ -126,6 +133,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             if( ! isset($_ENV['SKIP_ACCOUNT'])) {
                 self::$account = new TestAccount(get_called_class());
             }
+            self::saveSystemConfigs();
             static::setUpCase();
         });
 
@@ -145,6 +153,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         self::safeCall(function() {
             static::tearDownCase();
         });
+        self::restoreSystemConfigs();
     }
 
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
@@ -259,6 +268,28 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function assertNotSet($object, $key, $message = null) {
         self::assertFalse(isset($object->$key), $message);
+    }
+
+    private static function saveSystemConfigs() {
+        foreach(static::system_configs() as $config) {
+            self::$system_configs[$config] = SDK::getInstance()->SystemConfig($config)->fetch();
+            self::deleteSystemConfig($config);
+        }
+    }
+
+    private static function restoreSystemConfigs() {
+        foreach(static::system_configs() as $config) {
+            self::deleteSystemConfig($config);
+            self::$system_configs[$config]->save();
+        }
+    }
+
+    public static function deleteSystemConfig($config) {
+       try {
+            SDK::getInstance()->SystemConfig($config)->remove();
+        }
+        catch(Exception $e) {
+        }
     }
 
 }
