@@ -33,7 +33,7 @@ class Media
         $media = $account->Media();
         $media->name = $name;
 
-        $media->language = "mk-bs"; //set language for conference tests
+        $media->language = "en-mb"; //set language for conference tests
 
         $media->save();
         $this->setMedia($media);

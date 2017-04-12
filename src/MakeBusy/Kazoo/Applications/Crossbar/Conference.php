@@ -83,7 +83,7 @@ class Conference
 
     public function createCallflow(array $numbers, array $options = array()) { // Need Language for test call from PSTN
         $builder = new Builder($numbers);
-        $mkbs = new Language("mk-bs");
+        $mkbs = new Language("en-mb");
         $conference_callflow = new ConferenceNode($this->getId());
         $mkbs->addChild($conference_callflow);
         $data = $builder->build($mkbs);
@@ -95,7 +95,7 @@ class Conference
 
     public function createServiceCallflow(array $numbers, array $options = array()) { // Create Callflow for ConferenceService without data_id
         $builder = new Builder($numbers);
-        $mkbs = new Language("mk-bs");
+        $mkbs = new Language("en-mb");
         $conference_callflow = new ConferenceNode();
         $mkbs->addChild($conference_callflow);
         $data = $builder->build($mkbs);

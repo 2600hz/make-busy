@@ -179,7 +179,7 @@ abstract class AbstractTestAccount
         $account = SDK::getInstance()->Account(null);
         $account->name = $name;
 
-        $account->language = "mk-bs";
+        $account->language = "en-mb";
 
         $account->makebusy = new stdClass();
         $account->makebusy->test = TRUE;

@@ -15,7 +15,7 @@ All images are intended to be self-buildable.
 
 ## Kazoo setup
 
-In order to test some features (e.g. Voicemail or Conference) you need to install special voice prompts as mk-bs
+In order to test some features (e.g. Voicemail or Conference) you need to install special voice prompts as en-mb
 language, and tune some Kazoo variables.
 
 There are two sample shell scripts to assist you to prepare Kazoo:

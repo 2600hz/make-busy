@@ -100,7 +100,7 @@ class Voicemail
             return;
         }
         $builder    = new Builder($numbers);
-        $mkbs       = new Language("mk-bs");
+        $mkbs       = new Language("en-mb");
         $voicemail  = new VoicemailNode($this->getId());
         $mkbs->addChild($voicemail);
         $data       = $builder->build($mkbs);
@@ -113,7 +113,7 @@ class Voicemail
             return;
         }
         $builder    = new Builder($numbers);
-        $mkbs       = new Language("mk-bs");
+        $mkbs       = new Language("en-mb");
         $voicemail  = new VoicemailNode();
         $mkbs->addChild($voicemail);
         $voicemail->action("check");
@@ -129,7 +129,7 @@ class Voicemail
         $builder    = new Builder($numbers);
         $voicemail  = new VoicemailNode($this->getId());
         $user       = new UserNode($user_id);
-        $mkbs       = new Language("mk-bs");
+        $mkbs       = new Language("en-mb");
 
         $user->addChild($mkbs)->addChild($voicemail);
 
@@ -154,7 +154,7 @@ class Voicemail
         $language->module = "language";
         $data = new stdClass();
 
-        $data->language = "mk-bs";
+        $data->language = "en-mb";
         $language->data = (object) $data;
 
         $flow = new stdClass();
