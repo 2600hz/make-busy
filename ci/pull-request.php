@@ -45,8 +45,9 @@ function kazoo($action, $pr) {
 	$owner = $pr->base->repo->owner->login;
 	$repo = $pr->base->repo->name;
 	$commit = $pr->head->sha;
+	$pr_number = $pr->number;
 	$short = substr($commit, 0, 10);
-	error_log(sprintf("action:%s owner:%s repo:%s commit:%s", $action, $owner, $repo, $commit));
+	error_log(sprintf("action:%s pr:%s owner:%s repo:%s commit:%s", $action, $pr_number, $owner, $repo, $commit));
 	if ($action == "closed") {
 		error_log("skipping action");
 		return;
@@ -54,7 +55,7 @@ function kazoo($action, $pr) {
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$short");
-		exec("./build.sh $short $owner:$repo:$commit > ~/volume/log/$short/build.log 2>&1 &");
+		exec("./build.sh $short $owner:$repo:$commit pull/$pr_number/head > ~/volume/log/$short/build.log 2>&1 &");
 		exit(0);
 	}
 }

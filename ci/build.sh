@@ -8,6 +8,7 @@ export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 PARALLEL=${PARALLEL:-"4"}
 COMMIT=${1:0:10}
 REPO=$2
+BRANCH=$3
 if [ -z $COMMIT ]
 then
 	echo Usage: $0 commit_ref repo_ref
@@ -42,8 +43,8 @@ touch $LOCK/$COMMIT
 
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
-cd ~/kazoo-docker/kazoo && ./build-commit.sh $COMMIT
-
+echo Build Kazoo commit:$COMMIT branch:$BRANCH
+cd ~/kazoo-docker/kazoo && BRANCH=$BRANCH ./build-commit.sh $COMMIT
 function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
@@ -71,7 +72,7 @@ cd ~/kazoo-docker/rabbitmq && ./run.sh
 cd ~/kazoo-docker/couchdb && ./run.sh -td kazoo/couchdb-mkbs
 cd ~/kazoo-docker/kamailio && ./run.sh
 cd ~/kazoo-docker/freeswitch && ./run.sh
-cd ~/kazoo-docker/kazoo && ./run-commit.sh $COMMIT
+cd ~/kazoo-docker/kazoo && ./run.sh
 
 if [ "$(docker ps -q --filter name=kazoo.$NETWORK)" = ""  ]
 then
