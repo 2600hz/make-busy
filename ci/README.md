@@ -14,8 +14,4 @@
 
 # TODO
 
-1. Make a container of CI 'server' alike kazoo-meta
-2. Re-trigger tests against specific commit
-3. Clear unused docker containers (e.g. stopped)
-4. Update MakeBusy container/test suite on commit to their repos
 5. Speed up CouchDB setup with pre-created sounds/etc?
