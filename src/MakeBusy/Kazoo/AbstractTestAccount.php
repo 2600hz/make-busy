@@ -221,7 +221,7 @@ abstract class AbstractTestAccount
     }
 
     public function getLanguage() {
-        return $this->language;
+        return $this->getAccount()->language;
     }
 
     public function getAccountRealm() {
