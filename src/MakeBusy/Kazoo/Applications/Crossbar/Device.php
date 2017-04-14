@@ -80,7 +80,7 @@ class Device
         $device->makebusy->profile = $profile;
         $device->makebusy->register = (bool)$register;
 
-        $device->language = "en-mb"; //set language for conference tests
+        $device->language = $this->getTestAccount()->getLanguage();
 
         $device = $this->mergeOptions($device, $options);
 
