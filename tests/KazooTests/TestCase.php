@@ -227,9 +227,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         Log::info("call %s has answered call %s", $channel_b->getUuid(), $channel_a->getUuid());
     }
 
-    public static function ensureTalking($first_channel, $second_channel, $freq = 600) {
-        $first_channel->playTone($freq, 3000, 0, 5);
-        $tone = $second_channel->detectTone($freq);
+    public static function ensureTalking($first_channel, $second_channel, $freq = 600, $timeout = 5) {
+        $first_channel->playTone($freq, $timeout*1000, 0, 1);
+        $tone = $second_channel->detectTone($freq, $timeout);
         $first_channel->breakout();
         self::assertEquals($freq, $tone, "Expected tone wasn't heard");
     }
