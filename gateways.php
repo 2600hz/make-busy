@@ -15,7 +15,7 @@ $include = EslConnection::getInstance($type)
 	->getProfiles()
 	->getProfile("profile")
 	->getGateways()
-	->asXmlInclude(); 
+	->asXmlInclude();
 
 error_log("response:\n" . htmlentities($include));
 echo $include;
