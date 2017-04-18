@@ -44,7 +44,7 @@ touch $LOCK/$COMMIT
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 echo Build Kazoo commit:$COMMIT branch:$BRANCH
-cd ~/kazoo-docker/kazoo && BRANCH=$BRANCH ./build.sh $COMMIT
+cd ~/kazoo-docker/kazoo && BUILD_FLAGS=-q BRANCH=$BRANCH ./build.sh $COMMIT
 function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
