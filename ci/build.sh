@@ -25,7 +25,7 @@ fi
 if [ -z $REPO_REF ]
 then
 	SHA=$(curl -s https://api.github.com/repos/2600hz/kazoo/commits/$COMMIT | jq -r '.sha')
-	REPO_REF=2600hz:kazoo:$SHA
+	REPO_REF=2600hz:kazoo:$SHA:$PR
 	echo Guessed repo: $REPO_REF
 fi
 
