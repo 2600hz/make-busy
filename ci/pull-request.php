@@ -36,7 +36,7 @@ function get_token() {
 
 function client() {
 	$client = new \Github\Client();
-	$client->authenticate(get_token(), null,  Github\Client::AUTH_HTTP_TOKEN);
+	$client->authenticate(get_token(), null, Github\Client::AUTH_HTTP_TOKEN);
 	return $client;
 }
 
@@ -55,7 +55,7 @@ function kazoo($action, $pr) {
 	error_log("builder: $short $owner:$repo:$commit");
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$short");
-		exec("BRANCH=pull/$pr_number/head ./build.sh $short $owner:$repo:$commit:$pr_number > ~/volume/log/$short/build.log 2>&1 &");
+		exec("BRANCH=pull/$pr_number/head ./build.sh $short $owner:$repo:$commit:$pr_number >> ~/volume/log/$short/build.log 2>&1 &");
 		exit(0);
 	}
 }
