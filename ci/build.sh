@@ -12,6 +12,7 @@ REPO_REF=$2 # format: owner:name:commit, comes from pull-request.php, used to se
 # Beware: global variables
 PARALLEL=${PARALLEL:-"4"}
 BRANCH=${BRANCH:-""}
+PR=${PR:-""} # only to guess REPO_REF, see action.php
 KZ_BUILD_FLAGS=${KZ_BUILD_FLAGS:-""} # comes from action.php, to alter kazoo build
 TOKEN=${TOKEN} # Github access token, supposedly set as container global
 

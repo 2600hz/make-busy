@@ -6,9 +6,11 @@ $action = $_POST['action'];
 // typechecks, just in case of malicious input
 $branch = "";
 $pr_uri = "";
+$pr_cmd = "";
 if (preg_match('/^\d+$/', $pr)) {
 	$branch = "BRANCH=pull/$pr/head";
 	$pr_uri = "&pr=$pr";
+	$pr_cmd = "PR=$pr";
 }
 if (! preg_match('/^[\w|\d]{10}$/', $ref)) {
 	exit(1);
@@ -17,7 +19,7 @@ if (! preg_match('/^[\w|\d]{10}$/', $ref)) {
 if ($action == "run_again") {
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$ref");
-		exec("$branch ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
+		exec("$pr_cmd $branch ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
 	}
 } elseif ($action == "remove_locks") {
@@ -25,7 +27,7 @@ if ($action == "run_again") {
 } elseif ($action == "rebuild") {
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$ref");
-		exec("KZ_BUILD_FLAGS=--no-cache ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
+		exec("KZ_BUILD_FLAGS=--no-cache $branch $pr_cmd ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
 	}
 }
