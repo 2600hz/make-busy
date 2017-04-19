@@ -7,6 +7,11 @@
 		$ref = substr($ref, 0, 10);
 	}
 
+	$pr = $_GET['pr'];
+	if (! preg_match('/^\d+$/', $pr)) {
+		$pr = "";
+	}
+
 	if (isset($_GET['type'])) {
 		$log = $_GET['type'];
 	} else {
@@ -46,6 +51,7 @@
 <form action="action.php" method="POST">
 	<input type="hidden" name="action" value="run_again">
 	<input type="hidden" name="ref" value="<?php echo $ref ?>">
+	<input type="hidden" name="pr" value="<?php echo $pr ?>">
 	<input type="submit" value="Run again">
 </form>
 </td>
@@ -53,6 +59,7 @@
 <form action="action.php" method="POST">
 	<input type="hidden" name="action" value="rebuild">
 	<input type="hidden" name="ref" value="<?php echo $ref ?>">
+	<input type="hidden" name="pr" value="<?php echo $pr ?>">
 	<input type="submit" value="Rebuild and run">
 </form>
 </td>

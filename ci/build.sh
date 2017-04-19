@@ -1,28 +1,34 @@
 #!/bin/bash
-# script assumes specific folder structure:
+# This script assumes following folder structure:
 # $HOME/kazoo-docker
 # $HOME/make-busy
 # $HOME/tests
-
 export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
+
+# Command line arguments
+COMMIT=${1:0:10} # use first 10 digits of sha to reference
+REPO_REF=$2 # format: owner:name:commit, comes from pull-request.php, used to set statuses
+
+# Beware: global variables
 PARALLEL=${PARALLEL:-"4"}
-COMMIT=${1:0:10}
-REPO=$2
-BRANCH=$3
+BRANCH=${BRANCH:-""}
+KZ_BUILD_FLAGS=${KZ_BUILD_FLAGS:-""} # comes from action.php, to alter kazoo build
+TOKEN=${TOKEN} # Github access token, supposedly set as container global
+
 if [ -z $COMMIT ]
 then
 	echo Usage: $0 commit_ref repo_ref
 	exit 1
 fi
 
-if [ -z $REPO ]
+if [ -z $REPO_REF ]
 then
 	SHA=$(curl -s https://api.github.com/repos/2600hz/kazoo/commits/$COMMIT | jq -r '.sha')
-	REPO=2600hz:kazoo:$SHA
-	echo Guessed repo: $REPO
+	REPO_REF=2600hz:kazoo:$SHA
+	echo Guessed repo: $REPO_REF
 fi
 
-cd ~/make-busy/ci && php update-status.php $TOKEN $REPO pending
+cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF pending
 
 LOCK=/tmp/makebusy
 mkdir -p $LOCK
@@ -44,7 +50,7 @@ touch $LOCK/$COMMIT
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 echo Build Kazoo commit:$COMMIT branch:$BRANCH
-cd ~/kazoo-docker/kazoo && BUILD_FLAGS=-q BRANCH=$BRANCH ./build.sh $COMMIT
+cd ~/kazoo-docker/kazoo && BUILD_FLAGS="-q $KZ_BUILD_FLAGS" BRANCH=$BRANCH ./build.sh $COMMIT
 function stop_segment {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
@@ -147,17 +153,17 @@ cat ~/volume/log/$COMMIT/run.log.tmp | grep -P TEST\|SUITE > ~/volume/log/$COMMI
 if grep -q 'GIVE UP SUITE' ~/volume/log/$COMMIT/run.log
 then
 	echo SET ERROR STATUS
-	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO error
+	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF error
 	exit 1
 fi
 
 if grep -q 'COMPLETE SUITE' ~/volume/log/$COMMIT/run.log
 then
 	echo SET SUCCESS STATUS
-	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO success
+	cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF success
 	exit 0
 fi
 
 echo SET FAILURE STATUS > /dev/null
-cd ~/make-busy/ci && php update-status.php $TOKEN $REPO failure
+cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF failure
 exit 2
