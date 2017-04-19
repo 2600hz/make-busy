@@ -15,12 +15,21 @@ BRANCH=${BRANCH:-""}
 PR=${PR:-""} # only to guess REPO_REF, see action.php
 KZ_BUILD_FLAGS=${KZ_BUILD_FLAGS:-""} # comes from action.php, to alter kazoo build
 TOKEN=${TOKEN} # Github access token, supposedly set as container global
+LOCK=/tmp/makebusy # Where to store lock files
 
 if [ -z $COMMIT ]
 then
 	echo Usage: $0 commit_ref repo_ref
 	exit 1
 fi
+
+mkdir -p $LOCK
+
+# Wait if PR is updated before this run ends
+while [ -f $LOCK/$COMMIT ]
+do
+	sleep 30
+done
 
 if [ -z $REPO_REF ]
 then
@@ -31,9 +40,6 @@ fi
 
 cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF pending
 
-LOCK=/tmp/makebusy
-mkdir -p $LOCK
-
 while [ $(ls -1 $LOCK | wc -l) -gt $PARALLEL ]
 do
 	echo wait in queue for $(ls $LOCK)
@@ -42,7 +48,6 @@ done
 
 for file in kazoo freeswitch kamailio makebusy-fs-auth makebusy-fs-pbx makebusy-fs-carrier run suite makebusy
 do
-	echo "Remove old log file $file"
 	rm -f ~/volume/log/$COMMIT/$file.log
 done
 
