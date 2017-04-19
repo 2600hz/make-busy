@@ -19,7 +19,7 @@ if (! preg_match('/^[\w|\d]{10}$/', $ref)) {
 if ($action == "run_again") {
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$ref");
-		exec("$pr_cmd $branch ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
+		exec("./waiter.sh $ref && $pr_cmd $branch ./build.sh $ref >> ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
 	}
 } elseif ($action == "remove_locks") {
@@ -27,7 +27,7 @@ if ($action == "run_again") {
 } elseif ($action == "rebuild") {
 	if(pcntl_fork() > 0) {
 		exec("mkdir -p ~/volume/log/$ref");
-		exec("KZ_BUILD_FLAGS=--no-cache $branch $pr_cmd ./build.sh $ref > ~/volume/log/$ref/build.log 2>&1 &");
+		exec("./waiter.sh $ref && KZ_BUILD_FLAGS=--no-cache $branch $pr_cmd ./build.sh $ref >> ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
 	}
 }
