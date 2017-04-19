@@ -8,7 +8,7 @@
 	}
 
 	$pr = "";
-	if (isset($_GET['pr']) && preg_match('/^\d+$/', $pr)) {
+	if (isset($_GET['pr']) && preg_match('/^\d+$/', $_GET['pr'])) {
 		$pr = $_GET['pr'];
 	}
 
