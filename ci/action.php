@@ -5,8 +5,10 @@ $action = $_POST['action'];
 
 // typechecks, just in case of malicious input
 $branch = "";
+$pr_uri = "";
 if (preg_match('/^\d+$/', $pr)) {
 	$branch = "BRANCH=pull/$pr/head";
+	$pr_uri = "&pr=$pr";
 }
 if (! preg_match('/^[\w|\d]{10}$/', $ref)) {
 	exit(1);
@@ -28,4 +30,4 @@ if ($action == "run_again") {
 	}
 }
 
-header(sprintf("Location: status.php?ref=%s", $ref));
+header(sprintf("Location: status.php?ref=%s$pr_uri", $ref));

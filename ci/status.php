@@ -7,9 +7,9 @@
 		$ref = substr($ref, 0, 10);
 	}
 
-	$pr = $_GET['pr'];
-	if (! preg_match('/^\d+$/', $pr)) {
-		$pr = "";
+	$pr = "";
+	if (isset($_GET['pr']) && preg_match('/^\d+$/', $pr)) {
+		$pr = $_GET['pr'];
 	}
 
 	if (isset($_GET['type'])) {
