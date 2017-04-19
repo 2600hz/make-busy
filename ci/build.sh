@@ -9,13 +9,15 @@ export PATH=$PATH:~/kazoo-docker/kazoo:~/make-busy/bin
 COMMIT=${1:0:10} # use first 10 digits of sha to reference
 REPO_REF=$2 # format: owner:name:commit, comes from pull-request.php, used to set statuses
 
-# Beware: global variables
+# Configuration
 PARALLEL=${PARALLEL:-"4"}
+LOCK=/tmp/makebusy # Where to store lock files
+
+# Beware: overridable global variables
 BRANCH=${BRANCH:-""}
 PR=${PR:-""} # only to guess REPO_REF, see action.php
 KZ_BUILD_FLAGS=${KZ_BUILD_FLAGS:-""} # comes from action.php, to alter kazoo build
 TOKEN=${TOKEN} # Github access token, supposedly set as container global
-LOCK=/tmp/makebusy # Where to store lock files
 
 if [ -z $COMMIT ]
 then
