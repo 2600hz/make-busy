@@ -74,7 +74,7 @@ class Connection extends Socket
         return $this;
     }
 
-    public function clone() {
+    public function __clone() {
         return new Connection($this->ip_address, $this->ip_port, $this->auth_key, $this->connect_options, $this->type);
     }
 
