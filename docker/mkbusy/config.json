@@ -1,0 +1,54 @@
+{
+
+"sip": {
+    "targets": [
+        "kamailio"
+    ]
+},
+
+"webhooks": {
+    "uri": "http://makebusy/webhook.php"
+},
+
+"sdk": {
+    "base_url": "http://kazoo:8000",
+    "auth_username": "admin",
+    "auth_password": "admin",
+    "auth_realm": "admin"
+},
+
+"esl": {
+    "auth": {
+        "ip_address": "makebusy-fs-auth",
+        "port": "8021",
+        "auth_key": "ClueCon"
+    },
+    "carrier": {
+        "ip_address": "makebusy-fs-carrier",
+        "port": "8021",
+        "auth_key": "ClueCon"
+    },
+    "pbx": {
+        "ip_address": "makebusy-fs-pbx",
+        "port": "8021",
+        "auth_key": "ClueCon"
+    }
+},
+
+"media": {
+    "welcome_prompt_path": "/home/user/make-busy/prompts/prompts/welcome.wav"
+},
+
+"log": {
+    "log_type": "file",
+    "log_file": "/tmp/makebusy.log",
+    "log_name": "php-shared",
+    "log_stream": 128,
+    "email": {
+        "from_address": "app@{{hostname}}",
+        "to_address": "",
+        "subject": ""
+    }
+}
+
+}
