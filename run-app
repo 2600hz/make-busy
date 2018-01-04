@@ -1,0 +1,17 @@
+#!/bin/sh
+export PHPRC=./php.ini
+APP=$1
+[ -z $APP ] && echo "please specify a folder with tests" && exit 0
+[ ! -d $APP ] && echo "$APP must be a folder with php test files" && exit 0
+shift
+echo START APP:$APP
+for SUITE in $(ls $APP)
+do
+#echo "checkng $SUITE"
+        if [ -d "$APP/$SUITE" ]
+        then
+         ./run-suite $APP/$SUITE
+        fi
+done
+exit 0
+

@@ -18,7 +18,7 @@ class Channels
         foreach ($this->getChannels() as $uuid => $channel) {
             if ( $uuid === $value && $header == 'Unique-ID' ) return $channel;
             $event = $channel->getEvent();
-            $channel_value = urldecode($event->getHeader($header));
+            $channel_value = $event->getHeader($header);
 
             if ((!$direction || $event->getHeader('Call-Direction') == $direction)
                 && strpos($channel_value, $value) !== FALSE

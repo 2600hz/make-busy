@@ -2,6 +2,8 @@
 
 namespace MakeBusy\FreeSWITCH\Esl;
 
+use \MakeBusy\Common\Log;
+
 class Event
 {
     static private $instance;
@@ -201,7 +203,7 @@ class Event
                     continue;
                 } else if (strstr($line, ':')) {
                     list($key, $value) = explode(':', $line);
-                    $this->addHeader($key, $value);
+                    $this->addHeader(trim(urldecode($key)), trim(urldecode($value)));
                 } else {
                     $this->addBody($line);
                 }

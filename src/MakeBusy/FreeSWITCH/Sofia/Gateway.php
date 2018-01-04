@@ -217,7 +217,7 @@ class Gateway
             }
 
              if ($event->getHeader("Event-Name") == "CUSTOM"
-                 && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_state"
+                 && $event->getHeader("Event-Subclass") == "sofia::gateway_state"
                  && $event->getHeader("Gateway") == $gateway_name
                 )
             {
@@ -249,7 +249,7 @@ class Gateway
                continue;
             }
             if ($event->getHeader("Event-Name") == "CUSTOM"
-                && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_state"
+                && $event->getHeader("Event-Subclass") == "sofia::gateway_state"
                 && $event->getHeader("Gateway") == $gateway_name
                )
             {

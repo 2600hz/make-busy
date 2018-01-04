@@ -352,14 +352,15 @@ class Connection extends Socket
         }
 
         $event_name = $event->getHeader('Event-Name');
+        $event_subclass = $event->getHeader('Event-Subclass'); 
         $fs_type = $this->getType();
 
         $event_uuid = $event->getUuid();
 
         if (isset($_ENV['DUMP_EVENTS'])) {
-            Log::dump("fs $fs_type incoming: $event_name", $event);
+            Log::dump("fs $fs_type incoming: $event_name $event_subclass", $event);
         } else {
-            Log::debug("fs %s incoming: %s %s", $fs_type, $event_name, $event_uuid);
+            Log::debug("fs %s incoming: %s %s", $fs_type, $event_name == "CUSTOM" ? $event_subclass : $event_name , $event_uuid);
         }
         $this->channels->newEvent($event);
 
