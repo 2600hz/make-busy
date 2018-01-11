@@ -241,11 +241,15 @@ class Profile
                 continue;
             }
 
-            if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_state") {
+            if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia::gateway_state") {
                 if ($event->getHeader("State") == "REGED") {
                     unset($waitMap[$event->getHeader("Gateway")]);
                     Log::debug("fs %s gateway %s registered, remains: %s", $this->getEsl()->getType(), $event->getHeader("Gateway"), count($waitMap));
+                } else {
+                    Log::debug("fs %s gateway %s not registered, remains: %s", $this->getEsl()->getType(), $event->getHeader("Gateway"), count($waitMap));
                 }
+            } else {
+               Log::debug("fs %s event %s %s ", $this->getEsl()->getType(), $event->getHeader("Event-Name"), $event->getHeader("Event-Subclass"));
             }
         }
         Log::debug("fs %s has all registrations", $this->getEsl()->getType());
@@ -268,7 +272,7 @@ class Profile
                 continue;
             }
 
-            if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia%3A%3Agateway_add") {
+            if ($event->getHeader("Event-Name") == "CUSTOM" && $event->getHeader("Event-Subclass") == "sofia::gateway_add") {
                 $counter--;
             }
         }

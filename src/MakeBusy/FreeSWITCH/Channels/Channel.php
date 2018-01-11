@@ -19,7 +19,7 @@ class Channel
     public function __destruct() {
         Log::debug("channel:%s is destructing, issuing uuid_kill", $this->getUuid());
         // oob destruction
-        $this->esl->clone()->api_f("uuid_kill %s", $this->getUuid());
+//        $this->esl->clone()->api_f("uuid_kill %s", $this->getUuid());
     }
 
     public function __toString() {
@@ -266,7 +266,7 @@ class Channel
         $call_uuid = $ch->getUuid();
         $to_tag = $ch->getVariable('sip_to_tag');
         $from_tag = $ch->getVariable('sip_from_tag');
-        $sip_uri = urldecode($ch->getVariable('sip_req_uri'));
+        $sip_uri = $ch->getVariable('sip_req_uri');
 
         $refer_to =     '<sip:' . $sip_uri
                  . '?Replaces=' . $call_uuid
