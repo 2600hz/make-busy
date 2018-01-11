@@ -75,7 +75,10 @@
 <td><a href="?ref=<?php echo $ref ?>&type=build">build.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=suite">suite.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=run">run.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=crossbar">crossbar.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=callmgr">callmgr.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kazoo">kazoo.log</a></td>
+<td><a href="?ref=<?php echo $ref ?>&type=media">media.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=freeswitch">freeswitch.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=kamailio">kamailio.log</a></td>
 <td><a href="?ref=<?php echo $ref ?>&type=couchdb">couchdb.log</a></td>
@@ -124,6 +127,15 @@ EOT;
 	elseif ($log == "kazoo") {
 		show_log($ref, "kazoo");
 	}
+        elseif ($log == "callmgr") {                                                                         
+                show_log($ref, "callmgr");                                                                   
+        }                                                                                                  
+        elseif ($log == "crossbar") {                                                                         
+                show_log($ref, "crossbar");                                                                   
+        }                                                                                                  
+        elseif ($log == "media") {                                                                         
+                show_log($ref, "media");                                                                   
+        }                                                                                                  
 	elseif ($log == "freeswitch") {
 		show_log($ref, "freeswitch");
 	}

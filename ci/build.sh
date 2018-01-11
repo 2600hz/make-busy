@@ -58,13 +58,18 @@ touch $LOCK/$COMMIT
 export NETWORK=git-$COMMIT
 docker network create $NETWORK
 echo Build Kazoo commit:$COMMIT branch:$BRANCH
-cd ~/kazoo-docker/kazoo && BUILD_FLAGS="-q $KZ_BUILD_FLAGS" BRANCH=$BRANCH ./build.sh $COMMIT
-function stop_segment {
+#cd ~/kazoo-docker/kazoo && BUILD_FLAGS="-q $KZ_BUILD_FLAGS" BRANCH=$BRANCH ./build.sh $COMMIT
+
+function copy_logs {
 	docker logs kazoo.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kazoo.log
+        docker logs crossbar.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/crossbar.log
+        docker logs callmgr.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/callmgr.log
+        docker logs media.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/media.log
 	docker logs kamailio.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/kamailio.log
 	docker logs freeswitch.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/freeswitch.log
 	docker logs rabbitmq.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/rabbitmq.log
-	docker logs couchdb.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/couchdb.log
+#	docker logs couchdb.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/couchdb.log
+        docker logs couchdb.$NETWORK > ~/volume/log/$COMMIT/couchdb.log
 	docker logs makebusy.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/makebusy.log
 
 	# Makebusy Post-Mortem (just in case)
@@ -72,67 +77,125 @@ function stop_segment {
 	do
 		docker logs $fs.$NETWORK | ~/kazoo-docker/bin/uncolor > ~/volume/log/$COMMIT/$fs.log
 		echo "Post-Mortem" >> ~/volume/log/$COMMIT/$fs.log
-		docker exec $fs.$NETWORK bin/fs_cli -x "sofia status" 2>&1 >> ~/volume/log/$COMMIT/$fs.log
+		docker exec $fs.$NETWORK fs_cli -x "sofia status" 2>&1 >> ~/volume/log/$COMMIT/$fs.log
 		TYPE=$(echo $fs | sed s/makebusy-fs-//)
 		docker exec $fs.$NETWORK curl -s http://makebusy.$NETWORK/gateways.php/gateways.php?type=$TYPE >> ~/volume/log/$COMMIT/$fs.log
 	done
-
-	docker stop -t 2 $(docker ps -q -a --filter name=$COMMIT)
-	docker network rm $NETWORK
-	rm -f $LOCK/$COMMIT
 }
 
-cd ~/kazoo-docker/rabbitmq && ./run.sh
-cd ~/kazoo-docker/couchdb && ./run.sh -td kazoo/couchdb-mkbs
-cd ~/kazoo-docker/kamailio && ./run.sh
-cd ~/kazoo-docker/freeswitch && ./run.sh
-cd ~/kazoo-docker/kazoo && ./run.sh
+function stop_segment {
+     copy_logs
+     cd ~/docker-compose/mkbusy && docker-compose --no-ansi -p mkbusy-$COMMIT down
+     cd ~/docker-compose/kazoo && COMMIT=$COMMIT docker-compose --no-ansi -p kazoo-$COMMIT down
+     docker network rm $NETWORK
+     rm -f $LOCK/$COMMIT
+}
 
-if [ "$(docker ps -q --filter name=kazoo.$NETWORK)" = ""  ]
-then
-	echo No Kazoo image, exiting...
-	stop_segment
-	exit 1
-fi
+function set_error {
+    cd ~/make-busy/ci && php update-status.php $TOKEN $REPO_REF error
+}
 
-cd ~/make-busy/docker/makebusy-fs && ./run-all.sh
+function error_segment {
+    stop_segment
+    set_error
+}
+
+if [ -z "$(docker image ls -q --filter=reference=2600hz/kazoo:$COMMIT)" ]                           
+then                                                                                                                                          
+        echo Building Kazoo image
+        #cd ~/images/kazoo && docker build -t 2600hz/kazoo:$COMMIT --target kazoo --build-arg COMMIT=$COMMIT .                                        
+        cd ~/images/kazoo && ./build.sh $COMMIT                                                             
+fi                                                                                                 
+
+#cd ~/images/kazoo && docker build -t 2600hz/kazoo:$COMMIT --target kazoo --build-arg COMMIT=$COMMIT .
+#cd ~/images/kazoo && ./build.sh $COMMIT
+
+if [ -z "$(docker image ls -q --filter=reference=2600hz/kazoo:$COMMIT)" ]
+then                                                                                                             
+        echo No Kazoo image, exiting...
+        set_error
+        rm -f $LOCK/$COMMIT 
+        exit 1                                                                                                   
+fi                                                                                                               
+
+                                                          
+echo "starting kazoo"                                                                  
+cd ~/docker-compose/kazoo && COMMIT=$COMMIT docker-compose --no-ansi -p kazoo-$COMMIT up -d             
+                              
+if ! ~/make-busy/docker/makebusy/kazoo/wait-for-node.sh crossbar 4m; then             
+        echo crossbar not ready after 4m, exiting...                                                       
+        error_segment    
+        exit 1                                                                        
+fi                  
+
+if ! ~/make-busy/docker/makebusy/kazoo/wait-for-node.sh callmgr 4m; then                     
+        echo callmgr not ready after 4m, exiting...
+        error_segment                  
+        exit 1                                                                                  
+fi                                                                                                    
+
+
+# need to wait for crossbar schemas update to finish
+echo Wait for Crossbar schemas update to finish
+if ! ~/make-busy/docker/makebusy/kazoo/t.sh crossbar.$NETWORK 4m "finished system schemas update"; then
+       echo Failure to determine if crossbar schemas update finished, exiting...                                      
+       error_segment                   
+       exit 1                       
+fi          
+
+echo "creating account"
+sup crossbar crossbar_maintenance create_account admin admin admin admin
+                                                                         
+cd ~/docker-compose/mkbusy && docker-compose --no-ansi -p mkbusy-$COMMIT up -d              
+
+
+
 
 # need to wait for fs drone to start
 echo Wait for FreeSwitch drones to start...
-timeout --foreground 20 watch -g "docker logs makebusy-fs-auth.$NETWORK | grep 'FreeSWITCH Started'" > /dev/null
-if [ $? -ne 0 ]
-then
-	echo Failure to start FreeSwitch drone, exiting...
-	stop_segment
-	exit $?
+if ! ~/make-busy/docker/makebusy/kazoo/t.sh makebusy-fs-auth.$NETWORK 60 "FreeSWITCH Started"; then
+       echo Failure to start FreeSwitch drone, exiting...                                                                                    
+       error_segment                                                                                                                          
+       exit 1                                                                                                                               
 fi
 
+# need to wait for mkbusy to start                                                                  
+echo Wait for Makebusy to be ready...                                                               
+if ! ~/make-busy/docker/makebusy/kazoo/t.sh makebusy.$NETWORK 60 "Development Server started"; then   
+       echo Failure to check that makebusy is ready, exiting...                                           
+       error_segment                                                                                
+       exit 1                                                                                         
+fi 
+
+docker exec makebusy-fs-auth.$NETWORK fs_cli -x 'load mod_sofia'
+
 cd ~/make-busy/docker/makebusy/kazoo && ./configure-for-makebusy.sh
-if [ $? -ne 0 ]
-then
+if [ $? -ne 0 ]; then
 	echo Failure to start Kazoo image, exiting...
-	stop_segment
+	error_segment
 	exit 1
 fi
 
 echo -n "Reload acls: "
-sup ecallmgr_maintenance reload_acls
+sup callmgr ecallmgr_maintenance reload_acls
+
+
 
 echo Sanity check...
 cd ~/make-busy/docker/makebusy/kazoo && ./sanity-check.sh
 
-echo Building makebusy...
-cd ~/make-busy/docker/makebusy
-BUILD_FLAGS=-q ./build.sh $(git rev-parse HEAD)
-if [ -d ~/volume ]
-then
-	TESTS_PATH=kazoo-ci ./run.sh
-else
-	TESTS_PATH=~/tests ./run.sh
-fi
+#echo Building makebusy...
+#cd ~/make-busy/docker/makebusy
+#BUILD_FLAGS=-q ./build.sh $(git rev-parse HEAD)
+#if [ -d ~/volume ]
+#then
+#	TESTS_PATH=kazoo-ci ./run.sh
+#else
+#	TESTS_PATH=~/tests ./run.sh
+#fi
 
-echo Reloading kamailio dispatcher...
-docker exec kamailio.$NETWORK kamcmd dispatcher.reload
+#echo Reloading kamailio dispatcher...
+#docker exec kamailio.$NETWORK kamcmd dispatcher.reload
 
 echo Starting tests...
 mkdir -p ~/volume/log/$COMMIT

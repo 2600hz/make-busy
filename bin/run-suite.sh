@@ -5,7 +5,7 @@ SUITE=$1
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
 REEXPORT=""
-for var in LOG_CONSOLE CLEAN RESTART_PROFILE LOG_EVENTS LOG_ENTITIES SKIP_SOME_RESPONSE_VARS
+for var in HUPALL LOG_CONSOLE CLEAN RESTART_PROFILE LOG_EVENTS LOG_ENTITIES SKIP_SOME_RESPONSE_VARS
 do
 	VALUE=$(eval echo \$$var)
 	if [ ! -z $VALUE ]
