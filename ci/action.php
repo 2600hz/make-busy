@@ -18,6 +18,7 @@ if (! preg_match('/^[\w|\d]{10}$/', $ref)) {
 
 if ($action == "run_again") {
 	if(pcntl_fork() > 0) {
+                exec("rm -r ~/volume/log/$ref");
 		exec("mkdir -p ~/volume/log/$ref");
 		exec("./waiter.sh $ref && $pr_cmd $branch ./build.sh $ref >> ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
@@ -26,6 +27,7 @@ if ($action == "run_again") {
 	exec("rm -f /tmp/makebusy/*");
 } elseif ($action == "rebuild") {
 	if(pcntl_fork() > 0) {
+                exec("rm -r ~/volume/log/$ref");
 		exec("mkdir -p ~/volume/log/$ref");
 		exec("./waiter.sh $ref && KZ_BUILD_FLAGS=--no-cache $branch $pr_cmd ./build.sh $ref >> ~/volume/log/$ref/build.log 2>&1 &");
 		exit(0);
