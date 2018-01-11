@@ -1,0 +1,183 @@
+version: '3.5'
+
+x-node-env:
+  &kz-env
+    KAZOO_COOKIE: change_me                                                                                                                                                                        
+    VMARGS_PATH: /etc/kazoo/vm.args                                                                                                                                                                
+    RELX_CONFIG_PATH: /etc/kazoo/sys.config
+    LC_CTYPE: en_US.UTF-8
+    LANG: en_US.UTF-8
+
+x-node-cfg:
+  &kz-cfg
+    - type: bind
+      source: /root/kazoo/docker-compose/kazoo/config.ini                                                                                                                                           
+      target: /etc/kazoo/config.ini                                                                                                                                                                 
+      read_only: true                                                                                                                                                                               
+    - type: bind                                                                                                                                                                                    
+      source: /root/kazoo/docker-compose/kazoo/sys.config                                                                                                                                           
+      target: /etc/kazoo/sys.config                                                                                                                                                                 
+      read_only: true                                                                                                                                                                               
+    - type: bind                                                                                                                                                                                    
+      source: /root/kazoo/docker-compose/kazoo/vm.args                                                                                                                                              
+      target: /etc/kazoo/vm.args                                                                                                                                                                    
+      read_only: true                                                                                                                                                                               
+    - type: bind                                                                                                                                                                                    
+      source: /root/kazoo/docker-compose/kazoo/kazoo                                                                                                                                                
+      target: /opt/kazoo/bin/kazoo                                                                                                                                                                  
+      read_only: true
+
+x-media-cfg:
+  &kz-media
+    - type: bind                                                                                                                  
+      source: /root/kazoo/docker-compose/kazoo/config.ini                                                                         
+      target: /etc/kazoo/config.ini                                                                                               
+      read_only: true                                             
+    - type: bind                                                 
+      source: /root/kazoo/docker-compose/kazoo/sys.config
+      target: /etc/kazoo/sys.config                               
+      read_only: true                                                                                                             
+    - type: bind                                                 
+      source: /root/kazoo/docker-compose/kazoo/vm.args                                                                            
+      target: /etc/kazoo/vm.args                                                                                                  
+      read_only: true                                             
+    - type: bind                                                  
+      source: /root/kazoo/docker-compose/kazoo/kazoo                                                                              
+      target: /opt/kazoo/bin/kazoo                                                                                                
+      read_only: true                                            
+    - type: bind                  
+      source: /media-files/kazoo                      
+      target: /media-files               
+      read_only: true
+
+x-fs-rights:
+  &fs-rights
+    - IPC_LOCK
+    - NET_ADMIN
+    - NET_RAW
+    - NET_BROADCAST
+    - SYS_NICE
+    - SYS_RESOURCE
+
+services:
+
+  couchdb:
+    image: apache/couchdb
+    hostname: "couchdb.$NETWORK"
+    container_name: couchdb.$NETWORK
+    tty: true
+    networks:
+      - kazoo
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq.$NETWORK"
+    container_name: rabbitmq.$NETWORK
+    networks:
+      - kazoo
+
+  freeswitch:
+    image: 2600hz/kazoo-fs
+    hostname: "freeswitch.$NETWORK"
+    container_name: freeswitch.$NETWORK
+#    command: ["-c", "-nf"]
+    volumes:
+      - type: bind
+        source: /media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+      - type: bind 
+        source: /root/kazoo/docker-compose/mkbusy/logfile.conf.xml
+        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
+        read_only: true                                          
+    networks:
+      - kazoo
+    cap_add: *fs-rights
+    depends_on:
+      - kamailio
+
+  kazoo:
+    image: 2600hz/kazoo:$COMMIT
+    environment:
+       << : *kz-env
+       KAZOO_NODE: apps
+       KAZOO_APPS: "sysconf,blackhole,callflow,conference,fax,hotornot,jonny5,omnipresence,registrar,pusher,stepswitch,trunkstore"
+    container_name: kazoo.$NETWORK
+    volumes: *kz-cfg
+    hostname: "kazoo.$NETWORK"
+    tty: true
+    networks:
+      - kazoo
+    depends_on:                                                   
+      - couchdb                                                  
+      - rabbitmq
+
+  crossbar:
+    image: 2600hz/kazoo:$COMMIT
+    environment:
+       << : *kz-env
+       KAZOO_NODE: api                                                                                                                                      
+       KAZOO_APPS: "crossbar"
+    container_name: crossbar.$NETWORK                                                                                                                             
+    hostname: "crossbar.$NETWORK"
+    volumes: *kz-cfg
+    networks:                                                                                                                                                 
+      - kazoo                                                                                                                                                 
+    depends_on:                                                   
+      - couchdb
+      - rabbitmq
+
+  callmgr:
+    image: 2600hz/kazoo:$COMMIT                                                                                                                                                         
+    environment:
+       << : *kz-env
+       KAZOO_NODE: ecallmgr                                                                                                                                                                 
+       KAZOO_APPS: "ecallmgr"                                                                                                                                                           
+    container_name: callmgr.$NETWORK
+    hostname: "callmgr.$NETWORK"
+    volumes: *kz-cfg
+    networks:                                                                                                                                                                           
+      - kazoo                                                                                                                                                                           
+    depends_on:                                                   
+      - couchdb
+      - rabbitmq
+      - freeswitch
+      - kamailio
+
+  media:                                                                                                                                           
+    image: 2600hz/kazoo:$COMMIT                                                                                                                      
+    environment:
+       << : *kz-env
+       KAZOO_NODE: media                                                                                                                          
+       KAZOO_APPS: "media_mgr"                                                                                                                        
+    container_name: media.$NETWORK
+    hostname: "media.$NETWORK"
+    volumes: *kz-media
+    networks:                                                                                                                                        
+      - kazoo                                                                                                                                        
+    depends_on:                                                   
+      - couchdb
+      - rabbitmq
+
+
+  kamailio:
+    image: 2600hz/kamailio:edge
+    hostname: "kamailio.$NETWORK"
+    container_name: kamailio.$NETWORK
+    environment:
+       ENABLE_SERVICE_NAME: "false"
+       ENABLE_ADVERTISE: "false"
+    tty: true
+    networks:
+       - kazoo
+    cap_add:                                                      
+      - SYS_NICE                                                  
+    depends_on:
+       - rabbitmq
+
+networks:
+    kazoo:
+       name: $NETWORK
+       attachable: true
+
+

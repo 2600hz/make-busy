@@ -1,0 +1,106 @@
+version: '3.3'
+services:
+
+  makebusy:
+    image: 2600hz/mkbusy
+    hostname: "makebusy.$NETWORK"
+    container_name: makebusy.$NETWORK
+    volumes:
+      - type: bind
+        source: /root/kazoo/tests
+        target: /home/user/make-busy/tests/KazooTests/Applications
+        read_only: true
+      - type: bind
+        source: /root/kazoo/docker-compose/mkbusy/mkbusy.config.json
+        target: /home/user/make-busy/config.json
+        read_only: true
+    tty: true
+    depends_on:
+      - makebusy-fs-auth
+      - makebusy-fs-pbx
+      - makebusy-fs-carrier
+    networks:
+      - mkbusy
+
+  makebusy-fs-auth:
+    image: 2600hz/mkbusy-fs
+    hostname: "makebusy-fs-auth.$NETWORK"
+    container_name: makebusy-fs-auth.$NETWORK
+#    entrypoint: ["freeswitch" , "-nonat", "-nf"]
+    volumes:
+      - type: bind
+        source: /media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+      - type: bind
+        source: /root/kazoo/docker-compose/mkbusy/logfile.conf.xml
+        target: /etc/freeswitch/autoload_configs/logfile.conf.xml
+        read_only: true
+    environment:
+       TYPE: auth
+#    depends_on:
+#      - makebusy
+    tty: true
+    cap_add:                                                      
+      - ALL                                                  
+    networks:
+      - mkbusy
+
+  makebusy-fs-pbx:                 
+    image: 2600hz/mkbusy-fs                     
+    hostname: "makebusy-fs-pbx.$NETWORK"
+    container_name: makebusy-fs-pbx.$NETWORK
+#    entrypoint: ["freeswitch", "-nonat", "-c", "-nf"]
+    volumes:
+      - type: bind
+        source: /media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+      - type: bind 
+        source: /root/kazoo/docker-compose/mkbusy/logfile.conf.xml
+        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
+        read_only: true                                          
+    environment:
+       TYPE: pbx
+#    depends_on:                                                   
+#      - makebusy                                                  
+    tty: true
+    cap_add:                                                      
+      - ALL                                                  
+    networks:
+      - mkbusy
+
+  makebusy-fs-carrier:                 
+    image: 2600hz/mkbusy-fs                     
+    hostname: "makebusy-fs-carrier.$NETWORK"
+    container_name: makebusy-fs-carrier.$NETWORK
+#    entrypoint: ["freeswitch", "-nonat", "-c", "-nf"]
+    volumes:
+      - type: bind
+        source: /media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+      - type: bind 
+        source: /root/kazoo/docker-compose/mkbusy/logfile.conf.xml
+        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
+        read_only: true                                          
+    environment:
+       TYPE: carrier
+#    depends_on:                                                   
+#      - makebusy                                                  
+    tty: true
+    cap_add:
+      - ALL
+    networks:
+      - mkbusy
+
+networks:
+    mkbusy:
+      external:
+        name: $NETWORK
+
+#volumes:
+#    mkbusy-tests:
+#      external:
+#         name:  make-busy-tests
+
