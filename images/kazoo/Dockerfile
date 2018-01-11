@@ -6,7 +6,7 @@ RUN mkdir kazoo \
    && make \
    && make tar-release
 
-FROM alpine
+FROM alpine as kazoo
 RUN apk --update add ncurses bash libstdc++ openssl expat
 ENV PATH=$PATH:/opt/kazoo/bin
 
@@ -21,9 +21,7 @@ ENV CODE_LOADING_MODE=interactive
 COPY --from=build /kazoo/_rel/kazoo/kazoo-4.0.0.tar.gz /opt/
 RUN mkdir /opt/kazoo && tar -xf /opt/kazoo-4.0.0.tar.gz -C /opt/kazoo && rm /opt/kazoo-4.0.0.tar.gz
 ADD config.ini /etc/kazoo/
-ADD vm.args /etc/kazoo
-#/opt/kazoo/releases/4.0.0/
+ADD vm.args /opt/kazoo/releases/4.0.0/
 RUN ln /opt/kazoo/lib/sup-4.0.0/priv/sup /opt/kazoo/bin/sup
 
 CMD ["kazoo", "foreground"]
-
