@@ -1,6 +1,7 @@
 #!/bin/bash
-NETWORK=${NETWORK:-"kazoo"}
+NETWORK=${COMMIT:-"kazoo"}
 REOPTS=""
+CID=$(docker ps --filter name=^/${NETWORK}_makebusy\\. --format="{{.ID}}")
 for ARG in "$@"
 do
 	if [ "${ARG: -4}" == ".php" ]
@@ -24,4 +25,5 @@ do
 		REEXPORT="$REEXPORT $var=$VALUE"
 	fi
 done
-docker exec makebusy.$NETWORK /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
+docker exec $CID /bin/bash -c "$REEXPORT ./run-test $REOPTS tests/KazooTests/Applications/$FILE"
+

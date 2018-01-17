@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 COMMIT=${2:-${COMMIT:-master}}
-BASE_IMAGE=${BASE_IMAGE:-~/make-busy/images}
-BASE_STACK=${BASE_STACK:-~/make-busy/stack}
+BASE_IMAGE=${BASE_IMAGE:-$(dirname $0)/../images}
+BASE_STACK=${BASE_STACK:-$(dirname $0)/../stacks}
 
 export COMMIT=$COMMIT
 
 up() {
-   cd ${BASE_STACK}/mkbusy    
+   cd ${BASE_STACK}/mkbusy
    docker stack deploy -c docker-stack.yml $COMMIT
 }
 
@@ -16,7 +16,30 @@ down() {
 }
 
 help() {
- echo usage: mkbusy up | down
+ echo usage: mkbusy up | down | run
+}
+
+run() {
+
+mkdir -p ~/volume/log/$COMMIT
+TESTS=~/make-busy-ci/tests
+cd $TESTS
+for APP in $(ls $TESTS)                             
+do                                                                                                                                          
+        if [ -d $APP ]                              
+        then                                                    
+                for CASE in $(ls $APP)                                          
+                do                                                              
+                        if [ -d $APP/$CASE ]                                     
+                        then                                                                         
+                                LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log
+                                CLEAN=1 SKIP_ACCOUNT=1 run-test.sh ../EmptyTestCase.php                                                       
+                        fi                                                                                                                    
+                done                                                                                                                          
+        fi                                                                                                                                    
+done                                                                                                                                          
+
+
 }
 
 COMMAND=${1:-help}
@@ -24,8 +47,7 @@ COMMAND=${1:-help}
 case $COMMAND in
     up) up;;
     down) down;;
+    run) run;;
     help) help;;
 esac
-
-
 
