@@ -11,7 +11,11 @@ required for testing and generation of FreeSWITCH configuration.
 Makebusy makes extensive use of FreeSWITCH ESL and requires the use of the esl php module
 
 check https://github.com/lazedo/freeswitch-php-esl for HowTo install
- 
+
+## Easy Start
+
+Check Here [DEV-SESSION](DEV-SESSION.md)
+
 ## Components
 
 To run tests you'll requite one MakeBusy instance serving XML configs for automated FreeSWITCH instances via HTTP, and at least 3
