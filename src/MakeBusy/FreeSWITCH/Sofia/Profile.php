@@ -76,7 +76,8 @@ class Profile
     }
 
     public function getSipIp(){
-        return $this->getProfileParam("Ext-SIP-IP");
+    	$ip = $this->getProfileParam("Ext-SIP-IP");
+    	return $ip == NULL ? $this->getProfileParam("SIP-IP") : $ip;
     }
 
     public function register($wait = true) {
@@ -248,8 +249,6 @@ class Profile
                 } else {
                     Log::debug("fs %s gateway %s not registered, remains: %s", $this->getEsl()->getType(), $event->getHeader("Gateway"), count($waitMap));
                 }
-            } else {
-               Log::debug("fs %s event %s %s ", $this->getEsl()->getType(), $event->getHeader("Event-Name"), $event->getHeader("Event-Subclass"));
             }
         }
         Log::debug("fs %s has all registrations", $this->getEsl()->getType());
