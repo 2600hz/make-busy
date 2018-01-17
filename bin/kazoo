@@ -1,0 +1,120 @@
+#!/bin/sh
+COMMIT=${2:-${COMMIT:-master}}
+BASE_IMAGE=${BASE_IMAGE:-~/make-busy/images}
+BASE_STACK=${BASE_STACK:-~/make-busy/stack}
+
+export COMMIT=$COMMIT
+
+wait_for() {
+   local NODE=${1:-"kazoo"}
+   local TIMEOUT=${2:-"120"}
+   local SEARCH_TERM=${3:-"nada"}
+   (timeout --foreground $TIMEOUT docker logs -f $NODE &) | grep -q "$SEARCH_TERM" && echo "found '$SEARCH_TERM' in $NODE" && exit 0
+}
+
+wait_for_node() {
+   local NODE=${1:-"kazoo"}
+   local TIMEOUT=${2:-"120"}
+   local COMMIT=${COMMIT:-"kazoo"}
+   local CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
+
+   #echo Waiting for $NODE.$COMMIT to start
+   #timeout --foreground $TIMEOUT watch -g "docker logs $CID | grep 'auto-started kapps'" > /dev/null
+   if ! wait_for $NODE.$COMMIT $TIMEOUT "auto-started kapps"; then
+      exit 1
+   else
+      exit 0
+   fi
+
+}
+
+connect() {
+   local NODE=${1:-"kazoo"}
+   local CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
+   echo "connecting to $NODE with  docker exec -ti $CID kazoo remote_console"
+   docker exec -ti $CID kazoo remote_console
+}
+
+shell() {
+   local NODE=${1:-"kazoo"}
+   local CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
+   docker exec -ti $CID bash
+}
+
+build() {
+   cd ${BASE_IMAGE}/kazoo
+   docker build --target=kazoo \
+       -t 2600hz/kazoo:$COMMIT \
+       --build-arg COMMIT=$COMMIT \
+       --squash --label kazoo.commit=$COMMIT \
+       .
+}
+
+up() {
+   cd ${BASE_STACK}/kazoo    
+   docker stack deploy -c docker-stack.yml $COMMIT
+}
+
+
+down() {
+   cd ${BASE_STACK}/kazoo
+   docker stack rm $COMMIT
+}
+
+
+add_media_files() {
+   sup media kazoo_media_maintenance import_prompts /media-files/en-mb/ en-mb > /dev/null 2>&1
+   sup media kazoo_media_maintenance import_prompts /media-files/en-us/ en-us > /dev/null 2>&1 
+}
+
+add_freeswitch() {
+   sup callmgr ecallmgr_maintenance add_fs_node freeswitch@freeswitch-1.$COMMIT
+   if ! wait_for callmgr.$COMMIT 60 "fs sync complete"; then
+	  echo Failed to wait for FreeSwitch to connect, network:$COMMIT
+  	  exit 1
+   fi
+
+}
+
+add_servers() {
+   sup callmgr ecallmgr_maintenance allow_sbc kamailio.$COMMIT
+   sup callmgr ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$COMMIT
+}
+
+configure() {
+   wait_for_node kazoo $TIMEOUT
+   wait_for_node callmgr $TIMEOUT
+   wait_for_node media $TIMEOUT
+   wait_for_node crossbar $TIMEOUT
+
+   add_media_files
+   add_freeswitch
+   add_servers   
+
+}
+
+sanity_check() {
+   sup crossbar kz_nodes status
+   sup callmgr ecallmgr_maintenance acl_summary
+}
+
+help() {
+ echo usage: kazoo build | up | down
+}
+
+COMMAND=${1:-help}
+shift
+case $COMMAND in
+    build) build;;
+    up) up;;
+    down) down;;
+    configure) configure;;
+    add_fs) add_freeswitch;;
+    check) sanity_check;;
+    connect) connect $1;; 
+    shell) shell $1;;
+    help) help;;
+esac
+
+
+

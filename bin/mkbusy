@@ -1,0 +1,31 @@
+#!/bin/sh
+COMMIT=${2:-${COMMIT:-master}}
+BASE_IMAGE=${BASE_IMAGE:-~/make-busy/images}
+BASE_STACK=${BASE_STACK:-~/make-busy/stack}
+
+export COMMIT=$COMMIT
+
+up() {
+   cd ${BASE_STACK}/mkbusy    
+   docker stack deploy -c docker-stack.yml $COMMIT
+}
+
+
+down() {
+   docker stack rm $COMMIT
+}
+
+help() {
+ echo usage: mkbusy up | down
+}
+
+COMMAND=${1:-help}
+
+case $COMMAND in
+    up) up;;
+    down) down;;
+    help) help;;
+esac
+
+
+
