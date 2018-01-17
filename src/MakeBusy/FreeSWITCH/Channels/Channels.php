@@ -1,8 +1,11 @@
 <?php
 namespace MakeBusy\FreeSWITCH\Channels;
 
-use \MakeBusy\FreeSWITCH\Esl\Event;
+require_once('ESL.php');
+
+use \ESLevent;
 use \MakeBusy\Common\Log;
+use Kazoo\AuthToken\None;
 
 class Channels
 {
@@ -37,27 +40,28 @@ class Channels
         $this->wait_for_dead[$value] = false; // death watch
         $start = time();
         while(1) {
-            $this->esl->recvEventTimed(25);
-
-            if ($this->wait_for_dead[$value]) {
-                Log::notice("fs %s failed to create outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
-                unset($this->wait_for_dead[$value]);
-                return null;
-            }
-
-            $channel = $this->getChannel($value, $header, 'outbound');
-            if ($channel) {
-                Log::debug("fs %s new outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
-                $this->remove($channel);
-                return $channel;
-            }
-
-            if ((time() - $start) > $timeout) {
-                Log::notice("fs %s timeout outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
-                return null;
-            }
-
-            usleep(2500);
+        	
+        	$this->esl->recvFilteredEventTimed(250, $value, $header, 'outbound');
+        		
+	        if ($this->wait_for_dead[$value]) {
+	             Log::notice("fs %s failed to create outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
+	             unset($this->wait_for_dead[$value]);
+	             return null;
+	        }
+	
+	        $channel = $this->getChannel($value, $header, 'outbound');
+	        if ($channel) {
+	            Log::debug("fs %s new outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
+	            $this->remove($channel);
+	            return $channel;
+	        }
+        	
+	        if ((time() - $start) > $timeout) {
+	             Log::notice("fs %s timeout outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
+	             return null;
+	        }
+	
+	        usleep(2500);
         }
     }
 
@@ -66,13 +70,15 @@ class Channels
         Log::debug("fs %s wait inbound channel header:%s value:%s for %d seconds", $this->esl->getType(), $header, $value, $timeout);
         $start = time();
         while(1) {
-            $this->esl->recvEventTimed(250);
+        	
+        	$this->esl->recvFilteredEventTimed(250, $value, $header, 'inbound');
+
             $channel = $this->getChannel($value, $header, 'inbound');
             if ($channel) {
                 Log::debug("fs %s new inbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
                 $this->remove($channel);
                 return $channel;
-            }
+        	}
 
             if ((time() - $start) > $timeout) {
                 Log::notice("fs %s timeout inbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
@@ -101,7 +107,8 @@ class Channels
                 return null;
             }
 
-            $this->esl->recvEventTimed(25);
+            $this->esl->recvEventTimed(25, $uuid);
+            	
             usleep(250);
         }
     }
@@ -113,7 +120,7 @@ class Channels
         }
     }
 
-    public function newEvent(Event $event) {
+    public function newEvent(ESLevent $event) {
         $event_name = $event->getHeader('Event-Name');
         switch($event_name) {
             case 'CHANNEL_CREATE':
@@ -127,7 +134,7 @@ class Channels
         }
     }
 
-    private function created(Event $event) {
+    private function created(ESLevent $event) {
         if ($event->getHeader('Event-Name') != 'CHANNEL_CREATE') {
             Log::error("the header Event-Name doesn't contain the value 'CHANNEL_CREATE'");
             return null;
@@ -136,7 +143,7 @@ class Channels
         $this->add(new Channel($this->esl, $event));
     }
 
-    private function destroyed(Event $event) {
+    private function destroyed(ESLevent $event) {
         $uuid = $event->getHeader('Unique-ID');
         Log::debug("destroying channel %s", $uuid);
         if (isset($this->channels[$uuid])) {
@@ -148,10 +155,10 @@ class Channels
     }
 
     public function getChannels() {
-        return $this->channels;
+    	return $this->esl->getChannels()->channels;
     }
 
     private function add(Channel $channel) {
-        $this->channels[$channel->getUuid()] = $channel;
+    	$this->esl->getChannels()->channels[$channel->getUuid()] = $channel;
     }
 }

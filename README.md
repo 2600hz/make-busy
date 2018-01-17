@@ -6,6 +6,12 @@ MakeBusy is a functional test suite for Kazoo. It works by creating test account
 performing test calls to Kazoo cluster with separate automated FreeSWITCH instances. Kazoo entities are used to store arbitrary information
 required for testing and generation of FreeSWITCH configuration.
 
+## Requirements
+
+Makebusy makes extensive use of FreeSWITCH ESL and requires the use of the esl php module
+
+check https://github.com/lazedo/freeswitch-php-esl for HowTo install
+ 
 ## Components
 
 To run tests you'll requite one MakeBusy instance serving XML configs for automated FreeSWITCH instances via HTTP, and at least 3

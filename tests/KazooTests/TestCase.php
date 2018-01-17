@@ -2,6 +2,8 @@
 
 namespace KazooTests;
 
+require_once('ESL.php');
+
 use \PHPUnit_Framework_TestCase;
 
 use \MakeBusy\Common\Configuration;
@@ -215,7 +217,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function ensureEvent($ev) {
-        self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\ESL\\Event", $ev, "Expected event wasn't received");
+        self::assertInstanceOf("\\ESLevent", $ev, "Expected event wasn't received");        
         return $ev;
     }
 

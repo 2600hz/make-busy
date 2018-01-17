@@ -1,8 +1,9 @@
 <?php
 namespace MakeBusy\FreeSWITCH\Channels;
 
-use \MakeBusy\FreeSWITCH\Esl\Event;
-use \MakeBusy\FreeSWITCH\Channels\Exceptions\ChannelException;
+require_once('ESL.php');
+
+use \ESLevent;
 use \MakeBusy\Common\Log;
 
 class Channel
@@ -10,16 +11,13 @@ class Channel
     private $event;
     private $esl;
 
-    public function __construct($esl, Event $event) {
+    public function __construct($esl, ESLevent $event) {
         $this->event = clone $event;
         $this->esl = $esl;
         Log::debug("channel:%s is new %s", $this->getUuid(), $event->getHeader('Call-Direction'));
     }
 
     public function __destruct() {
-        Log::debug("channel:%s is destructing, issuing uuid_kill", $this->getUuid());
-        // oob destruction
-//        $this->esl->clone()->api_f("uuid_kill %s", $this->getUuid());
     }
 
     public function __toString() {
@@ -27,7 +25,7 @@ class Channel
     }
 
     public function getUuid() {
-        return $this->getEvent()->getHeader('Unique-ID');
+    	return $this->getEvent()->getHeader('Unique-ID');
     }
 
     public function getEvent() {
@@ -36,14 +34,14 @@ class Channel
 
     public function answer() {
         $uuid = $this->getUuid();
-        Log::debug("channel:%s attemptinng answer", $uuid);
-        $this->esl->api("uuid_answer $uuid");
+        Log::debug("channel:%s attempting answer", $uuid);
+        $this->esl->api_f("uuid_answer %s", $uuid);
     }
 
     public function breakout() {
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting break", $uuid);
-        $this->esl->api("uuid_break $uuid");
+        $this->esl->api_f("uuid_break %s", $uuid);
     }
 
     public function transfer($destination, $both = FALSE) {
@@ -64,14 +62,13 @@ class Channel
     public function hangup() {
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting hangup", $uuid);
-        $this->esl->api("uuid_kill $uuid");
+        $this->esl->api_f("uuid_kill %s", $uuid);
     }
 
     public function dump(){
         $uuid  = $this->getUuid();
-        $event = $this->esl->api("uuid_dump $uuid");
-        $event->convertPlainEvent(TRUE);
-        return $event;
+        $this->esl->api_f("uuid_broadcast %s event::Event-Name=CUSTOM,Event-Subclass=DUMP_ME", $uuid);
+        return $this->waitEvent(10, "CUSTOM", "DUMP_ME");        
     }
 
     public function getAnswerState(){
@@ -111,46 +108,46 @@ class Channel
     public function onHold(){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting hold", $uuid);
-        $this->esl->api("uuid_hold $uuid");
+        $this->esl->api_f("uuid_hold %s", $uuid);
     }
 
     public function offHold(){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting resume", $uuid);
-        $this->esl->api("uuid_hold off $uuid");
+        $this->esl->api_f("uuid_hold off %s", $uuid);
     }
 
     public function sendDtmf($dtmf_digit_string, $duration = "W"){
         $uuid = $this->getUuid();
         $dtmf = "$dtmf_digit_string\@$duration";
         Log::debug("channel:%s attempting to send dtmf:%s", $uuid, $dtmf);
-        $this->esl->api("uuid_send_dtmf $uuid $dtmf");
+        $this->esl->api_f("uuid_send_dtmf %s %s", $uuid, $dtmf);
     }
 
     public function recvDtmf($dtmf_digit_string, $duration = "w"){
         $uuid = $this->getUuid();
         $dtmf = sprintf("%s[@%s]", $dtmf_digit_string, $duration);
         Log::debug("channel:%s attempting to recieve dtmf:%s", $uuid, $dtmf);
-        $this->esl->api("uuid_recev_dtmf $uuid $dtmf");
+        $this->esl->api_f("uuid_recev_dtmf %s %s", $uuid, $dtmf);
     }
 
     public function deflect($refer_uri){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting to deflect to %s", $uuid, $refer_uri);
-        $this->esl->api("uuid_deflect $uuid $refer_uri");
+        $this->esl->api_f("uuid_deflect %s %s", $uuid, $refer_uri);
     }
 
     public function playMedia($media_file){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting to play media file %s", $uuid, $media_file);
-        $this->esl->api("uuid_broadcast $uuid $media_file both");
+        $this->esl->api_f("uuid_broadcast %s %s both", $uuid, $media_file);
     }
 
     public function sayText($text,$leg){
         $uuid = $this->getUuid();
         $say = "say::en\sname_spelled\spronounced\s$text";
         Log::debug("channel:%s attempting to say %s leg:%s", $uuid, $say, $leg);
-        $value = $this->esl->api("uuid_broadcast $uuid $say $leg");
+        $value = $this->esl->api_f("uuid_broadcast %s %s %s", $uuid, $say, $leg);
     }
 
     public function playTone($freq, $duration = 2000, $space = 0, $loops = 1){
@@ -162,7 +159,7 @@ class Channel
 
     public function stopTone() {
         $uuid = $this->getUuid();
-        $this->esl->api("uuid_break $uuid");
+        $this->esl->api_f("uuid_break %s", $uuid);
     }
 
     public function detectLeTone($freq, $timeout = 30000, $hits=1) {
@@ -179,22 +176,21 @@ class Channel
     public function detectTone($name, $timeout = 5){
         $uuid = $this->getUuid();
         Log::debug("channel:%s waiting for tone:%s detection for:%s seconds", $uuid, $name, $timeout);
-        $this->esl->api("spandsp_start_tone_detect $uuid $name");
+        $this->esl->api_f("spandsp_start_tone_detect %s %s", $uuid, $name);
         $tone = $this->waitDetectTone($name, $timeout);
-        $this->esl->api("spandsp_stop_tone_detect $uuid");
+        $this->esl->api_f("spandsp_stop_tone_detect %s", $uuid);
         return $tone;
     }
 
     public function setVariables($name, $value) {
         $uuid = $this->getUuid();
         Log::debug("channel:%s set variable:%s to value:%s", $uuid, $name, $value);
-        $this->esl->api("uuid_setvar $uuid $name $value");
+        $this->esl->api_f("uuid_setvar %s %s %s", $uuid, $name, $value);
     }
 
     public function getVariable($name) {
         $uuid = $this->getUuid();
-        Log::debug("channel:%s get variable:%s", $uuid, $name);
-        return $this->esl->api("uuid_getvar $uuid $name");
+        return $this->esl->api_f("uuid_getvar %s %s", $uuid, $name)->getBody();
     }
 
     public function waitDetectTone($freq, $timeout) {
@@ -218,18 +214,17 @@ class Channel
         return $this->waitEvent($timeout, "CHANNEL_PARK");
     }
 
-    private function waitEvent($timeout, $event_name) {
+    private function waitEvent($timeout, $event_name, $event_subclass='') {
         $uuid = $this->getUuid();
         Log::debug("channel:%s wait event name:%s for %d seconds", $uuid, $event_name, $timeout);
 
         $start = time();
-        // $this->esl->events($event_name);
         while(1){
             $now = time();
             $time_left = ($timeout - ($now - $start)) * 1000;
 
             if (($now - $start) >= $timeout){
-                Log::notice("channel:%s timeout waiting for event name:%s", $uuid, $event_name);
+            	Log::notice("channel:%s timeout waiting for event name:%s", $uuid, $event_name == "CUSTOM" ? $event_subclass : $event_name);
                 return NULL;
             }
 
@@ -237,9 +232,23 @@ class Channel
             if (!$event) {
                 continue;
             }
-
-            if ($event->getHeader("Event-Name") === $event_name) {
-                return $event;
+            
+            $eventName = $event->getHeader("Event-Name");
+            $eventSubclass = $event->getHeader("Event-Subclass");
+            if($event_name == "CUSTOM") {
+            	if ($eventName == "CUSTOM" && $eventSubclass === $event_subclass) {
+            		Log::notice("channel:%s received expected event %s", $uuid, $event_subclass);            		
+            		return $event;
+            	} else {
+            		Log::debug("channel:%s received event %s while expecting %s", $uuid, $eventName == "CUSTOM" ? $eventSubclass: $eventName, $event_subclass);
+            	}
+            } else {
+            	if ($eventName === $event_name) {
+            		Log::debug("channel:%s received expected event %s", $uuid, $eventName);
+            		return $event;
+            	} else {
+            		Log::debug("channel:%s received event %s while expecting %s", $uuid, $eventName == "CUSTOM" ? $eventSubclass: $eventName, $event_name);
+            	}            	
             }
         }
     }
