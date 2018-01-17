@@ -1,9 +1,10 @@
 #!/bin/bash
-NETWORK=${NETWORK:-"kazoo"}
+NETWORK=${COMMIT:-"kazoo"}
 SUITE=$1
 [ -z $SUITE ] && echo "please specify a folder with tests" && exit 0
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
+CID=$(docker ps --filter name=^/${NETWORK}_makebusy\\. --format="{{.ID}}")
 REEXPORT=""
 for var in HUPALL LOG_CONSOLE CLEAN RESTART_PROFILE LOG_EVENTS LOG_ENTITIES SKIP_SOME_RESPONSE_VARS
 do
@@ -13,4 +14,5 @@ do
 		REEXPORT="$REEXPORT $var=$VALUE"
 	fi
 done
-docker exec makebusy.$NETWORK /bin/bash -c "$REEXPORT ./run-suite $REOPTS tests/KazooTests/Applications/$SUITE $*"
+docker exec $CID /bin/bash -c "$REEXPORT ./run-suite $REOPTS tests/KazooTests/Applications/$SUITE $*"
+

@@ -1,3 +1,7 @@
 #!/bin/sh -e
+NODE=${1:-"kazoo"}
 NETWORK=${NETWORK:-"kazoo"}
-docker exec -i kazoo.$NETWORK sup "$*"
+shift
+docker exec -i $(docker ps --filter name=$NODE --format="{{.ID}}") /opt/kazoo/bin/sup "$*"
+
+

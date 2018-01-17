@@ -6,13 +6,15 @@ services:
     hostname: "makebusy.$COMMIT"
     volumes:
       - type: bind
-        source: ../../../tests
+        source: ../../tests
         target: /home/user/make-busy/tests/KazooTests/Applications
         read_only: true
       - type: bind
         source: ./mkbusy.config.json
         target: /home/user/make-busy/config.json
         read_only: true
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -29,7 +31,9 @@ services:
         target: /etc/freeswitch/autoload_configs/logfile.conf.xml
         read_only: true
     environment:
-       TYPE: auth
+      TYPE: auth
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -46,7 +50,9 @@ services:
         target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
         read_only: true                                          
     environment:
-       TYPE: pbx
+      TYPE: pbx
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -63,7 +69,9 @@ services:
         target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
         read_only: true                                          
     environment:
-       TYPE: carrier
+      TYPE: carrier
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
