@@ -22,7 +22,7 @@ help() {
 run() {
 
 mkdir -p ~/volume/log/$COMMIT
-TESTS=~/make-busy-ci/tests
+TESTS=~/tests
 cd $TESTS
 for APP in $(ls $TESTS)                             
 do                                                                                                                                          
