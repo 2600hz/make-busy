@@ -9,8 +9,11 @@ root@fl03:~# docker exec -ti mkbusy sh
    # docker swarm init
    # apk --update add git jq bash
    # export PATH=$PATH:~/make-busy/bin
+   
    # export COMMIT=ce385413cd
-   # kazoo up
+   # if exported, the commit can be ommited in next commands
+   
+   # kazoo up ce385413cd
    # wait-for crossbar 4m "finished system schemas update"
    # sup crossbar crossbar_maintenance create_account admin admin admin admin
    # mkbusy up ce385413cd
@@ -19,5 +22,9 @@ root@fl03:~# docker exec -ti mkbusy sh
    # kazoo configure
    # sup callmgr ecallmgr_maintenance reload_acls
    # kazoo check
-   # mkbusy run
+   
+   # mkbusy run ce385413cd
+   
+   
+   
 ```
