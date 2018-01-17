@@ -142,7 +142,7 @@ class Connection extends \ESLconnection
     	}
     	
     	foreach ($this->eventQueue as $idx => $found_event) {
-    		if ($header == 'Unique-ID' && $value == $found_event->getHeader('Unique-ID');) {
+    		if ($header == 'Unique-ID' && $value == $found_event->getHeader('Unique-ID')) {
    				$event = $found_event;
    				$index = $idx;
    			} else {
@@ -180,22 +180,14 @@ class Connection extends \ESLconnection
      * identical to sendRecv("api $command $args").
      */
     /*
+
     public function api($cmd,$arg=null) {
     	switch (func_num_args()) {
     		case 1: return parent::api($cmd); break;
     		default: return parent::api($cmd, sprintf("%s", implode(' ', $arg)));
     	}
     }
-    */
 
-    public function api() {
-    	$args = func_get_args();
-    	$command = array_shift($args);
-    	$command = $command .' ' .implode(' ', $args);
-    	return parent::api($command);
-    	//return $this->sendRecv($command);
-    }
-    
     public function api_f() {
         $args = func_get_args();
         return $this->api(call_user_func_array('sprintf', $args));

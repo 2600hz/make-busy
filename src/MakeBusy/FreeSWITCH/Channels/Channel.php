@@ -35,13 +35,13 @@ class Channel
     public function answer() {
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting answer", $uuid);
-        $this->esl->api("uuid_answer $uuid");
+        $this->esl->api_f("uuid_answer %s", $uuid);
     }
 
     public function breakout() {
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting break", $uuid);
-        $this->esl->api("uuid_break $uuid");
+        $this->esl->api_f("uuid_break %s", $uuid);
     }
 
     public function transfer($destination, $both = FALSE) {
@@ -62,7 +62,7 @@ class Channel
     public function hangup() {
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting hangup", $uuid);
-        $this->esl->api("uuid_kill $uuid");
+        $this->esl->api_f("uuid_kill %s", $uuid);
     }
 
     public function dump(){
@@ -108,46 +108,46 @@ class Channel
     public function onHold(){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting hold", $uuid);
-        $this->esl->api("uuid_hold $uuid");
+        $this->esl->api_f("uuid_hold %s", $uuid);
     }
 
     public function offHold(){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting resume", $uuid);
-        $this->esl->api("uuid_hold off $uuid");
+        $this->esl->api_f("uuid_hold off %s", $uuid);
     }
 
     public function sendDtmf($dtmf_digit_string, $duration = "W"){
         $uuid = $this->getUuid();
         $dtmf = "$dtmf_digit_string\@$duration";
         Log::debug("channel:%s attempting to send dtmf:%s", $uuid, $dtmf);
-        $this->esl->api("uuid_send_dtmf $uuid $dtmf");
+        $this->esl->api_f("uuid_send_dtmf %s %s", $uuid, $dtmf);
     }
 
     public function recvDtmf($dtmf_digit_string, $duration = "w"){
         $uuid = $this->getUuid();
         $dtmf = sprintf("%s[@%s]", $dtmf_digit_string, $duration);
         Log::debug("channel:%s attempting to recieve dtmf:%s", $uuid, $dtmf);
-        $this->esl->api("uuid_recev_dtmf $uuid $dtmf");
+        $this->esl->api_f("uuid_recev_dtmf %s %s", $uuid, $dtmf);
     }
 
     public function deflect($refer_uri){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting to deflect to %s", $uuid, $refer_uri);
-        $this->esl->api("uuid_deflect $uuid $refer_uri");
+        $this->esl->api_f("uuid_deflect %s %s", $uuid, $refer_uri);
     }
 
     public function playMedia($media_file){
         $uuid = $this->getUuid();
         Log::debug("channel:%s attempting to play media file %s", $uuid, $media_file);
-        $this->esl->api("uuid_broadcast $uuid $media_file both");
+        $this->esl->api_f("uuid_broadcast %s %s both", $uuid, $media_file);
     }
 
     public function sayText($text,$leg){
         $uuid = $this->getUuid();
         $say = "say::en\sname_spelled\spronounced\s$text";
         Log::debug("channel:%s attempting to say %s leg:%s", $uuid, $say, $leg);
-        $value = $this->esl->api("uuid_broadcast $uuid $say $leg");
+        $value = $this->esl->api_f("uuid_broadcast %s %s %s", $uuid, $say, $leg);
     }
 
     public function playTone($freq, $duration = 2000, $space = 0, $loops = 1){
@@ -159,7 +159,7 @@ class Channel
 
     public function stopTone() {
         $uuid = $this->getUuid();
-        $this->esl->api("uuid_break $uuid");
+        $this->esl->api_f("uuid_break %s", $uuid);
     }
 
     public function detectLeTone($freq, $timeout = 30000, $hits=1) {
@@ -176,21 +176,21 @@ class Channel
     public function detectTone($name, $timeout = 5){
         $uuid = $this->getUuid();
         Log::debug("channel:%s waiting for tone:%s detection for:%s seconds", $uuid, $name, $timeout);
-        $this->esl->api("spandsp_start_tone_detect $uuid $name");
+        $this->esl->api_f("spandsp_start_tone_detect %s %s", $uuid, $name);
         $tone = $this->waitDetectTone($name, $timeout);
-        $this->esl->api("spandsp_stop_tone_detect $uuid");
+        $this->esl->api_f("spandsp_stop_tone_detect %s", $uuid);
         return $tone;
     }
 
     public function setVariables($name, $value) {
         $uuid = $this->getUuid();
         Log::debug("channel:%s set variable:%s to value:%s", $uuid, $name, $value);
-        $this->esl->api("uuid_setvar $uuid $name $value");
+        $this->esl->api_f("uuid_setvar %s %s %s", $uuid, $name, $value);
     }
 
     public function getVariable($name) {
         $uuid = $this->getUuid();
-        return $this->esl->api("uuid_getvar $uuid $name")->getBody();
+        return $this->esl->api_f("uuid_getvar %s %s", $uuid, $name)->getBody();
     }
 
     public function waitDetectTone($freq, $timeout) {
