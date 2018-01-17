@@ -179,7 +179,6 @@ class Connection extends \ESLconnection
      * execution until the command has been executed. api($command, $args) is
      * identical to sendRecv("api $command $args").
      */
-    /*
 
     public function api($cmd,$arg=null) {
     	switch (func_num_args()) {
