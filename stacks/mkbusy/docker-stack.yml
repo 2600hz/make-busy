@@ -78,10 +78,4 @@ services:
 networks:
     kazoo:
       attachable: true
-#        name: $COMMIT_kazoo
-
-#volumes:
-#    mkbusy-tests:
-#      external:
-#         name:  make-busy-tests
 
