@@ -3,7 +3,7 @@ COMMIT=${2:-${COMMIT:-master}}
 BASE_IMAGE=${BASE_IMAGE:-$(dirname $0)/../images}
 BASE_STACK=${BASE_STACK:-$(dirname $0)/../stacks}
 
-export COMMIT=${COMMIT:0:10}$COMMIT
+export COMMIT=${COMMIT:0:10}
 
 wait_for_node() {
    local NODE=${1:-"kazoo"}
