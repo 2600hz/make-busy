@@ -1,0 +1,21 @@
+#!/bin/bash
+
+NODE=${1:-"kazoo"}
+TIMEOUT=${2:-"120"}
+SEARCH_TERM=${3:-"nada"}
+CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
+TRY=1
+while [ -z "$CID" ]
+do
+   sleep 5
+   CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
+   TRY=$(( TRY + 1 ))
+   if [ $TRY gt 5]; then
+      exit 1
+   fi
+done   
+echo "waiting for '$SEARCH_TERM' in node '$NODE' => $CID"
+(timeout --foreground $TIMEOUT docker logs -f $CID  2>&1 &) | grep -q "$SEARCH_TERM" && echo "found '$SEARCH_TERM' in $NODE" && exit 0
+echo "timeout waiting for '$SEARCH_TERM' in '$NODE'"
+
+
