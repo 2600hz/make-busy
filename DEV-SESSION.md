@@ -7,7 +7,7 @@ root@fl03:~# docker run -td --name mkbusy -v make-busy:/root/make-busy -v mytest
                   --privileged docker:dind --experimental --storage-driver=overlay
 root@fl03:~# docker exec -ti mkbusy sh
    # docker swarm init
-   # apk --update add git jq bash
+   # apk --update add git jq bash coreutils
    # export PATH=$PATH:~/make-busy/bin
    
    # export COMMIT=ce385413cd
