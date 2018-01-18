@@ -2,6 +2,7 @@
 COMMIT=${2:-${COMMIT:-master}}
 BASE_IMAGE=${BASE_IMAGE:-$(dirname $0)/../images}
 BASE_STACK=${BASE_STACK:-$(dirname $0)/../stacks}
+TESTS_DIR=${TESTS_DIR:~/tests}
 
 export COMMIT=$COMMIT
 
@@ -22,8 +23,7 @@ help() {
 run() {
 
 mkdir -p ~/volume/log/$COMMIT
-TESTS=~/tests
-cd $TESTS
+cd $TESTS_DIR
 for APP in $(ls $TESTS)                             
 do                                                                                                                                          
         if [ -d $APP ]                              
@@ -32,8 +32,8 @@ do
                 do                                                              
                         if [ -d $APP/$CASE ]                                     
                         then                                                                         
-                                LOG_CONSOLE=1 run-suite.sh $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log
-                                CLEAN=1 SKIP_ACCOUNT=1 run-test.sh ../EmptyTestCase.php                                                       
+                                LOG_CONSOLE=1 run-suite $APP/$CASE 2>> ~/volume/log/$COMMIT/suite.log | tee -a ~/volume/log/$COMMIT/run.log
+                                CLEAN=1 SKIP_ACCOUNT=1 run-test ../EmptyTestCase.php                                                       
                         fi                                                                                                                    
                 done                                                                                                                          
         fi                                                                                                                                    
