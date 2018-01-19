@@ -25,6 +25,10 @@ root@fl03:~# docker exec -ti mkbusy sh
    
    # mkbusy run ce385413cd
    
+   running a single test
+   # HUPALL=1 LOG_CONSOLE=1 run-test Callflow/Voicemail/SetupOwner.php
    
-   
+   running a suite test
+   HUPALL=1 LOG_CONSOLE=1 run-suite Callflow/Voicemail
+
 ```
