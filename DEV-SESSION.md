@@ -28,7 +28,7 @@ root@fl03:~# docker exec -ti mkbusy sh
    running a single test
    # HUPALL=1 LOG_CONSOLE=1 run-test Callflow/Voicemail/SetupOwner.php
    
-   running a suite test
+   running a suite of tests
    HUPALL=1 LOG_CONSOLE=1 run-suite Callflow/Voicemail
 
 ```
