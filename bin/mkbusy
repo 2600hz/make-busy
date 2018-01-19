@@ -8,16 +8,16 @@ export COMMIT=$COMMIT
 
 up() {
    cd ${BASE_STACK}/mkbusy
-   docker stack deploy -c docker-stack.yml $COMMIT
+   docker stack deploy -c docker-stack.yml mb_${COMMIT}
 }
 
 
 down() {
-   docker stack rm $COMMIT
+   docker stack rm mb_${COMMIT}
 }
 
 help() {
- echo usage: mkbusy up | down | run
+ echo usage: "mkbusy up | down | run"
 }
 
 run() {

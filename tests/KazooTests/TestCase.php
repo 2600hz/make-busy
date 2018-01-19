@@ -243,9 +243,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         self::assertNotEquals($freq, $tone, "Unexpected tone was detected");
     }
 
-    public static function ensureTwoWayAudio($a_channel, $b_channel) {
-        self::ensureTalking($a_channel, $b_channel, 1600);
-        self::ensureTalking($b_channel, $a_channel, 600);
+    public static function ensureTwoWayAudio($a_channel, $b_channel, $timeout = 5) {
+        self::ensureTalking($a_channel, $b_channel, 1600, $timeout);
+        self::ensureTalking($b_channel, $a_channel, 600, $timeout);
     }
 
     public static function hangupBridged($a_channel, $b_channel) {
