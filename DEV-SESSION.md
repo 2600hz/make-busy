@@ -10,7 +10,9 @@ root@fl03:~# git clone https://github.com/2600hz/make-busy-conference.git Confer
 root@fl03:~# git clone https://github.com/2600hz/make-busy-crossbar.git Crossbar
 root@fl03:~# cd ..
 ===> we need to pass full path for volume ex: /tmp/test1/make-busy
-root@fl03:~# docker run -td --name mkbusy -v /tmp/test1/make-busy:/root/make-busy -v /tmp/test1/mytests:/root/tests \
+root@fl03:~# docker run -td --name mkbusy \
+                  -v /tmp/test1/make-busy:/root/make-busy \
+                  -v /tmp/test1/mytests:/root/tests \
                   --privileged docker:dind --experimental --storage-driver=overlay
 root@fl03:~# docker exec -ti mkbusy sh
    # docker swarm init
