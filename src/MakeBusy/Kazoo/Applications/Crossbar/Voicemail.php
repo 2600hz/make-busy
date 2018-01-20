@@ -43,6 +43,7 @@ class Voicemail
         $voicemail_box->pin = "0000";
         $voicemail_box->mailbox = $box_number;
         $voicemail_box->timezone = "America/Los_Angeles";
+        $voicemail_box->media_extension = "wav";
 
         $voicemail_box->makebusy = new stdClass();
         $voicemail_box->makebusy->test = TRUE;
