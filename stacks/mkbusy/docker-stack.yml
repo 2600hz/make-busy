@@ -6,6 +6,9 @@ services:
     hostname: "makebusy.$COMMIT"
     volumes:
       - type: bind
+        source: ../../../make-busy/src
+        target: /home/user/make-busy/src
+      - type: bind
         source: ../../../tests
         target: /home/user/make-busy/tests/KazooTests/Applications
         read_only: true
@@ -13,6 +16,24 @@ services:
         source: ./mkbusy.config.json
         target: /home/user/make-busy/config.json
         read_only: true
+      - type: bind
+        source: /tmp
+        target: /tmp
+    deploy:
+      endpoint_mode: dnsrr
+    networks:
+      - kazoo
+
+  makebusy-http:
+    image: php:7.0-apache
+    hostname: "makebusy-http.$COMMIT"
+    volumes:
+      - type: bind
+        source: ../../../make-busy
+        target: /var/www/html
+      - type: bind
+        source: /tmp
+        target: /tmp
     deploy:
       endpoint_mode: dnsrr
     networks:
