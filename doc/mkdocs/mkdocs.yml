@@ -3,7 +3,8 @@ site_name: Testing
 pages:
 - 'index.md'
 - 'Make-Busy':
-    - 'README.md'
+    - './README.md'
+    - './DEV-SESSION.md'
     - './CONTRIBUTING.md'
     - './TODO.md'
 - 'Tests':

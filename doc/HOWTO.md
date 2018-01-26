@@ -2,16 +2,11 @@
 
 ## Overview
 
-To write a test you need to define a test case by subclassing TestCase class. In test case you can define a number of
-TestAccount instances representing Kazoo's accounts (usually one).
-Each TestAccount descendant class in turn can have several instances of Device, User, Resource, Voicemail and other Kazoo entities as class
-static members. After setting up testing environment you need to define actual tests, by subclassing your defined TestCase.
+To write a test you need to define a test case by subclassing TestCase class. In test case you can define a number of TestAccount instances representing Kazoo's accounts (usually one). Each TestAccount descendant class in turn can have several instances of Device, User, Resource, Voicemail and other Kazoo entities as class static members. After setting up testing environment you need to define actual tests, by subclassing your defined TestCase.
 
 ## FreeSWITCH types
 
-You can have several (at least one) FreeSWITCH instances that will simulate various SIP devices distinguished by "type".
-Recommended is two, one for "auth" type devices like Devices, and another for "carrier" type devices, like Resources.
-Please see supplied [config.json.dist](../etc/config.json.dist) for details.
+You can have several (at least one) FreeSWITCH instances that will simulate various SIP devices distinguished by "type". Recommended is two, one for "auth" type devices like Devices, and another for "carrier" type devices, like Resources. Please see supplied [config.json.dist](../etc/config.json.dist) for details.
 
 ## Programming notes
 

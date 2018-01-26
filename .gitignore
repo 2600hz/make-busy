@@ -18,3 +18,4 @@ doc/mkdocs/docs/
 /doc/mkdocs/mkdocs.local.yml
 doc/mkdocs/site
 /vendor/
+/doc/mkdocs/mkdocs.local

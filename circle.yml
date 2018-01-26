@@ -1,0 +1,9 @@
+dependencies:
+  pre:
+      - pip install --upgrade pip
+      - pip install PyYAML mkdocs pyembed-markdown jsonschema
+
+test:
+  pre:
+    - make docs-clean
+    - make docs
