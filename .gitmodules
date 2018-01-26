@@ -1,0 +1,9 @@
+[submodule "Callflow"]
+	path = tests/Callflow
+	url = git@github.com:2600hz/make-busy-callflow
+[submodule "Conference"]
+	path = tests/Conference
+	url = git@github.com:2600hz/make-busy-conference
+[submodule "Crossbar"]
+	path = tests/Crossbar
+	url = git@github.com:2600hz/make-busy-crossbar
