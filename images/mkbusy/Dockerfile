@@ -9,11 +9,9 @@ WORKDIR /home/user
 USER user
 RUN  git clone $REPO ./make-busy \
      && cd make-busy \
-     && git checkout -b some-fixes origin/some-fixes \
      && ./composer install \
      && ./composer clear-cache
-RUN sudo setcap CAP_NET_BIND_SERVICE+ep /usr/local/bin/php
 WORKDIR /home/user/make-busy
 ADD config.json /home/user/make-busy
-ENTRYPOINT ["php", "-S", "0.0.0.0:80"]
+ENTRYPOINT ["php", "-S", "0.0.0.0:8080"]
 
