@@ -10,14 +10,16 @@ class Channel
 {
     private $event;
     private $esl;
+    private $tone_detection = [];
 
     public function __construct($esl, ESLevent $event) {
         $this->event = clone $event;
         $this->esl = $esl;
-        Log::debug("channel:%s is new %s", $this->getUuid(), $event->getHeader('Call-Direction'));
+        Log::debug("channel:%s is new %s for %s", $this->getUuid(), $event->getHeader('Call-Direction'), $event->getHeader('Caller-Destination-Number'));
     }
 
     public function __destruct() {
+    	$this->hangup();
     }
 
     public function __toString() {
@@ -92,8 +94,7 @@ class Channel
     }
 
     public function getAutoAnswerDetected() {
-        $event = $this->dump();
-        return $event->getHeader("variable_sip_auto_answer_detected");
+        return $this->event->getHeader("variable_sip_auto_answer_detected");
     }
 
     public function log() {
@@ -174,14 +175,19 @@ class Channel
     }
 
     public function detectTone($name, $timeout = 5){
-        $uuid = $this->getUuid();
-        Log::debug("channel:%s waiting for tone:%s detection for:%s seconds", $uuid, $name, $timeout);
-        $this->esl->api_f("spandsp_start_tone_detect %s %s", $uuid, $name);
-        $tone = $this->waitDetectTone($name, $timeout);
-        $this->esl->api_f("spandsp_stop_tone_detect %s", $uuid);
-        return $tone;
+    	return $this->waitDetectTone($name, $timeout);
     }
 
+    public function startToneDetection($name, $timeout=5){
+    	if(isset($this->tone_detection[$name])) {
+    		return;
+    	}
+    	$this->tone_detection[$name] = true;
+    	$uuid = $this->getUuid();
+    	Log::debug("channel:%s starting tone detection: %s", $uuid, $name);
+    	$this->esl->api_f("spandsp_start_tone_detect %s %s", $uuid, $name);
+    }
+    
     public function setVariables($name, $value) {
         $uuid = $this->getUuid();
         Log::debug("channel:%s set variable:%s to value:%s", $uuid, $name, $value);
@@ -202,6 +208,29 @@ class Channel
         return NULL;
     }
 
+    public function waitForTone($tone, $timeout = 10) {
+    	$uuid = $this->getUuid();
+    	$start = time();
+    	while(1) {
+    		$now = time();
+    		$time_left = ($timeout - ($now - $start)) * 1000;
+
+    		if (($now - $start) >= $timeout){
+    			Log::debug("channel:%s timeout waiting for tone %s", $uuid, $tone);
+    			return FALSE;
+    		}
+
+	    	if ( ($event = $this->waitEvent($timeout, "DETECTED_TONE") ) ) {
+	    		$evtone = $event->getHeader("Detected-Tone");
+	    		Log::debug("channel:%s received detected tone %s , %s", $uuid, $evtone, $tone);
+	    		if($evtone  == $tone) {
+	    			return TRUE;
+	    		}
+	    	}
+    	}
+    	return FALSE;
+    }
+    
     public function waitAnswer($timeout = 5) {
         $uuid = $this->getUuid();
         Log::debug("channel:%s waiting for answer for %d seconds", $uuid, $timeout);
@@ -214,7 +243,12 @@ class Channel
         return $this->waitEvent($timeout, "CHANNEL_PARK");
     }
 
-    private function waitEvent($timeout, $event_name, $event_subclass='') {
+    public function waitToneDetectionStarted($timeout = 5) {
+    	$uuid = $this->getUuid();
+    	return $this->waitEvent($timeout, "MEDIA_BUG_START");
+    }
+
+    public function waitEvent($timeout, $event_name) {
         $uuid = $this->getUuid();
         Log::debug("channel:%s wait event name:%s for %d seconds", $uuid, $event_name, $timeout);
 
@@ -224,7 +258,7 @@ class Channel
             $time_left = ($timeout - ($now - $start)) * 1000;
 
             if (($now - $start) >= $timeout){
-            	Log::notice("channel:%s timeout waiting for event name:%s", $uuid, $event_name == "CUSTOM" ? $event_subclass : $event_name);
+            	Log::debug("channel:%s timeout waiting for event name:%s", $uuid, $event_name);
                 return NULL;
             }
 
@@ -235,13 +269,9 @@ class Channel
             
             $eventName = $event->getHeader("Event-Name");
             $eventSubclass = $event->getHeader("Event-Subclass");
-            if($event_name == "CUSTOM") {
-            	if ($eventName == "CUSTOM" && $eventSubclass === $event_subclass) {
-            		Log::notice("channel:%s received expected event %s", $uuid, $event_subclass);            		
-            		return $event;
-            	} else {
-            		Log::debug("channel:%s received event %s while expecting %s", $uuid, $eventName == "CUSTOM" ? $eventSubclass: $eventName, $event_subclass);
-            	}
+            if ($eventName == "CUSTOM" && $eventSubclass === $event_name) {
+            	Log::debug("channel:%s received expected event %s", $uuid, $event_name);
+            	return $event;
             } else {
             	if ($eventName === $event_name) {
             		Log::debug("channel:%s received expected event %s", $uuid, $eventName);
