@@ -28,6 +28,7 @@ class Connection extends \ESLconnection
     private $authenticated = FALSE;
     private $eventLock = FALSE;
     private $asyncExecute = FALSE;
+    private $uuids = [];
 
     public static function getInstance($type = "auth") {
         if (! array_key_exists($type, self::$instances)) {
@@ -221,6 +222,7 @@ class Connection extends \ESLconnection
 
     	if($event) {
     		
+    		$this->trackChannel($event);
     		$this->channels->newEvent($event);
     		
     		$event_name = $event->getHeader('Event-Name');
@@ -255,10 +257,12 @@ class Connection extends \ESLconnection
     	$event = parent::recvEventTimed($milliseconds);
 
     	if($event) {
-    		
+    		$this->trackChannel($event);
     		$this->channels->newEvent($event);
     		
     		$event_uuid = $event->getHeader('Unique-ID');
+    		$evname = $event->getHeader('Event-Name');
+    		$eventSubclass = $event->getHeader("Event-Subclass");
 
     		if ( ! $uuid && ! $event_uuid ) {
     			return $event;
@@ -270,9 +274,9 @@ class Connection extends \ESLconnection
     		
     		// Event was not for our $uuid, enqueue and recvEvent again
     		$this->enqueueEvent($event);
-    		$event = NULL;
+    		return $this->recvEventTimed($milliseconds, $uuid);
     	}
-    	return $event;    	
+    	return $event;
     }
 
     public function recvFilteredEventTimed($milliseconds, $value, $header, $direction = null) {
@@ -283,7 +287,7 @@ class Connection extends \ESLconnection
     	$event = parent::recvEventTimed($milliseconds);
     	
     	if($event) {
-    		
+    		$this->trackChannel($event);
     		$this->channels->newEvent($event);
     		
     		$uuid = $event->getHeader('Unique-ID');
@@ -296,7 +300,7 @@ class Connection extends \ESLconnection
     		    		    		
     		// Event was not for our header/value/direction, enqueue and recvEvent again
     		$this->enqueueEvent($event);
-    		$event = NULL;
+    		return $this->recvFilteredEventTimed($milliseconds, $value, $header, $direction);
     	}
     	return $event;
     }
@@ -321,10 +325,34 @@ class Connection extends \ESLconnection
     public function disconnect() {
         // if we are connected cleanly exit
         if ($this->connected()) {
+        	$this->hangupChannels();
             $this->send('exit');
             $this->authenticated = FALSE;
         }
         // disconnect the socket
         return parent::disconnect();
+    }
+
+    public function hangupChannels() {
+    	foreach ($this->uuids as $uuid => $live) {
+    		if ($live== 1){
+    			$this->api_f("uuid_kill %s", $uuid);
+    		}
+    	}    	
+    }
+
+    public function trackChannel(\ESLevent $event) {
+    	$event_name = $event->getHeader('Event-Name');
+    	$uuid = $event->getHeader('Unique-ID');
+    	switch($event_name) {
+    		case 'CHANNEL_CREATE':
+    			$this->uuids[$uuid] = 1;
+    			break;
+    		case 'CHANNEL_DESTROY':
+    			$this->uuids[$uuid] = 0;
+    			break;
+    		default:
+    			break;
+    	}
     }
 }
