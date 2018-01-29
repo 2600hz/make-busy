@@ -5,6 +5,7 @@ namespace KazooTests;
 require_once('ESL.php');
 
 use \PHPUnit_Framework_TestCase;
+use \PHPUnit_Framework_TestSuite;
 
 use \MakeBusy\Common\Configuration;
 use \MakeBusy\Common\Utils;
@@ -17,8 +18,13 @@ use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
 use \MakeBusy\Kazoo\SDK;
 
 use \Exception;
-use Kazoo\Api\Exception\ApiException;
-use Kazoo\HttpClient\Exception\HttpException;
+use \Kazoo\Api\Exception\ApiException;
+use \Kazoo\HttpClient\Exception\HttpException;
+use \Kazoo\Api\Exception\Conflict;
+
+use \ReflectionClass;
+use \RecursiveDirectoryIterator;
+use \RecursiveIteratorIterator;
 
 function handleError($e) {
     $error = json_decode((string) $e->getResponse()->getBody());
@@ -29,10 +35,17 @@ function handleError($e) {
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
+	protected static $is_suite = false;
+	protected static $setup = false;
     protected static $account;
     protected static $type;
     protected static $base_type;
     protected static $system_configs = [];
+
+    protected static $tones = [
+    		"TALKING" => 500,
+    		"TWO-WAY-TALKING" => 550
+    ];
 
     /**
     * @dataProvider sipUriProvider
@@ -43,6 +56,56 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         });
     }
 
+    public static function suite()
+    {
+    	$class = get_called_class();
+    	$type = AbstractTestAccount::shortName($class);
+    	$base_type = AbstractTestAccount::shortName(get_parent_class($class));
+
+    	$suite = new PHPUnit_Framework_TestSuite;
+    	
+    	if($base_type != "TestCase") {
+    		$suite->addTest(new PHPUnit_Framework_TestSuite($class));
+    		return $suite;
+    	}
+
+    	$obj = new ReflectionClass($class);
+    	$filename = $obj->getFileName();
+    	$path = str_replace("TestCase.php", "/", $filename);
+    	Log::info("BASE TYPE %s - %s - %s - %s", $base_type, $type, $filename, $path );
+    	
+    	$directory = new RecursiveDirectoryIterator($path , RecursiveDirectoryIterator::SKIP_DOTS);
+    	$fileIterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
+    	foreach ($fileIterator as $file) {
+    		if ($file->getExtension() == "php") {
+    			if ($file->isReadable()) {
+    				Log::info("including %s", $file->getPathname());
+    				include_once $file->getPathname();
+    			} else {
+    				Log::info("not readable ? %s", $file->getPathname());
+    			}
+    		}
+    	}
+
+    	$this_class = get_called_class();
+    	$children = array();
+    	foreach( get_declared_classes() as $class ){
+    		if( is_subclass_of( $class, $this_class) ) {
+    			Log::info("CLASS %s", $class);
+    			$children[] = new ReflectionClass($class);
+    		}
+    	}
+    	foreach($children as $child) {
+    		$t = PHPUnit_Framework_TestSuite::createTest($child, 'testMain');
+    		$suite->addTest($t);
+    	}
+
+    	$suite->setName($obj->name);
+    	self::$is_suite= true;
+    	
+    	return $suite;
+    }
+    
     // override this to run a test
     public function main($sip_uri) {
     }
@@ -54,9 +117,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     // override this to set up case
     public static function setUpCase() {
-        FeatureCodes::create(self::$account);
-        self::$account->createOffnetNoMatch();
-        self::$account->createAccountMetaflow();
+    	self::safeCall(function() {
+	        FeatureCodes::create(self::$account);
+	        self::$account->createOffnetNoMatch();
+	        self::$account->createAccountMetaflow();
+    	});
     }
 
     // override this to cleanup after case
@@ -91,9 +156,18 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         return self::getProfile($profile)->getGateways();
     }
 
-    public static function safeCall($callable) {
+    public static function safeCall($callable, $try=0) {
         try {
             $callable();
+        }
+        catch(Conflict $e) {
+        	if($try < 3) {
+        		Log::debug("Conflict exception caught, retrying");
+        		self::safeCall($callable, $try + 1);        		
+        	} else {
+        		Log::debug("Conflict exception caught, NOT retrying");
+        		handleError($e);        		
+        	}
         }
         catch(ApiException $e) {
             handleError($e);
@@ -108,6 +182,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public function setUp() {
+    	if(self::$is_suite) {
+    		$this->setUpBeforeClass();
+    	}
         self::safeCall(function() {
             $this->setUpTest();
         });
@@ -120,13 +197,22 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function setUpBeforeClass() {
-        self::saveSystemConfigs();
-        self::SystemConfig("token_buckets/default")->fetch()->patch(["tokens_fill_rate"], 100);
+    	$class = get_called_class();    	
+    	self::$type = AbstractTestAccount::shortName($class);
+    	self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
+    	
+    	if(self::$setup) {
+    		self::$account->setType(self::$type);
+    		return;
+    	}
+    	self::$setup = true;
+    	
+    	self::safeCall(function() {
+	        self::saveSystemConfigs();
+	        self::SystemConfig("token_buckets/default")->fetch()->patch(["tokens_fill_rate"], 100);
+    	});
 
-        $class = get_called_class();
 
-        self::$type = AbstractTestAccount::shortName($class);
-        self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
         Log::info("Start test: %s case: %s", self::$type, self::$base_type);
         if (isset($_ENV['CLEAN'])) {
             Log::debug("Cleaning MakeBusy traces from Kazoo");
@@ -188,13 +274,15 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             $profile->register(false);
             if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
                 Log::error("fs %s %d gateways are not registered still, giving up", $profile_name, $wait);
-                Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
+                $status = $profile->status();
+                Log::error("fs %s sofia status:\n%s", $profile_name, $status == null ? "down" : $status->getBody());
                 throw new Exception("gateways weren't registered");
             }
         }
         if ( ($wait = $profile->waitForGateways($profile->getUnregistered())) > 0) {
             Log::error("fs %s %d gateways are absent in profile", $profile_name, $wait);
-            Log::error("fs %s sofia status:\n%s", $profile_name, $profile->status()->getBody());
+            $status = $profile->status();
+            Log::error("fs %s sofia status:\n%s", $profile_name, $status == null ? "down" : $status->getBody());
             throw new Exception("gateways are absent");
         }
     }
@@ -213,41 +301,58 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function ensureChannel($ch) {
         self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\Channels\\Channel", $ch, "Expected channel wasn't created");
+        static::onChannelReady($ch);
         return $ch;
     }
 
     public static function ensureEvent($ev) {
-        self::assertInstanceOf("\\ESLevent", $ev, "Expected event wasn't received");        
+        self::assertInstanceOf("\\ESLevent", $ev, "Expected event wasn't received");
         return $ev;
     }
 
+    public static function onChannelReady($ch) {
+    	$ch->startToneDetection("MAKEBUSY");
+    }
+
+    public static function onChannelAnswer($ch) {
+    	$ch->startToneDetection("MAKEBUSY");
+    }
+    
     // channel a is calling (originating), channel b is ringing
-    public static function ensureAnswer($channel_a, $channel_b) {
+    public static function ensureAnswer($channel_a, $channel_b, $timeout = 5) {
         $channel_b->answer();
-        self::ensureEvent($channel_b->waitAnswer());
-        self::ensureEvent($channel_a->waitAnswer());
+        self::ensureAnswered($channel_b, $timeout);
+        self::ensureAnswered($channel_a, $timeout);
         Log::info("call %s has answered call %s", $channel_b->getUuid(), $channel_a->getUuid());
     }
 
-    public static function ensureTalking($first_channel, $second_channel, $freq = 600, $timeout = 5) {
-        $first_channel->playTone($freq, $timeout*1000, 0, 1);
-        $tone = $second_channel->detectTone($freq, $timeout);
-        $first_channel->breakout();
-        self::assertEquals($freq, $tone, "Expected tone wasn't heard");
+    public static function ensureAnswered($channel, $timeout=5) {
+    	self::ensureEvent($channel->waitAnswer($timeout));
+    	static::onChannelAnswer($channel);
+    	return $channel;
     }
-
-    public static function ensureNotTalking($first_channel, $second_channel, $freq = 600) {
-        $first_channel->playTone($freq, 3000, 0, 5);
-        $tone = $second_channel->detectTone($freq);
+    
+    public static function ensureTalking($first_channel, $second_channel, $tone = "TALKING", $timeout = 5) {
+    	$freq = self::$tones[$tone];
+    	$first_channel->playTone($freq, $timeout*1000, 0, 1);
+    	$res = $second_channel->waitForTone($tone, $timeout);
+    	$first_channel->breakout();
+    	self::assertTrue($res, sprintf("channels are not talking : %s", $tone));
+    }
+    
+    public static function ensureNotTalking($first_channel, $second_channel, $tone = "TALKING", $timeout = 5) {
+    	$freq = self::$tones[$tone];
+    	$first_channel->playTone($freq, $timeout*1000, 0, 1);
+        $res = $second_channel->waitForTone($tone, $timeout);
         $first_channel->breakout();
-        self::assertNotEquals($freq, $tone, "Unexpected tone was detected");
+        self::assertFalse($res, sprintf("channels are talking and they shouldn't : %s", $tone));
     }
 
     public static function ensureTwoWayAudio($a_channel, $b_channel, $timeout = 5) {
-        self::ensureTalking($a_channel, $b_channel, 1600, $timeout);
-        self::ensureTalking($b_channel, $a_channel, 600, $timeout);
+    	self::ensureTalking($a_channel, $b_channel, "TALKING", $timeout);
+    	self::ensureTalking($b_channel, $a_channel, "TWO-WAY-TALKING", $timeout);
     }
-
+    
     public static function hangupBridged($a_channel, $b_channel) {
         $a_channel->hangup();
         self::ensureEvent($a_channel->waitDestroy());
@@ -262,9 +367,22 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function expectPrompt($channel, $descriptor, $timeout = 10) {
-        $tone = $channel->detectTone($descriptor, $timeout);
-        $expected = strtolower($descriptor);
-        self::assertEquals($expected, $tone);
+    	self::assertTrue($channel->waitForTone($descriptor, $timeout), sprintf("expected prompt %s not detected", $descriptor));
+    }
+
+    public static function waitForPrompt($channel, $descriptor, $timeout = 10) {
+    	return $channel->waitForTone($descriptor, $timeout);
+    }
+    
+    public static function expectEvent($channel, $event_name, $timeout = 10) {
+    	$event = self::ensureEvent($channel->waitEvent($timeout, $event_name));
+    	if($event_name== "CHANNEL_ANSWER") {
+   			static::onChannelAnswer($channel);
+    	}
+    }
+
+    public static function expectAnswer($channel, $timeout = 10) {
+    	return self::expectEvent($channel, "CHANNEL_ANSWER", $timeout);
     }
 
     public static function assertIsSet($object, $key, $message = null) {
@@ -279,14 +397,12 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $configs = array_merge(static::system_configs(), ["token_buckets"]);
         foreach($configs as $config) {
             self::$system_configs[$config] = self::SystemConfig($config)->fetch();
-            self::deleteSystemConfig($config);
         }
     }
 
     private static function restoreSystemConfigs() {
         $configs = array_merge(static::system_configs(), ["token_buckets"]);
         foreach($configs as $config) {
-            self::deleteSystemConfig($config);
             self::$system_configs[$config]->save();
         }
     }
