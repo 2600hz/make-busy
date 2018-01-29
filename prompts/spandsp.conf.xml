@@ -12,90 +12,29 @@
     </settings>
    <descriptors>
 
-     <!-- North America -->
-     <descriptor name="1">
-       <tone name="CED_TONE">
-         <element freq1="2100" freq2="0" min="500" max="0"/>
-       </tone>
-       <tone name="SIT">
-         <element freq1="950" freq2="0" min="256" max="400"/>
-         <element freq1="1400" freq2="0" min="256" max="400"/>
-         <element freq1="1800" freq2="0" min="256" max="400"/>
-       </tone>
-       <tone name="REORDER_TONE">
-         <element freq1="480" freq2="620" min="224" max="272"/>
-         <element freq1="0" freq2="0" min="224" max="272"/>
-       </tone>
-       <tone name="BUSY_TONE">
-         <element freq1="480" freq2="620" min="464" max="516"/>
-         <element freq1="0" freq2="0" min="464" max="516"/>
-       </tone>
-     </descriptor>
-
-     <!-- United Kingdom -->
-     <descriptor name="44">
-       <tone name="CED_TONE">
-         <element freq1="2100" freq2="0" min="500" max="0"/>
-       </tone>
-       <tone name="SIT">
-         <element freq1="950" freq2="0" min="256" max="400"/>
-         <element freq1="1400" freq2="0" min="256" max="400"/>
-         <element freq1="1800" freq2="0" min="256" max="400"/>
-       </tone>
-       <tone name="REORDER_TONE">
-         <element freq1="400" freq2="0" min="368" max="416"/>
-         <element freq1="0" freq2="0" min="336" max="368"/>
-         <element freq1="400" freq2="0" min="256" max="288"/>
-         <element freq1="0" freq2="0" min="512" max="544"/>
-       </tone>
-       <tone name="BUSY_TONE">
-         <element freq1="400" freq2="0" min="352" max="384"/>
-         <element freq1="0" freq2="0" min="352" max="384"/>
-         <element freq1="400" freq2="0" min="352" max="384"/>
-         <element freq1="0" freq2="0" min="352" max="384"/>
-       </tone>
-     </descriptor>
-
-     <!-- Germany -->
-     <descriptor name="49">
-       <tone name="CED_TONE">
-         <element freq1="2100" freq2="0" min="500" max="0"/>
-       </tone>
-       <tone name="SIT">
-         <element freq1="900" freq2="0" min="256" max="400"/>
-         <element freq1="1400" freq2="0" min="256" max="400"/>
-         <element freq1="1800" freq2="0" min="256" max="400"/>
-       </tone>
-       <tone name="REORDER_TONE">
-         <element freq1="425" freq2="0" min="224" max="272"/>
-         <element freq1="0" freq2="0" min="224" max="272"/>
-       </tone>
-       <tone name="BUSY_TONE">
-         <element freq1="425" freq2="0" min="464" max="516"/>
-         <element freq1="0" freq2="0" min="464" max="516"/>
-       </tone>
-     </descriptor>
-     <!-- Make-Busy GENERIC -->
-     <descriptor name="600">
-        <tone name="600">
+     <!-- Make-Busy GENERIC -->                               
+     <descriptor name="600">                                  
+        <tone name="600">                                     
              <element freq1="600" freq2="0" min="600" max="0"/>
-        </tone>
-     </descriptor>
-     <descriptor name="1600">
-        <tone name="1600">
+        </tone>                                                 
+     </descriptor>                                             
+     <descriptor name="1600">                                  
+        <tone name="1600">                                     
              <element freq1="1600" freq2="0" min="600" max="0"/>
-        </tone>
-     </descriptor>
-     <descriptor name="2600">
-        <tone name="2600">
+        </tone>                                                 
+     </descriptor>                                              
+     <descriptor name="2600">                                   
+        <tone name="2600">                                      
              <element freq1="2600" freq2="0" min="600" max="0"/>
-        </tone>
-     </descriptor>
-     <descriptor name="3000">
-        <tone name="3000">
+        </tone>                                                 
+     </descriptor>                                              
+     <descriptor name="3000">                                   
+        <tone name="3000">                                      
              <element freq1="3000" freq2="0" min="600" max="0"/>
-        </tone>
-     </descriptor>
+        </tone>                                                 
+     </descriptor>                                              
+
+     
     <!-- Make-Busy AGENT -->
     <descriptor name="AGENT-ALREADY_LOGGED_IN">
         <tone name="agent-already_logged_in">
@@ -156,6 +95,8 @@
             <element freq1="800" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy CAMPER -->
     <descriptor name="CAMPER-DENY">
         <tone name="camper-deny">
@@ -167,6 +108,8 @@
             <element freq1="850" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+
+    
     <!-- Make-Busy CF -->
     <descriptor name="CF-DISABLED">
         <tone name="cf-disabled">
@@ -218,7 +161,14 @@
             <element freq1="1250" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy CONF -->
+    <descriptor name="WELCOME">
+        <tone name="welcome">
+            <element freq1="800" freq2="0" min="600" max="0"/>
+        </tone>
+    </descriptor>
     <descriptor name="CONF-ALONE">
         <tone name="conf-alone">
             <element freq1="800" freq2="0" min="600" max="0"/>
@@ -314,6 +264,8 @@
             <element freq1="1700" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy DIR -->
     <descriptor name="DIR-CONFIRM_MENU">
         <tone name="dir-confirm_menu">
@@ -385,6 +337,8 @@
             <element freq1="1450" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy DISA -->
     <descriptor name="DISA-ENTER_PIN">
         <tone name="disa-enter_pin">
@@ -406,6 +360,8 @@
             <element freq1="950" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy DND -->
     <descriptor name="DND-ACTIVATED">
         <tone name="dnd-activated">
@@ -422,6 +378,8 @@
             <element freq1="900" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy DYNAMIC -->
     <descriptor name="DYNAMIC-CID-ENTER_CID">
         <tone name="dynamic-cid-enter_cid">
@@ -433,12 +391,16 @@
             <element freq1="850" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy EAVESDROP -->
     <descriptor name="EAVESDROP-NO_CHANNELS">
         <tone name="eavesdrop-no_channels">
             <element freq1="800" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy FAULT -->
     <descriptor name="FAULT-CAN_NOT_BE_COMPLETED_AS_DIALED">
         <tone name="fault-can_not_be_completed_as_dialed">
@@ -455,6 +417,8 @@
             <element freq1="900" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy HOTDESK -->
     <descriptor name="HOTDESK-ABORT">
         <tone name="hotdesk-abort">
@@ -491,6 +455,8 @@
             <element freq1="1100" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy INTERCEPT -->
     <descriptor name="INTERCEPT-NO_CHANNELS">
         <tone name="intercept-no_channels">
@@ -502,6 +468,8 @@
             <element freq1="850" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy IVR -->
     <descriptor name="IVR-GROUP_CONFIRM">
         <tone name="ivr-group_confirm">
@@ -513,6 +481,8 @@
             <element freq1="850" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy MENU -->
     <descriptor name="MENU-EXIT">
         <tone name="menu-exit">
@@ -539,6 +509,8 @@
             <element freq1="1000" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy PARK -->
     <descriptor name="PARK-ALREADY_IN_USE">
         <tone name="park-already_in_use">
@@ -555,6 +527,8 @@
             <element freq1="900" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy PICKUP -->
     <descriptor name="PICKUP-NO_CHANNELS">
         <tone name="pickup-no_channels">
@@ -566,6 +540,8 @@
             <element freq1="850" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy TEMPORAL -->
     <descriptor name="TEMPORAL-MARKED_DISABLED">
         <tone name="temporal-marked_disabled">
@@ -587,6 +563,8 @@
             <element freq1="950" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
     <!-- Make-Busy VM -->
     <descriptor name="VM-ABORT">
         <tone name="vm-abort">
@@ -808,5 +786,245 @@
             <element freq1="2950" freq2="0" min="600" max="0"/>
         </tone>
     </descriptor>
+    
+    
+    
+    <!-- Make-Busy CONF -->
+    <descriptor name="CONFERENCE">
+        <tone name="CONF-ALONE">
+            <element freq1="800" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-ANNOUNCE_YOUR_NAME">
+            <element freq1="850" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-BAD_CONF">
+            <element freq1="900" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-BAD_PIN">
+            <element freq1="950" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-DEAF">
+            <element freq1="1000" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-ENTER_CONF_NUMBER">
+            <element freq1="1050" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-ENTER_CONF_PIN">
+            <element freq1="1100" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-JOINING_CONFERENCE">
+            <element freq1="1150" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-MAX_PARTICIPANTS">
+            <element freq1="1200" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-MUTED">
+            <element freq1="1250" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-OTHER_PARTICIPANTS">
+            <element freq1="1300" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-REVIEW">
+            <element freq1="1350" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-SINGLE">
+            <element freq1="1400" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-THERE_ARE">
+            <element freq1="1450" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-TOO_MANY_ATTEMPTS">
+            <element freq1="1500" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-UNDEAF">
+            <element freq1="1550" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-UNMUTED">
+            <element freq1="1600" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-WELCOME">
+            <element freq1="1650" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-YOUR_ANNOUNCEMENT">
+            <element freq1="1700" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-ENTER">
+            <element freq1="1750" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-EXIT">
+            <element freq1="1800" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="CONF-CUSTOM-WELCOME">
+            <element freq1="1850" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="TALKING">
+            <element freq1="500" freq2="0" min="500" max="0"/>
+        </tone>
+        <tone name="TWO-WAY-TALKING">
+            <element freq1="550" freq2="0" min="500" max="0"/>
+        </tone>        
+    </descriptor>
+
+    <!-- Make-Busy VM -->
+    <descriptor name="VOICEMAIL">
+        <tone name="VM-ABORT">
+            <element freq1="800" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-DELETED">
+            <element freq1="850" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-ENTER_ID">
+            <element freq1="900" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-ENTER_NEW_PIN">
+            <element freq1="950" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-ENTER_NEW_PIN_CONFIRM">
+            <element freq1="1000" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-ENTER_PASS">
+            <element freq1="1050" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-FAIL_AUTH">
+            <element freq1="1100" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-GOODBYE">
+            <element freq1="1150" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-GREETING_INTRO">
+            <element freq1="1200" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-MAILBOX_FULL">
+            <element freq1="1250" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-MAIN_MENU">
+            <element freq1="1300" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-MAIN_MENU_NOT_CONFIGURABLE">
+            <element freq1="1350" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-MESSAGE_MENU">
+            <element freq1="1400" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-MESSAGE_NUMBER">
+            <element freq1="1450" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NEW">
+            <element freq1="1500" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NEW_AND">
+            <element freq1="1550" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NEW_AND-OLD1">
+            <element freq1="1600" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NEW_MESSAGE">
+            <element freq1="1650" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NEW_MESSAGES">
+            <element freq1="1700" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NO_ACCESS">
+            <element freq1="1750" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NO_MESSAGES">
+            <element freq1="1800" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NOT_AVAILABLE">
+            <element freq1="1850" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-NOT_AVAILABLE_NO_VOICEMAIL">
+            <element freq1="1900" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-PERSON">
+            <element freq1="1950" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-PERSON_NOT_AVAILABLE">
+            <element freq1="2000" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-PIN_INVALID">
+            <element freq1="2050" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-PIN_SET">
+            <element freq1="2100" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECEIVED">
+            <element freq1="2150" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECORD_GREETING">
+            <element freq1="2200" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECORD_MESSAGE">
+            <element freq1="2250" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECORD_NAME">
+            <element freq1="2300" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECORDING_SAVED">
+            <element freq1="2350" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-RECORDING_TO_SHORT">
+            <element freq1="2400" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-REVIEW_RECORDING">
+            <element freq1="2450" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAVED">
+            <element freq1="2500" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAVED_MESSAGE">
+            <element freq1="2550" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAVED_MESSAGES">
+            <element freq1="2600" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SETTINGS_MENU">
+            <element freq1="2650" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SETUP_COMPLETE">
+            <element freq1="2700" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SETUP_INTRO">
+            <element freq1="2750" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SETUP_REC_GREETING">
+            <element freq1="2800" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-THANK_YOU">
+            <element freq1="2850" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-YOU_HAVE">
+            <element freq1="2900" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-YOU_HAVE-OLD1">
+            <element freq1="2950" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAMPLE-MESSAGE-1">
+            <element freq1="3500" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAMPLE-MESSAGE-2">
+            <element freq1="3550" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="VM-SAMPLE-GREETING-1">
+            <element freq1="3600" freq2="0" min="600" max="0"/>
+        </tone>
+        <tone name="TALKING">
+            <element freq1="500" freq2="0" min="500" max="0"/>
+        </tone>
+        <tone name="TWO-WAY-TALKING">
+            <element freq1="550" freq2="0" min="500" max="0"/>
+        </tone>
+    </descriptor>
+
+     <!-- Make-Busy TALKING -->
+     <descriptor name="MAKEBUSY">
+        <tone name="TALKING">
+            <element freq1="500" freq2="0" min="500" max="0"/>
+        </tone>
+        <tone name="TWO-WAY-TALKING">
+            <element freq1="550" freq2="0" min="500" max="0"/>
+        </tone>
+     </descriptor>
+    
    </descriptors>
 </configuration>
