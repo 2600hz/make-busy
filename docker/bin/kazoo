@@ -38,7 +38,17 @@ build() {
        --squash --label kazoo.commit=$COMMIT \
        .
      popd > /dev/null
-  fi 
+  fi
+}
+
+force_build() {
+    cd ${BASE_IMAGE}/kazoo
+    docker build --target=kazoo \
+           --no-cache \
+           -t 2600hz/kazoo:$COMMIT \
+           --build-arg COMMIT=$COMMIT \
+           --squash --label kazoo.commit=$COMMIT \
+           .
 }
 
 up() {
@@ -59,7 +69,7 @@ devup() {
 }
 
 down() {
-   echo kazoo is going down   
+   echo kazoo is going down
    docker stack rm kz_$COMMIT
 }
 
@@ -87,7 +97,7 @@ docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}"
           echo Failed to verify that kamailio has dispatcher updated
           exit 1
    fi
-   
+
    sleep 10
    ## DON'T SEND PINGS TO FREESWITCH
    CID=$(docker ps --filter name=kz_${COMMIT}_kamailio --format="{{.ID}}")
@@ -117,7 +127,7 @@ docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}"
 }
 
 add_servers() {
-## hack until dns resolves hostname in overlay network 
+## hack until dns resolves hostname in overlay network
 IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"kz_${COMMIT}_kazoo\").IPAddress }}" $(docker ps --filter name=kz_${COMMIT}_kamailio --format="{{.ID}}"))
 echo "setting kamailio ip to $IP kamailio-1 kamailio-1.$COMMIT"
 docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}") /bin/sh -c "echo $IP kamailio-1 kamailio-1.$COMMIT >> /etc/hosts"
@@ -167,6 +177,7 @@ shift
 case "$COMMAND" in
     build) build;;
     devup) devup $*;;
+    force_build) force_build;;
     up) up;;
     down) down;;
     configure) configure;;
