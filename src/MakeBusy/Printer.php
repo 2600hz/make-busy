@@ -1,13 +1,20 @@
 <?php
 use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestSuite\DataProvider;
 use \MakeBusy\Common\Log;
 
 class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework_TestListener {
+
     protected $currentTestSuiteName = '';
     protected $currentTestName = '';
+    protected $currentTestFileName = '';
     protected $pass = true;
+    protected $incomplete = false;
     protected $start_time = 0;
-
+    protected $test_start_time = 0;
+    protected $errors = 0;
+    protected $incompletes = 0;
+    
     public function __construct($out = null) {
         $this->start_time = microtime(true);
         return parent::__construct($out);
@@ -22,7 +29,13 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     }
 
     public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
-        $this->writeCase('FAILURE', $time, $e->getMessage(), $test);
+    	$subject = str_ireplace("/", "\/", $this->currentTestFileName);
+    	$subject = str_ireplace(".", "\.", $subject);
+    	preg_match_all("/" . $subject . "\(?(\d+)\)/", $e->getTraceAsString(), $out);
+    	$line = $out[1][0];
+    	
+    	
+    	$this->writeCase('FAILURE', $time, sprintf("line: %s %s", $line , $e->getMessage()), $test);
         $this->pass = false;
         if (isset($_ENV['STACK_TRACE'])) {
             $this->write($e->getTraceAsString());
@@ -32,6 +45,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
         $this->writeCase('INCOMPLETE', $time, $e->getMessage(), $test);
         $this->pass = false;
+        $this->incomplete = true;
     }
 
     public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -45,14 +59,26 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     }
 
     public function startTest(PHPUnit_Framework_Test $test) {
-        $this->currentTestName = $test->getName();
+    	$this->test_start_time = microtime(true);
+    	$re = new ReflectionClass($test);
+    	$this->currentTestName = $re->getFileName(); //$test->getName();
+    	$this->currentTestFileName = $re->getFileName(); //$test->getName();
+    	$this->write(sprintf("RUN %s\n", $this->currentTestName));
     }
 
     public function endTest(PHPUnit_Framework_Test $test, $time) {
-        if ($this->pass) {
+    	if ($this->pass) {
             $this->writeCase('OK', $time, '', $test);
+        } else {
+        	if($this->incomplete) {
+        		$this->incompletes++;
+        	} else {
+        		$this->errors++;
+        	}
         }
         $this->currentTestName = '';
+        $this->pass = true;
+        $this->incomplete = false;
     }
 
     private function getEnv($keys) {
@@ -66,17 +92,20 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     }
 
     public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-        if (! preg_match('/::/', $suite->getName())) {
-            $re = new ReflectionClass($suite->getName());
-            $this->currentTestSuiteName = sprintf("test: %s case: %s", $re->getShortName(), $re->getParentClass()->getShortName());
-            $this->currentTestName = '';
-            $this->write(sprintf("RUN %s %s\n", $re->getFileName(), $this->getEnv(['CLEAN','RESTART_PROFILE', 'SKIP_REGISTER', 'SKIP_ACCOUNT'])));
+    	$this->currentTestSuiteName = $suite->getName();
+    	$this->currentTestName = '';
+    	if($suite->count() > 1) {
+            $this->write(sprintf("START SUITE %s\n", $suite->getName()));
         }
     }
 
     public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
         $this->currentTestSuiteName = $suite->getName();
         $this->currentTestName = '';
+        if($suite->count() > 1) {
+        	$status = $this->errors == 0 ? "COMPLETED" : "ERROR";
+        	$this->write(sprintf("SUITE %s %s\n", $status, $suite->getName()));
+        }
     }
 
     protected function writeCase($status, $time, $message = '', $test = null) {
@@ -85,9 +114,15 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         if ($test !== null && method_exists($test, 'hasOutput') && $test->hasOutput()) {
             $output = $test->getActualOutput();
         }
-        $time = microtime(true) - $this->start_time;
+        $time = microtime(true) - $this->test_start_time;
         Log::debug("STATUS: %s", $status);
-        $this->write(sprintf("TEST %s %.02fs %s function: %s\n%s\n", $status, $time, $this->currentTestSuiteName, $this->currentTestName, $message));
+        $tk = explode("\n", $message);
+        $this->write(sprintf("TEST %s %.02fs %s %s\n", $status, $time, $this->currentTestName, $tk[0]));
     }
 
+    public function write($buffer) {
+    	if(!strstr($buffer, "PUnit")) {
+    		parent::write($buffer);
+    	}
+    }
 }
