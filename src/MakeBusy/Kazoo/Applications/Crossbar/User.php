@@ -187,6 +187,16 @@ class User {
         $user->save();
     }
 
+    public function getCallForward(){
+    	return $this->getUser()->call_forward;
+    }
+    
+    public function setCallForward($cf){
+    	$user = $this->getUser();
+    	$user->call_forward = $cf;
+    	$user->save();
+    }
+    
     public function resetCfParams($number = null){
         $user = $this->getUser();
 
