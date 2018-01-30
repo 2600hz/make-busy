@@ -1,7 +1,7 @@
 #!/bin/sh
 export PHPRC=./php.ini
 CASES=$(find tests -path "*/${1}/*TestCase.php")
-if [[ ! $CASES ]]; then
+if [ -z "$CASES" ]; then
     echo "no cases found for app $1. make sure there is at least one *TestCase.php in the app. $CASES" && exit 0
 fi
 APP=$1
