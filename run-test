@@ -1,3 +1,3 @@
 #!/bin/sh
 export PHPRC=./php.ini
-exec /home/user/bin/phpunit --printer MakeBusy_Printer $*
+exec vendor/bin/phpunit --printer MakeBusy_Printer $*
