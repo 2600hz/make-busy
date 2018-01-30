@@ -10,7 +10,7 @@ do
    sleep 5
    CID=$(docker ps --filter name=$NODE --format="{{.ID}}")
    TRY=$(( TRY + 1 ))
-   if [ $TRY gt 5]; then
+   if [ $TRY -gt 5 ]; then
       exit 1
    fi
 done   
