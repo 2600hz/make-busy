@@ -20,6 +20,13 @@ help() {
  echo usage: "mkbusy up | down | run"
 }
 
+runall()
+{
+mkdir -p ${LOGS_DIR}/$COMMIT
+CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
+LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
 run() {
 
 mkdir -p ${LOGS_DIR}/$COMMIT
