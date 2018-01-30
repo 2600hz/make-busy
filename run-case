@@ -6,15 +6,9 @@ if [ ! -f $TEST ]; then
    echo "suite $1 not found. make sure there is a ${1}TestCase.php in the tests path" && exit 0
 fi
 shift
-echo START CASE:$CASE "($TEST)"
-echo
 result=0
-./run-test "$TEST"
+CLEAN=1 RESTART_PROFILE=1 ./run-test "$TEST"
 if [ ! $? -eq 0 ]; then
-     echo ERROR CASE:$CASE
-     echo
      exit 1
 fi
-echo COMPLETE CASE:$CASE
-echo
 exit 0

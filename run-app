@@ -10,7 +10,7 @@ echo START APP:$APP
 result=0
 for CASE in $CASES
 do
-./run-test "$CASE"
+CLEAN=1 RESTART_PROFILE=1 ./run-test "$CASE"
 if [ ! $? -eq 0 ]; then
      result=1
 fi

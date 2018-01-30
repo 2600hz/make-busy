@@ -95,7 +95,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     	$this->currentTestSuiteName = $suite->getName();
     	$this->currentTestName = '';
     	if($suite->count() > 1) {
-            $this->write(sprintf("START SUITE %s\n", $suite->getName()));
+            $this->write(sprintf("START CASE %s\n", $suite->getName()));
         }
     }
 
@@ -104,7 +104,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         $this->currentTestName = '';
         if($suite->count() > 1) {
         	$status = $this->errors == 0 ? "COMPLETED" : "ERROR";
-        	$this->write(sprintf("SUITE %s %s\n", $status, $suite->getName()));
+        	$this->write(sprintf("CASE %s %s\n", $status, $suite->getName()));
         }
     }
 
