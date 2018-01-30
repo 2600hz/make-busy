@@ -187,10 +187,8 @@
 
             <!-- Logging / Events -->
             <param name="debug" value="info"/>
-            <param name="sip-trace" value="false"/>
+            <param name="sip-trace" value="true"/>
             <param name="log-auth-failures" value="true"/>
-            <param name="fire-transfer-events" value="true"/>
-            <param name="channel-xml-fetch-on-nightmare-transfer" value="true"/>
         </settings>
         <gateways>
             <X-PRE-PROCESS cmd="exec" data="wget -qO - http://makebusy:8080/gateways.php?type=$TYPE" />

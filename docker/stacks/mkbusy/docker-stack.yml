@@ -26,10 +26,6 @@ services:
         source: ../media-files/freeswitch
         target: /usr/share/freeswitch/sounds
         read_only: true
-      - type: bind
-        source: ../etc/freeswitch/logfile.conf.xml
-        target: /etc/freeswitch/autoload_configs/logfile.conf.xml
-        read_only: true
     environment:
       TYPE: auth
     deploy:
@@ -45,10 +41,6 @@ services:
         source: ../media-files/freeswitch
         target: /usr/share/freeswitch/sounds
         read_only: true
-      - type: bind 
-        source: ../etc/freeswitch/logfile.conf.xml
-        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
-        read_only: true                                          
     environment:
       TYPE: pbx
     deploy:
@@ -64,10 +56,6 @@ services:
         source: ../media-files/freeswitch
         target: /usr/share/freeswitch/sounds
         read_only: true
-      - type: bind 
-        source: ../etc/freeswitch/logfile.conf.xml
-        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
-        read_only: true                                          
     environment:
       TYPE: carrier
     deploy:

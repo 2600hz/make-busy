@@ -1,19 +1,19 @@
 #!/bin/sh
 export PHPRC=./php.ini
+CASES=$(find tests -path "*/${1}/*TestCase.php")
+if [[ ! $CASES ]]; then
+    echo "no cases found for app $1. make sure there is at least one *TestCase.php in the app. $CASES" && exit 0
+fi
 APP=$1
-[ -z $APP ] && echo "please specify a folder with tests" && exit 0
-[ ! -d $APP ] && echo "$APP must be a folder with php test files" && exit 0
 shift
 echo START APP:$APP
 result=0
-for SUITE in $(ls $APP)
+for CASE in $CASES
 do
-    if [ -d "$APP/$SUITE" ]; then
-         ./run-suite $APP/$SUITE
-        if [ ! $? -eq 0 ]; then
-             result=1
-        fi
-    fi
+./run-test "$CASE"
+if [ ! $? -eq 0 ]; then
+     result=1
+fi
 done
 if [ ! $result -eq 0 ]; then
      echo ERROR APP:$APP

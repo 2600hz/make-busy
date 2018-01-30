@@ -85,14 +85,6 @@ services:
         source: ../media-files/freeswitch
         target: /usr/share/freeswitch/sounds
         read_only: true
-      - type: bind 
-        source: ../etc/freeswitch/logfile.conf.xml
-        target: /etc/freeswitch/autoload_configs/logfile.conf.xml 
-        read_only: true                                          
-      - type: bind
-        source: ./sipinterface_1.xml
-        target: /etc/freeswitch/sip_profiles/sipinterface_1.xml
-        read_only: true
     deploy:
       endpoint_mode: dnsrr
     networks:
