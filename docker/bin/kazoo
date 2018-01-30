@@ -1,0 +1,138 @@
+#!/bin/bash
+COMMIT=${COMMIT:-${2:-master}}
+BASE_IMAGE=${BASE_IMAGE:-$(dirname $0)/../docker/images}
+BASE_STACK=${BASE_STACK:-$(dirname $0)/../docker/stacks}
+
+export COMMIT=${COMMIT:0:10}
+
+wait_for_node() {
+   local NODE=${1:-"kazoo"}
+   local TIMEOUT=${2:-"120"}
+   if ! wait-for kz_${COMMIT}_$NODE $TIMEOUT "auto-started kapps"; then
+      echo "exit with 1"
+      exit 1
+   fi
+
+}
+
+connect() {
+   local NODE=${1:-"kazoo"}
+   local CID=$(docker ps --filter name=kz_${COMMIT}_$NODE --format="{{.ID}}")
+   echo "connecting to $NODE with  docker exec -ti $CID kazoo remote_console"
+   docker exec -ti $CID kazoo remote_console
+}
+
+shell() {
+   local NODE=${1:-"kazoo"}
+   local CID=$(docker ps --filter name=kz_${COMMIT}_$NODE --format="{{.ID}}")
+   docker exec -ti $CID bash
+}
+
+build() {
+  if [ -z "$(docker image ls -q --filter=reference=2600hz/kazoo:$COMMIT)" ]
+  then
+     cd ${BASE_IMAGE}/kazoo
+     docker build --target=kazoo \
+       -t 2600hz/kazoo:$COMMIT \
+       --build-arg COMMIT=$COMMIT \
+       --squash --label kazoo.commit=$COMMIT \
+       .
+  fi 
+}
+
+up() {
+   build
+   cd ${BASE_STACK}/kazoo
+   docker stack deploy -c docker-stack.yml kz_$COMMIT
+}
+
+
+down() {
+   echo kazoo is going down
+   cd ${BASE_STACK}/kazoo
+   docker stack rm kz_$COMMIT
+}
+
+
+add_media_files() {
+   sup media kazoo_media_maintenance import_prompts /media-files/en-mb/ en-mb > /dev/null 2>&1
+#   sup media kazoo_media_maintenance import_prompts /media-files/en-us/ en-us > /dev/null 2>&1
+}
+
+add_freeswitch() {
+## hack because of dns
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"kz_${COMMIT}_kazoo\").IPAddress }}" $(docker ps --filter name=kz_${COMMIT}_freeswitch --format="{{.ID}}"))
+echo "setting freeswitch ip to $IP freeswitch-1 freeswitch-1.$COMMIT"
+docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}") /bin/sh -c "echo $IP freeswitch-1 freeswitch-1.kz_${COMMIT} >> /etc/hosts"
+
+   sup callmgr ecallmgr_maintenance add_fs_node freeswitch@freeswitch-1.kz_${COMMIT}
+   if ! wait-for kz_${COMMIT}_callmgr 60 "fs sync complete"; then
+          echo Failed to wait for FreeSwitch to connect, network:$COMMIT
+          exit 1
+   fi
+
+}
+
+add_servers() {
+## hack until dns resolves hostname in overlay network 
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"kz_${COMMIT}_kazoo\").IPAddress }}" $(docker ps --filter name=kz_${COMMIT}_kamailio --format="{{.ID}}"))
+echo "setting kamailio ip to $IP kamailio-1 kamailio-1.$COMMIT"
+docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}") /bin/sh -c "echo $IP kamailio-1 kamailio-1.$COMMIT >> /etc/hosts"
+
+
+   sup callmgr ecallmgr_maintenance allow_sbc kamailio-1.$COMMIT $IP
+
+
+IP=$(docker inspect --format "{{ (index .NetworkSettings.Networks \"kz_${COMMIT}_kazoo\").IPAddress }}" $(docker ps --filter name=mb_${COMMIT}_makebusy-fs-carrier --format="{{.ID}}"))
+echo "setting makebusy-fs-carrier ip to $IP makebusy-fs-carrier makebusy-fs-carrier.$COMMIT"
+docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}") /bin/sh -c "echo $IP makebusy-fs-carrier makebusy-fs-carrier.$COMMIT >> /etc/hosts"
+
+
+   sup callmgr ecallmgr_maintenance allow_carrier makebusy-fs-carrier.$COMMIT $IP
+}
+
+configure() {
+   wait_for_node kazoo 4m
+   wait_for_node callmgr 4m
+   wait_for_node media 4m
+   wait_for_node crossbar 4m
+
+   add_media_files
+   add_freeswitch
+   add_servers
+
+}
+
+sanity_check() {
+   sup crossbar kz_nodes status
+   sup callmgr ecallmgr_maintenance acl_summary
+}
+
+logs() {
+  local NODE=${1:-"kazoo"}
+  local CID=$(docker ps --filter name=kz_${COMMIT}_${NODE} --format="{{.ID}}")
+  shift
+  docker logs $* $CID
+}
+
+help() {
+ echo usage: "kazoo build | up | down | logs | configure | add_fs | check | shell | connect | loadmedia"
+}
+
+COMMAND=${1:-help}
+shift
+case "$COMMAND" in
+    build) build;;
+    up) up;;
+    down) down;;
+    configure) configure;;
+    add_fs) add_freeswitch;;
+    check) sanity_check;;
+    connect) connect $1;;
+    shell) shell $1;;
+    loadmedia) add_media_files;;
+    logs) logs $*;;
+    help) help;;
+esac
+
+

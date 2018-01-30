@@ -5,22 +5,21 @@ SUITE=$1
 [ ! -d $SUITE ] && echo "$SUITE must be a folder with php test files" && exit 0
 shift
 echo START SUITE:$SUITE
+echo
+CLEAN=1 SKIP_ACCOUNT=1 ./run-test tests/KazooTests/EmptyTestCase.php > /dev/null
+result=0
 for TEST in $(find $SUITE -name '*.php' | shuf)
 do
-	./run-test $TEST
-	if [ ! $? -eq 0 ]
-	then
-		RESTART_PROFILE=1 ./run-test $TEST
-		if [ ! $? -eq 0 ]
-		then
-			CLEAN=1 ./run-test $TEST
-			if [ ! $? -eq 0 ]
-			then
-				echo GIVE UP SUITE:$SUITE ON:$TEST
-				exit 1
-			fi
-		fi
-	fi
+        ./run-test $TEST
+        if [ ! $? -eq 0 ]; then
+             result=1
+        fi
 done
+if [ ! $result -eq 0 ]; then
+     echo ERROR SUITE:$SUITE
+     echo
+     exit 1
+fi
 echo COMPLETE SUITE:$SUITE
+echo
 exit 0

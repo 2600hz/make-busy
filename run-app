@@ -5,13 +5,19 @@ APP=$1
 [ ! -d $APP ] && echo "$APP must be a folder with php test files" && exit 0
 shift
 echo START APP:$APP
+result=0
 for SUITE in $(ls $APP)
 do
-#echo "checkng $SUITE"
-        if [ -d "$APP/$SUITE" ]
-        then
+    if [ -d "$APP/$SUITE" ]; then
          ./run-suite $APP/$SUITE
+        if [ ! $? -eq 0 ]; then
+             result=1
         fi
+    fi
 done
+if [ ! $result -eq 0 ]; then
+     echo ERROR APP:$APP
+     exit 1
+fi
+echo COMPLETE APP:$APP
 exit 0
-
