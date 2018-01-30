@@ -51,9 +51,28 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     * @dataProvider sipUriProvider
     */
     public function testMain($sipUri) {
-        self::safeCall(function() use ($sipUri) {
-            $this->main($sipUri);
-        });
+    	try {
+    		self::safeCall(function() use ($sipUri) {
+    			$this->main($sipUri);
+    		});    			
+    	}
+    	catch(Exception $e) {
+    		Log::error("Generic exception error: %s, code: %d", $e->getMessage(), $e->getCode());
+    		self::flushChannels();
+    		throw($e);
+    	}    	
+    	self::flushChannels();
+    }
+
+    public static function flushChannels() {
+    	self::hangupSofiaChannels("auth");
+    	self::hangupSofiaChannels("carrier");
+    	self::hangupSofiaChannels("pbx");
+    }
+
+    public static function hangupSofiaChannels($profile_name) {
+    	$profile = self::getProfile($profile_name);
+    	$profile->getEsl()->hangupChannels();
     }
 
     public static function suite()
@@ -299,9 +318,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         return Configuration::randomSipTarget();
     }
 
-    public static function ensureChannel($ch) {
+    public function ensureChannel($ch) {
         self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\Channels\\Channel", $ch, "Expected channel wasn't created");
-        static::onChannelReady($ch);
+        $this->onChannelReady($ch);
         return $ch;
     }
 
@@ -328,7 +347,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 
     public static function ensureAnswered($channel, $timeout=5) {
     	self::ensureEvent($channel->waitAnswer($timeout));
-    	static::onChannelAnswer($channel);
+    	self::onChannelAnswer($channel);
     	return $channel;
     }
     
