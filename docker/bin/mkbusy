@@ -55,6 +55,7 @@ case $COMMAND in
     up) up;;
     down) down;;
     run) run;;
+    runall) runall;;
     help) help;;
 esac
 
