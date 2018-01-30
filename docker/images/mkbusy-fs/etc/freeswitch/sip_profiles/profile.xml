@@ -193,7 +193,7 @@
             <param name="channel-xml-fetch-on-nightmare-transfer" value="true"/>
         </settings>
         <gateways>
-            <X-PRE-PROCESS cmd="exec" data="wget -qO - http://makebusy/gateways.php?type=$TYPE" />
+            <X-PRE-PROCESS cmd="exec" data="wget -qO - http://makebusy:8080/gateways.php?type=$TYPE" />
         </gateways>
     </profile>
 </include>
