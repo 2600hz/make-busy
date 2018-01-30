@@ -318,9 +318,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         return Configuration::randomSipTarget();
     }
 
-    public function ensureChannel($ch) {
+    public static function ensureChannel($ch) {
         self::assertInstanceOf("\\MakeBusy\\FreeSWITCH\\Channels\\Channel", $ch, "Expected channel wasn't created");
-        $this->onChannelReady($ch);
+        static::onChannelReady($ch);
         return $ch;
     }
 
@@ -346,8 +346,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function ensureAnswered($channel, $timeout=5) {
+    	self::ensureChannel($channel);
     	self::ensureEvent($channel->waitAnswer($timeout));
-    	self::onChannelAnswer($channel);
+    	static::onChannelAnswer($channel);
     	return $channel;
     }
     
