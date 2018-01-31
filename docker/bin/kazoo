@@ -107,6 +107,10 @@ configure() {
 }
 
 sanity_check() {
+   if ! wait-for kz_${COMMIT}_kamailio 60 "reported new media server"; then
+          echo Failed to verify that kamailio has dispatcher updated
+          exit 1
+   fi
    sup crossbar kz_nodes status
    sup callmgr ecallmgr_maintenance acl_summary
 }
