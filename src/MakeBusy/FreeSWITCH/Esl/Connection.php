@@ -85,8 +85,9 @@ class Connection extends \ESLconnection
     }
 
     public function flushEvents(){
-        unset($this->eventQueue);
-        $this->eventQueue = array();
+    	array_splice($this->eventQueue, 0);
+//        unset($this->eventQueue);
+//        $this->eventQueue = array();
     }
 
     
