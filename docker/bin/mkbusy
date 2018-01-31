@@ -67,7 +67,7 @@ case $COMMAND in
     down) down;;
     run) run;;
     runall) runall;;
-    runcase) runcase;;
+    runcase) runcase $*;;
     help) help;;
 esac
 
