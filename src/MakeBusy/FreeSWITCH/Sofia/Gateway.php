@@ -272,7 +272,7 @@ class Gateway
     public function restart() {
     	$this->getEsl()->api_f('sofia profile %s killgw %s', $this->getProfileName(), $this->getName());
     	$this->getProfile()->rescan();
-    	$this->register();
+    	return $this->register();
     }
     
     public function asXml() {
