@@ -8,6 +8,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     protected $currentTestSuiteName = '';
     protected $currentTestName = '';
     protected $currentTestFileName = '';
+    protected $currentTestClassName = '';
     protected $pass = true;
     protected $incomplete = false;
     protected $start_time = 0;
@@ -61,9 +62,10 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     public function startTest(PHPUnit_Framework_Test $test) {
     	$this->test_start_time = microtime(true);
     	$re = new ReflectionClass($test);
-    	$this->currentTestName = $re->getFileName(); //$test->getName();
-    	$this->currentTestFileName = $re->getFileName(); //$test->getName();
-    	$this->write(sprintf("RUN %s\n", $this->currentTestName));
+    	$this->currentTestClassName = $re->getName();
+    	$this->currentTestName = $re->getFileName();
+    	$this->currentTestFileName = $re->getFileName();
+    	$this->write(sprintf("TEST %s ... ", $this->currentTestClassName));
     }
 
     public function endTest(PHPUnit_Framework_Test $test, $time) {
@@ -117,7 +119,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         $time = microtime(true) - $this->test_start_time;
         Log::debug("STATUS: %s", $status);
         $tk = explode("\n", $message);
-        $this->write(sprintf("TEST %s %.02fs %s %s\n", $status, $time, $this->currentTestName, $tk[0]));
+        $this->write(sprintf("%s %.02fs %s\n", $status, $time, $tk[0]));
     }
 
     public function write($buffer) {
