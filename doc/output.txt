@@ -1,0 +1,187 @@
+james@pdx:~/local/git/2600hz/make-busy$ docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
+Unable to find image 'docker:dind' locally
+dind: Pulling from library/docker
+ff3a5c916c92: Pull complete
+1a649ea86bca: Pull complete
+ce35f4d5f86a: Pull complete
+77cff7920d8f: Pull complete
+234be691ceed: Pull complete
+6f3657a7b112: Pull complete
+e922ebf783a8: Pull complete
+fa852aa53bf1: Pull complete
+f05c5747f298: Pull complete
+f029b735bbfb: Pull complete
+Digest: sha256:9ac740379e36980be82a4a3f3291a58d2413bb554317f1e74fb9e7f808907616
+Status: Downloaded newer image for docker:dind
+afa9632a5e29b0c3390a543d9ca4a48c5578c4a68541ba620c6f601f68c791a2
+You have new mail in /var/mail/james
+james@pdx:~/local/git/2600hz/make-busy$
+james@pdx:~/local/git/2600hz/make-busy$ docker exec -ti mkbusy sh
+/ # docker swarm init
+Swarm initialized: current node (jjaiuixh79zparc52ldoz9zhl) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+docker swarm join --token SWMTKN-1-3j50shqowypy4959xltbufo5p3sj2f8el21p3dyi2i21l8o5vt-9u9vj00xj7vvfqqse2fsotfqr 172.17.0.2:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+/ #
+/ # apk --update add git jq bash coreutils
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/community/x86_64/APKINDEX.tar.gz
+(1/16) Installing pkgconf (1.3.10-r0)
+(2/16) Installing ncurses-terminfo-base (6.0_p20171125-r0)
+(3/16) Installing ncurses-terminfo (6.0_p20171125-r0)
+(4/16) Installing ncurses-libs (6.0_p20171125-r0)
+(5/16) Installing readline (7.0.003-r0)
+(6/16) Installing bash (4.4.12-r2)
+Executing bash-4.4.12-r2.post-install
+(7/16) Installing libattr (2.4.47-r6)
+(8/16) Installing libacl (2.2.52-r3)
+(9/16) Installing coreutils (8.28-r0)
+(10/16) Installing libssh2 (1.8.0-r2)
+(11/16) Installing libcurl (7.57.0-r0)
+(12/16) Installing expat (2.2.5-r0)
+(13/16) Installing pcre2 (10.30-r0)
+(14/16) Installing git (2.15.0-r1)
+(15/16) Installing oniguruma (6.6.1-r0)
+(16/16) Installing jq (1.5-r4)
+Executing busybox-1.27.2-r7.trigger
+OK: 46 MiB in 51 packages
+/ # export PATH=$PATH:~/make-busy/bin
+/ # export COMMIT=22e7b7688cc30c53d50262c774f2f9743b04a6e1
+/ # kazoo up 22e7b7688cc30c53d50262c774f2f9743b04a6e1
+Sending build context to Docker daemon  6.144kB
+Step 1/19 : FROM 2600hz/kazoo-build as build
+latest: Pulling from 2600hz/kazoo-build
+1160f4abea84: Pull complete
+4e7ef9cb2cd1: Pull complete
+fe7773f9cd17: Pull complete
+Digest: sha256:69d74628d97987e62f2e24bc4ad313cb29fbfbddd2a045ad79aae19b0d50aa44
+Status: Downloaded newer image for 2600hz/kazoo-build:latest
+---> fd9a9ddf5352
+Step 2/19 : ARG COMMIT
+---> Running in 5570a1cbf393
+Removing intermediate container 5570a1cbf393
+---> c4e0d6c9fadc
+Step 3/19 : RUN mkdir kazoo     && cd kazoo     && curl -L https://api.github.com/repos/2600hz/kazoo/tarball/$COMMIT | tar xz --strip-components=1    && make    && make tar-release
+---> Running in 0881ff6646b6
+...
+chmod +x /kazoo/deps/relx
+/kazoo/scripts/src2any.escript rel/relx.config.src
+( echo '-setcookie ${COOKIE}'; cat rel/args; echo '-name ${NODE_NAME}' ) > rel/vm.args
+       /kazoo/deps/relx --config rel/relx.config -V 2 release tar --relname 'kazoo'
+       ===> Starting relx build process ...
+       ===> Resolving OTP Applications from directories:
+       /kazoo/applications
+       /kazoo/core
+       /kazoo/deps
+       /usr/local/lib/erlang/lib
+       ===> Resolved kazoo-4.0.0
+       ===> rendering builtin_hook_status hook to "/kazoo/_rel/kazoo/bin/hooks/builtin/status"
+       ===> Including Erts from /usr/local/lib/erlang
+       ===> release successfully created!
+       ===> tarball /kazoo/_rel/kazoo/kazoo-4.0.0.tar.gz successfully created!
+       Removing intermediate container 0881ff6646b6
+       ---> cb18ff5a7a14
+       Step 4/19 : FROM alpine as kazoo
+       latest: Pulling from library/alpine
+       ff3a5c916c92: Pull complete
+       Digest: sha256:7df6db5aa61ae9480f52f0b3a06a140ab98d427f86d8d5de0bedab9b8df6b1c0
+       Status: Downloaded newer image for alpine:latest
+       ---> 3fd9065eaf02
+       Step 5/19 : RUN apk --update add ncurses bash libstdc++ openssl expat
+       ---> Running in 0ff2bc5b0fce
+       fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/main/x86_64/APKINDEX.tar.gz
+       fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/community/x86_64/APKINDEX.tar.gz
+       (1/13) Installing pkgconf (1.3.10-r0)
+       (2/13) Installing ncurses-terminfo-base (6.0_p20171125-r0)
+       (3/13) Installing ncurses-terminfo (6.0_p20171125-r0)
+       (4/13) Installing ncurses-libs (6.0_p20171125-r0)
+       (5/13) Installing readline (7.0.003-r0)
+       (6/13) Installing bash (4.4.12-r2)
+       Executing bash-4.4.12-r2.post-install
+       (7/13) Installing expat (2.2.5-r0)
+       (8/13) Installing libgcc (6.4.0-r5)
+       (9/13) Installing libstdc++ (6.4.0-r5)
+       (10/13) Installing ncurses (6.0_p20171125-r0)
+       (11/13) Installing libcrypto1.0 (1.0.2n-r0)
+       (12/13) Installing libssl1.0 (1.0.2n-r0)
+       (13/13) Installing openssl (1.0.2n-r0)
+       Executing busybox-1.27.2-r7.trigger
+       OK: 18 MiB in 24 packages
+       Removing intermediate container 0ff2bc5b0fce
+       ---> 8be8c61bad31
+       Step 6/19 : ENV PATH=$PATH:/opt/kazoo/bin
+       ---> Running in f6146f9c4c3a
+       Removing intermediate container f6146f9c4c3a
+       ---> d62e0530907d
+       Step 7/19 : ENV KAZOO_ZONE=local
+       ---> Running in 31f1024490e0
+       Removing intermediate container 31f1024490e0
+       ---> 250a75e41edc
+       Step 8/19 : ENV KAZOO_NODE=apps
+       ---> Running in 5fedde0e854b
+       Removing intermediate container 5fedde0e854b
+       ---> a75f0e4634b7
+       Step 9/19 : ENV KAZOO_COOKIE=change_me
+       ---> Running in 7a7f24621935
+       Removing intermediate container 7a7f24621935
+       ---> b94c9295dc6f
+       Step 10/19 : ENV RELX_REPLACE_OS_VARS=true
+       ---> Running in 366c2735baf2
+       Removing intermediate container 366c2735baf2
+       ---> 0b59a174bfd2
+       Step 11/19 : ENV TZ=UTC
+       ---> Running in 86de0df72fbf
+       Removing intermediate container 86de0df72fbf
+       ---> f8aaf8473696
+       Step 12/19 : ENV CODE_LOADING_MODE=interactive
+       ---> Running in 13ec4174192d
+       Removing intermediate container 13ec4174192d
+       ---> e39563e03e65
+       Step 13/19 : COPY --from=build /kazoo/_rel/kazoo/kazoo-4.0.0.tar.gz /opt/
+       ---> 083f5c5fac36
+       Step 14/19 : RUN mkdir /opt/kazoo && tar -xf /opt/kazoo-4.0.0.tar.gz -C /opt/kazoo && rm /opt/kazoo-4.0.0.tar.gz
+       ---> Running in d6b76b64f5bd
+       Removing intermediate container d6b76b64f5bd
+       ---> 902574b35ba8
+       Step 15/19 : ADD config.ini /etc/kazoo/
+       ---> 139315632b6e
+       Step 16/19 : ADD vm.args /opt/kazoo/releases/4.0.0/
+       ---> 8724fa1d9e02
+       Step 17/19 : RUN ln /opt/kazoo/lib/sup-4.0.0/priv/sup /opt/kazoo/bin/sup
+       ---> Running in 1a3053005d3f
+       Removing intermediate container 1a3053005d3f
+       ---> a9a2127ac5c1
+       Step 18/19 : CMD ["kazoo", "foreground"]
+       ---> Running in b5e22a4e6897
+       Removing intermediate container b5e22a4e6897
+       ---> e482ad18d1d3
+       Step 19/19 : LABEL "kazoo.commit"='22e7b7688c'
+       ---> Running in 1a4f8ea3104f
+       Removing intermediate container 1a4f8ea3104f
+       ---> 786075c52134
+       Successfully built 7dcc8c7e3257
+       Successfully tagged 2600hz/kazoo:22e7b7688c
+       Creating network kz_22e7b7688c_kazoo
+       Creating service kz_22e7b7688c_media
+       Creating service kz_22e7b7688c_kamailio
+       Creating service kz_22e7b7688c_couchdb
+       Creating service kz_22e7b7688c_rabbitmq
+       Creating service kz_22e7b7688c_freeswitch
+       Creating service kz_22e7b7688c_kazoo
+       Creating service kz_22e7b7688c_crossbar
+       Creating service kz_22e7b7688c_callmgr
+       / # wait-for crossbar 4m "finished system schemas update"
+       waiting for 'finished system schemas update' in node 'crossbar' => 2223fc0ce3bb
+       found 'finished system schemas update' in crossbar
+       / # sup crossbar crossbar_maintenance create_account admin admin admin admin
+       Error: No such container: /opt/kazoo/bin/sup
+       / # ls /opt
+       ls: cannot access '/opt': No such file or directory
+       / # ls /
+       bin  etc   lib    mnt   root  sbin  sys  usr
+       dev  home  media  proc  run   srv   tmp  var
+       / #
