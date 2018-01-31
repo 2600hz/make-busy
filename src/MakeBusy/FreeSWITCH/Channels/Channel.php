@@ -210,6 +210,7 @@ class Channel
 
     public function waitForTone($tone, $timeout = 10) {
     	$uuid = $this->getUuid();
+    	Log::debug("channel:%s wait for tone %s for %d seconds", $uuid, $tone, $timeout);
     	$start = time();
     	while(1) {
     		$now = time();
@@ -220,12 +221,20 @@ class Channel
     			return FALSE;
     		}
 
-	    	if ( ($event = $this->waitEvent($timeout, "DETECTED_TONE") ) ) {
-	    		$evtone = $event->getHeader("Detected-Tone");
-	    		Log::debug("channel:%s received detected tone %s , %s", $uuid, $evtone, $tone);
-	    		if($evtone  == $tone) {
-	    			return TRUE;
-	    		}
+    		$event = $this->esl->recvEventTimed($time_left, $uuid);
+    		if (!$event) {
+    			continue;
+    		}    		
+    		if ($event->getHeader("Event-Name")!= "DETECTED_TONE") {
+    			continue;
+    		}
+    		
+    		$evtone = $event->getHeader("Detected-Tone");
+    		if($evtone  == $tone) {
+    			Log::debug("channel:%s received expected tone %s", $uuid, $evtone);
+    			return TRUE;
+    		} else {
+    			Log::debug("channel:%s received tone %s while waiting for %s", $uuid, $evtone, $tone);	    			
 	    	}
     	}
     	return FALSE;
