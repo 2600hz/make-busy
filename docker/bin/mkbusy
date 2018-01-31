@@ -20,6 +20,17 @@ help() {
  echo usage: "mkbusy up | down | run"
 }
 
+runtest()
+{
+shift
+TEST=${1:-Error}
+COMMIT=${2:-${COMMIT:-master}}
+export COMMIT=$COMMIT
+mkdir -p ${LOGS_DIR}/$COMMIT
+CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
+LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${TEST}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
 runcase()
 {
 shift
@@ -28,7 +39,7 @@ COMMIT=${2:-${COMMIT:-master}}
 export COMMIT=$COMMIT
 mkdir -p ${LOGS_DIR}/$COMMIT
 CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
-LOG_CONSOLE=1 run-case 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+LOG_CONSOLE=1 run-case ${CASE} 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
 runall()
@@ -68,6 +79,7 @@ case $COMMAND in
     run) run;;
     runall) runall;;
     runcase) runcase $*;;
+    runtest) runtest $*;;
     help) help;;
 esac
 
