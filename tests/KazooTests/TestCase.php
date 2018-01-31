@@ -91,14 +91,12 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	$obj = new ReflectionClass($class);
     	$filename = $obj->getFileName();
     	$path = str_replace("TestCase.php", "/", $filename);
-    	Log::info("BASE TYPE %s - %s - %s - %s", $base_type, $type, $filename, $path );
     	
     	$directory = new RecursiveDirectoryIterator($path , RecursiveDirectoryIterator::SKIP_DOTS);
     	$fileIterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
     	foreach ($fileIterator as $file) {
     		if ($file->getExtension() == "php") {
     			if ($file->isReadable()) {
-    				Log::info("including %s", $file->getPathname());
     				include_once $file->getPathname();
     			} else {
     				Log::info("not readable ? %s", $file->getPathname());
