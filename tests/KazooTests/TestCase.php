@@ -117,7 +117,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	foreach($children as $child) {
     		$has_tests = false;
     		foreach ($child->getMethods() as $method) {
-    			if($suite->isTestMethod($method)) {
+    			if($suite->isTestMethod($method) && $method->getName() != 'testMain') {
     				$has_tests = true;
     				$t = PHPUnit_Framework_TestSuite::createTest($child, $method->getName());
     				$suite->addTest($t);
@@ -226,7 +226,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public static function setUpBeforeClass() {
-    	$class = get_called_class();    	
+    	$class = get_called_class();
     	self::$type = AbstractTestAccount::shortName($class);
     	self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
     	
@@ -262,10 +262,15 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         } else {
             $is_loaded = false;
         }
+        
+        static::syncProfiles();
 
-        self::syncSofiaProfile("auth", $is_loaded);
-        self::syncSofiaProfile("carrier", $is_loaded);
-        self::syncSofiaProfile("pbx", $is_loaded);
+    }
+    
+    public static function syncProfiles() {
+    	self::syncSofiaProfile("auth", $is_loaded);
+    	self::syncSofiaProfile("carrier", $is_loaded);
+    	self::syncSofiaProfile("pbx", $is_loaded);    	
     }
 
     public static function tearDownAfterClass() {
