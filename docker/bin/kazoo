@@ -74,6 +74,15 @@ docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}"
           exit 1
    fi
 
+   if ! wait-for kz_${COMMIT}_kamailio 60 "reported new media server"; then
+          echo Failed to verify that kamailio has dispatcher updated
+          exit 1
+   fi
+   
+   ## DON'T SEND PINGS TO FREESWITCH
+   $CID = $(docker ps --filter name=kz_${COMMIT}_kamailio --format="{{.ID}}")
+   docker exec -i ${CID}  kamcmd dispatcher.set_state a 1 sip:${IP}:11000
+
 }
 
 add_servers() {
@@ -107,10 +116,6 @@ configure() {
 }
 
 sanity_check() {
-   if ! wait-for kz_${COMMIT}_kamailio 60 "reported new media server"; then
-          echo Failed to verify that kamailio has dispatcher updated
-          exit 1
-   fi
    sup crossbar kz_nodes status
    sup callmgr ecallmgr_maintenance acl_summary
 }
