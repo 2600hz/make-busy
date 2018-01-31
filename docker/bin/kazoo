@@ -31,26 +31,29 @@ shell() {
 build() {
   if [ -z "$(docker image ls -q --filter=reference=2600hz/kazoo:$COMMIT)" ]
   then
-     cd ${BASE_IMAGE}/kazoo
+     pushd ${BASE_IMAGE}/kazoo
      docker build --target=kazoo \
        -t 2600hz/kazoo:$COMMIT \
        --build-arg COMMIT=$COMMIT \
        --squash --label kazoo.commit=$COMMIT \
        .
+     popd
   fi 
 }
 
 up() {
    build
-   cd ${BASE_STACK}/kazoo
+   pushd ${BASE_STACK}/kazoo
    docker stack deploy -c docker-stack.yml kz_$COMMIT
+   popd
 }
 
 
 down() {
-   echo kazoo is going down
-   cd ${BASE_STACK}/kazoo
+   echo kazoo is going down   
+   pushd ${BASE_STACK}/kazoo
    docker stack rm kz_$COMMIT
+   popd
 }
 
 
@@ -134,5 +137,3 @@ case "$COMMAND" in
     logs) logs $*;;
     help) help;;
 esac
-
-
