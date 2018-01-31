@@ -7,8 +7,9 @@ LOGS_DIR=${LOGS_DIR:-~/logs}
 export COMMIT=$COMMIT
 
 up() {
-   cd ${BASE_STACK}/mkbusy
+   pushd ${BASE_STACK}/mkbusy > /dev/null
    docker stack deploy -c docker-stack.yml mb_${COMMIT}
+   popd > /dev/null
 }
 
 
@@ -54,9 +55,9 @@ LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$CO
 }
 
 run() {
-
+ 
 mkdir -p ${LOGS_DIR}/$COMMIT
-cd $TESTS_DIR
+pushd $TESTS_DIR > /dev/null
 for APP in $(ls $TESTS)                             
 do                                                                                                                                          
         if [ -d $APP ]                              
@@ -71,7 +72,7 @@ do
                 done                                                                                                                          
         fi                                                                                                                                    
 done                                                                                                                                          
-
+popd > /dev/null
 
 }
 

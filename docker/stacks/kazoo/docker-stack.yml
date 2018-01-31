@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 
 x-node-env:
   &kz-env
@@ -150,6 +150,4 @@ services:
 
 networks:
     kazoo:
-#       name: $COMMIT
        attachable: true
-

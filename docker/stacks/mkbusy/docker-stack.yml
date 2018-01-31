@@ -6,6 +6,10 @@ services:
     hostname: "makebusy.$COMMIT"
     volumes:
       - type: bind
+        source: ../../../src
+        target: /home/user/make-busy/src
+        read_only: true
+      - type: bind
         source: ../../../tests
         target: /home/user/make-busy/tests/KazooTests/Applications
         read_only: true

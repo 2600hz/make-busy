@@ -31,29 +31,29 @@ shell() {
 build() {
   if [ -z "$(docker image ls -q --filter=reference=2600hz/kazoo:$COMMIT)" ]
   then
-     pushd ${BASE_IMAGE}/kazoo
+     pushd ${BASE_IMAGE}/kazoo > /dev/null
      docker build --target=kazoo \
        -t 2600hz/kazoo:$COMMIT \
        --build-arg COMMIT=$COMMIT \
        --squash --label kazoo.commit=$COMMIT \
        .
-     popd
+     popd > /dev/null
   fi 
 }
 
 up() {
    build
-   pushd ${BASE_STACK}/kazoo
+   pushd ${BASE_STACK}/kazoo > /dev/null
    docker stack deploy -c docker-stack.yml kz_$COMMIT
-   popd
+   popd > /dev/null
 }
 
 
 down() {
    echo kazoo is going down   
-   pushd ${BASE_STACK}/kazoo
+   pushd ${BASE_STACK}/kazoo > /dev/null
    docker stack rm kz_$COMMIT
-   popd
+   popd > /dev/null
 }
 
 
