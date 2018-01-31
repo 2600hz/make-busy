@@ -188,7 +188,7 @@
 
 
             <!-- Logging / Events -->
-            <param name="debug" value="info"/>
+            <param name="debug" value="debug"/>
             <param name="sip-trace" value="true"/>
             <param name="log-auth-failures" value="true"/>
         </settings>
