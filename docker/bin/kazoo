@@ -79,9 +79,12 @@ docker exec -i $(docker ps --filter name=kz_${COMMIT}_callmgr --format="{{.ID}}"
           exit 1
    fi
    
+   sleep 5
    ## DON'T SEND PINGS TO FREESWITCH
    $CID = $(docker ps --filter name=kz_${COMMIT}_kamailio --format="{{.ID}}")
    docker exec -i ${CID}  kamcmd dispatcher.set_state a 1 sip:${IP}:11000
+   ## DON'T SEND PINGS TO FREESWITCH-AUTH
+   docker exec -i ${CID}  kamcmd nathelper.enable_ping 0
 
 }
 
