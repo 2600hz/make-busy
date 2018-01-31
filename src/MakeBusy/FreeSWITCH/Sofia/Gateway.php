@@ -193,9 +193,7 @@ class Gateway
     }
 
     public function reregister($wait = true) {
-    	if(! $this->unregister($wait)) {
-    		return false;
-    	}
+    	$this->unregister($wait);
     	return $this->register($wait);
     }
     
