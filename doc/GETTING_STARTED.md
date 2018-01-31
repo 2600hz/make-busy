@@ -104,7 +104,7 @@ docker> export PATH=$PATH:~/make-busy/bin
 
 ### Export Kazoo git SHA
 
-This is the commit SHA you want to run the test suite(s) against.
+This is the commit SHA you want to run the test suite(s) against. Please limit it to the first 10 characters of the SHA.
 
 ```bash
 docker> export COMMIT=abcdef
@@ -144,4 +144,146 @@ docker> wait-for crossbar 4m "finished system schemas update"
 waiting for 'finished system schemas update' in node 'crossbar' => 017073060c18
 found 'finished system schemas update' in crossbar
 docker> sup crossbar crossbar_maintenance create_account admin admin admin admin
+View updated for account%2F2e%2Fbf%2Fa92013a7b0d447782a18098157e4!
+created new account '2ebfa92013a7b0d447782a18098157e4' in db 'account%2F2e%2Fbf%2Fa92013a7b0d447782a18098157e4'
+created new account admin user 'ab83c33b654552cf98282d9d77ca86e1'
+promoting account 2ebfa92013a7b0d447782a18098157e4 to reseller status, updating sub accounts
+updated master account id in system_config.accounts
+```
+
+### Start up make-busy system
+
+This includes vanilla FreeSWITCH instances
+
+```bash
+docker> mkbusy up 98a82f83ba
+Creating service mb_98a82f83ba_makebusy-fs-carrier
+Creating service mb_98a82f83ba_makebusy
+Creating service mb_98a82f83ba_makebusy-fs-auth
+Creating service mb_98a82f83ba_makebusy-fs-pbx
+docker> wait-for makebusy-fs-auth 120 "FreeSWITCH Started"
+waiting for 'FreeSWITCH Started' in node 'makebusy-fs-auth' => 7a7dacc5f469
+found 'FreeSWITCH Started' in makebusy-fs-auth
+docker> wait-for makebusy-fs-carrier 120 "FreeSWITCH Started"
+waiting for 'FreeSWITCH Started' in node 'makebusy-fs-carrier' => d91c14478a82
+found 'FreeSWITCH Started' in makebusy-fs-carrier
+```
+### Configure Kazoo for make-busy testing
+
+```bash
+docker> kazoo configure
+waiting for 'auto-started kapps' in node 'kz_98a82f83ba_kazoo' => 989f7816b977
+found 'auto-started kapps' in kz_98a82f83ba_kazoo
+waiting for 'auto-started kapps' in node 'kz_98a82f83ba_callmgr' => 72606d0506dd
+found 'auto-started kapps' in kz_98a82f83ba_callmgr
+waiting for 'auto-started kapps' in node 'kz_98a82f83ba_media' => d889a1866018
+found 'auto-started kapps' in kz_98a82f83ba_media
+waiting for 'auto-started kapps' in node 'kz_98a82f83ba_crossbar' => bfda06c4c5fd
+found 'auto-started kapps' in kz_98a82f83ba_crossbar
+setting freeswitch ip to 10.0.1.11 freeswitch-1 freeswitch-1.98a82f83ba
+adding freeswitch@freeswitch-1.kz_98a82f83ba to ecallmgr system config
+ok
+waiting for 'fs sync complete' in node 'kz_98a82f83ba_callmgr' => 72606d0506dd
+found 'fs sync complete' in kz_98a82f83ba_callmgr
+setting kamailio ip to 10.0.1.8 kamailio-1 kamailio-1.98a82f83ba
+updating authoritative ACLs kamailio-1.98a82f83ba(10.0.1.8/32) to allow traffic
+issued reload ACLs to freeswitch@freeswitch-1.kz_98a82f83ba
+setting makebusy-fs-carrier ip to 10.0.1.16 makebusy-fs-carrier makebusy-fs-carrier.98a82f83ba
+updating trusted ACLs makebusy-fs-carrier.98a82f83ba(10.0.1.16/32) to allow traffic
+issued reload ACLs to freeswitch@freeswitch-1.kz_98a82f83ba
+docker> sup callmgr ecallmgr_maintenance reload_acls
+issued reload ACLs to freeswitch@freeswitch-1.kz_98a82f83ba
+docker> kazoo check
+Node          : media@media-1.kz_98a82f83ba
+md5           : N5DqygdpWlscOfdQjTWkfw
+Version       : 4.0.0 - 20
+Memory Usage  : 71.26MB
+Processes     : 1610
+Ports         : 14
+Zone          : local
+Broker        : amqp://rabbitmq:5672
+Globals       : total (0)
+Node Info     : kz_amqp_pool: 250/0/0 (ready)
+WhApps        : media_mgr(12m4s)
+
+Node          : kamailio@kamailio-1.kz_98a82f83ba
+Version       : 5.1.0-dev8
+Memory Usage  : 16.54MB
+Zone          : local
+Broker        : amqp://rabbitmq:5672
+WhApps        : kamailio(12m32s)
+Roles         : Dispatcher Presence Proxy Registrar
+Dispatcher 1  : sip:10.0.1.11:11000 (AP)
+Subscribers   :
+Subscriptions :
+Presentities  : presence (0)  dialog (0)  message-summary (0)
+Registrations : 0
+
+Node          : ecallmgr@callmgr-1.kz_98a82f83ba
+md5           : 9y7E8GQapsLXFPLz7La-Xg
+Version       : 4.0.0 - 20
+Memory Usage  : 72.12MB
+Processes     : 1672
+Ports         : 26
+Zone          : local
+Broker        : amqp://rabbitmq:5672
+Globals       : total (0)
+Node Info     : kz_amqp_pool: 250/0/0 (ready)
+WhApps        : ecallmgr(12m4s)
+Channels      : 0
+Conferences   : 0
+Registrations : 0
+Media Servers : freeswitch@freeswitch-1.kz_98a82f83ba (1m35s)
+
+Node          : apps@kazoo-1.kz_98a82f83ba
+md5           : 2hc4eVFgzML_rGyQ9E3KEA
+Version       : 4.0.0 - 20
+Memory Usage  : 74.75MB
+Processes     : 1865
+Ports         : 15
+Zone          : local
+Broker        : amqp://rabbitmq:5672
+Globals       : total (0)
+Node Info     : kz_amqp_pool: 250/0/0 (ready)
+WhApps        : blackhole(12m3s)         callflow(12m3s)          conference(12m3s)        pusher(12m3s)
+                registrar(12m3s)         stepswitch(12m3s)        sysconf(12m4s)           trunkstore(12m3s)
+
+                Node          : api@crossbar-1.kz_98a82f83ba
+                md5           : fG3YrnyPUsjws5r-dXJqEw
+                Version       : 4.0.0 - 20
+                Memory Usage  : 80.36MB
+                Processes     : 1759
+                Ports         : 15
+                Zone          : local
+                Broker        : amqp://rabbitmq:5672
+                Globals       : total (0)
+                Node Info     : kz_amqp_pool: 250/0/0 (ready)
+                WhApps        : crossbar(12m2s)
+
+                +--------------------------------+--------------------+---------------+-------+------------------+----------------------------------+
+                | Name                           | CIDR               | List          | Type  | Authorizing Type | ID                               |
+                +================================+====================+===============+=======+==================+==================================+
+                | kamailio-1.98a82f83ba          | 10.0.1.8/32        | authoritative | allow | system_config    |                                  |
+                | makebusy-fs-carrier.98a82f83ba | 10.0.1.16/32       | trusted       | allow | system_config    |                                  |
+                +--------------------------------+--------------------+---------------+-------+------------------+----------------------------------+
+```
+
+### Run the test suite(s)
+
+#### Run all the test suites
+
+```bash
+docker> mkbusy run $COMMIT
+```
+
+#### Run a suite of tests
+
+```bash
+docker> HUPALL=1 LOG_CONSOLE=1 run-suite Callflow/Voicemail
+```
+
+#### Run a single test
+
+```bash
+docker> HUPALL=1 LOG_CONSOLE=1 run-test Callflow/Voicemail/SetupOwner.php
 ```
