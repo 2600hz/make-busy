@@ -4,6 +4,7 @@ pages:
 - 'index.md'
 - 'Make-Busy':
     - './README.md'
+    - './doc/GETTING_STARTED.md'
     - './DEV-SESSION.md'
     - './CONTRIBUTING.md'
     - './TODO.md'
