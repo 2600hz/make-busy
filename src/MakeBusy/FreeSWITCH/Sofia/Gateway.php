@@ -192,6 +192,13 @@ class Gateway
         }
     }
 
+    public function reregister($wait = true) {
+    	if(! $this->unregister($wait)) {
+    		return false;
+    	}
+    	return $this->register($wait);
+    }
+    
     public function statusRegistry() {
         $data = $this->getEsl()->api_f('sofia status gateway %s::%s', $this->getProfileName(), $this->getName());
         if (preg_match('/State\s+REGED/i',$data->getBody(),$match) !== 0) { // search State REGED in output command sofia status gateway profile::gateway_id
