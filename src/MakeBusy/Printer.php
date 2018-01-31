@@ -65,7 +65,8 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     	$this->currentTestClassName = $re->getName();
     	$this->currentTestName = $re->getFileName();
     	$this->currentTestFileName = $re->getFileName();
-    	$this->write(sprintf("TEST %s ... ", $this->currentTestClassName));
+    	$name = $test->getName() == "testMain" ? "" : sprintf("(%s) ", $test->getName());
+    	$this->write(sprintf("TEST %s %s... ", $this->currentTestClassName, $name));
     }
 
     public function endTest(PHPUnit_Framework_Test $test, $time) {

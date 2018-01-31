@@ -110,13 +110,23 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	$children = array();
     	foreach( get_declared_classes() as $class ){
     		if( is_subclass_of( $class, $this_class) ) {
-    			Log::info("CLASS %s", $class);
     			$children[] = new ReflectionClass($class);
     		}
     	}
+
     	foreach($children as $child) {
-    		$t = PHPUnit_Framework_TestSuite::createTest($child, 'testMain');
-    		$suite->addTest($t);
+    		$has_tests = false;
+    		foreach ($child->getMethods() as $method) {
+    			if($suite->isTestMethod($method)) {
+    				$has_tests = true;
+    				$t = PHPUnit_Framework_TestSuite::createTest($child, $method->getName());
+    				$suite->addTest($t);
+    			}
+    		}
+    		if(! $has_tests ) {
+	    		$t = PHPUnit_Framework_TestSuite::createTest($child, 'testMain');
+	    		$suite->addTest($t);
+    		}
     	}
 
     	$suite->setName($obj->name);
