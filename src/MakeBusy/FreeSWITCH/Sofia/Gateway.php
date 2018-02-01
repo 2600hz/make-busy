@@ -192,6 +192,11 @@ class Gateway
         }
     }
 
+    public function reregister($wait = true) {
+    	$this->unregister($wait);
+    	return $this->register($wait);
+    }
+    
     public function statusRegistry() {
         $data = $this->getEsl()->api_f('sofia status gateway %s::%s', $this->getProfileName(), $this->getName());
         if (preg_match('/State\s+REGED/i',$data->getBody(),$match) !== 0) { // search State REGED in output command sofia status gateway profile::gateway_id
@@ -269,6 +274,13 @@ class Gateway
         return $this->getEsl()->api_f('sofia profile %s killgw %s', $this->getProfileName(), $this->getName());
     }
 
+    public function restart() {
+    	$this->getEsl()->api_f('sofia profile %s killgw %s', $this->getProfileName(), $this->getName());
+    	$this->getProfile()->rescan();
+    	$this->getEsl()->flushEvents();
+    	return $this->register();
+    }
+    
     public function asXml() {
         $dom = new DOMDocument('1.0', 'utf-8');
         $gateway = $this->asDomDocument($dom);

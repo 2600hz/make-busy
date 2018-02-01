@@ -56,6 +56,10 @@ abstract class AbstractTestAccount
         return $this->type;
     }
 
+    public function setType($type) {
+    	$this->type = $type;
+    }
+    
     public static function shortName($namespace) {
         return substr($namespace, strrpos($namespace, '\\')+1);
     }

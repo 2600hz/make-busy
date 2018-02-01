@@ -1,0 +1,90 @@
+#!/bin/bash
+COMMIT=${2:-${COMMIT:-master}}
+BASE_IMAGE=${BASE_IMAGE:-$(dirname $0)/../images}
+BASE_STACK=${BASE_STACK:-$(dirname $0)/../stacks}
+TESTS_DIR=${TESTS_DIR:-~/tests}
+LOGS_DIR=${LOGS_DIR:-~/logs}
+export COMMIT=$COMMIT
+
+up() {
+   pushd ${BASE_STACK}/mkbusy > /dev/null
+   docker stack deploy -c docker-stack.yml mb_${COMMIT}
+   popd > /dev/null
+}
+
+
+down() {
+   docker stack rm mb_${COMMIT}
+}
+
+help() {
+ echo usage: "mkbusy up | down | run"
+}
+
+runtest()
+{
+shift
+TEST=${1:-Error}
+COMMIT=${2:-${COMMIT:-master}}
+export COMMIT=$COMMIT
+FILE=$(basename $TEST)
+BASE=${FILE%.*}
+EXT=${FILE##*.} 
+
+mkdir -p ${LOGS_DIR}/$COMMIT
+CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
+LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
+runcase()
+{
+shift
+CASE=${1:-Device}
+COMMIT=${2:-${COMMIT:-master}}
+export COMMIT=$COMMIT
+mkdir -p ${LOGS_DIR}/$COMMIT
+CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
+LOG_CONSOLE=1 run-case ${CASE} 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
+runall()
+{
+mkdir -p ${LOGS_DIR}/$COMMIT
+CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
+LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
+run() {
+ 
+mkdir -p ${LOGS_DIR}/$COMMIT
+pushd $TESTS_DIR > /dev/null
+for APP in $(ls $TESTS)                             
+do                                                                                                                                          
+        if [ -d $APP ]                              
+        then                                                    
+                for CASE in $(ls $APP)                                          
+                do                                                              
+                        if [ -d $APP/$CASE ]                                     
+                        then                                                                         
+                                LOG_CONSOLE=1 run-suite $APP/$CASE 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+                                CLEAN=1 SKIP_ACCOUNT=1 run-test ../EmptyTestCase.php                                                       
+                        fi                                                                                                                    
+                done                                                                                                                          
+        fi                                                                                                                                    
+done                                                                                                                                          
+popd > /dev/null
+
+}
+
+COMMAND=${1:-help}
+
+case $COMMAND in
+    up) up;;
+    down) down;;
+    run) run;;
+    runall) runall;;
+    runcase) runcase $*;;
+    runtest) runtest $*;;
+    help) help;;
+esac
+

@@ -1,0 +1,74 @@
+version: '3.5'
+services:
+
+  makebusy:
+    image: 2600hz/mkbusy
+    hostname: "makebusy.$COMMIT"
+    volumes:
+      - type: bind
+        source: ../../../src
+        target: /home/user/make-busy/src
+        read_only: true
+      - type: bind
+        source: ../../../tests
+        target: /home/user/make-busy/tests/KazooTests/Applications
+        read_only: true
+      - type: bind
+        source: ./mkbusy.config.json
+        target: /home/user/make-busy/config.json
+        read_only: true
+    deploy:
+      endpoint_mode: dnsrr
+    networks:
+      - kazoo
+
+  makebusy-fs-auth:
+    image: 2600hz/mkbusy-fs
+    hostname: "makebusy-fs-auth.$COMMIT"
+    volumes:
+      - type: bind
+        source: ../media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+    environment:
+      TYPE: auth
+    deploy:
+      endpoint_mode: dnsrr
+    networks:
+      - kazoo
+
+  makebusy-fs-pbx:                 
+    image: 2600hz/mkbusy-fs                     
+    hostname: "makebusy-fs-pbx.$COMMIT"
+    volumes:
+      - type: bind
+        source: ../media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+    environment:
+      TYPE: pbx
+    deploy:
+      endpoint_mode: dnsrr
+    networks:
+      - kazoo
+
+  makebusy-fs-carrier:                 
+    image: 2600hz/mkbusy-fs                     
+    hostname: "makebusy-fs-carrier.$COMMIT"
+    volumes:
+      - type: bind
+        source: ../media-files/freeswitch
+        target: /usr/share/freeswitch/sounds
+        read_only: true
+    environment:
+      TYPE: carrier
+    deploy:
+      endpoint_mode: dnsrr
+    networks:
+      - kazoo
+
+networks:
+    kazoo:
+      external: true
+      name: kz_${COMMIT}_kazoo
+

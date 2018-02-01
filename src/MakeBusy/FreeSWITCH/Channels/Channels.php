@@ -40,6 +40,13 @@ class Channels
         $this->wait_for_dead[$value] = false; // death watch
         $start = time();
         while(1) {
+
+        	$channel = $this->getChannel($value, $header, 'outbound');
+        	if ($channel) {
+        		Log::debug("fs %s new outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
+        		$this->remove($channel);
+        		return $channel;
+        	}
         	
         	$this->esl->recvFilteredEventTimed(250, $value, $header, 'outbound');
         		
@@ -47,21 +54,13 @@ class Channels
 	             Log::notice("fs %s failed to create outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
 	             unset($this->wait_for_dead[$value]);
 	             return null;
-	        }
-	
-	        $channel = $this->getChannel($value, $header, 'outbound');
-	        if ($channel) {
-	            Log::debug("fs %s new outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
-	            $this->remove($channel);
-	            return $channel;
-	        }
+	        }	
         	
 	        if ((time() - $start) > $timeout) {
 	             Log::notice("fs %s timeout outbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
 	             return null;
 	        }
 	
-	        usleep(2500);
         }
     }
 
@@ -71,8 +70,6 @@ class Channels
         $start = time();
         while(1) {
         	
-        	$this->esl->recvFilteredEventTimed(250, $value, $header, 'inbound');
-
             $channel = $this->getChannel($value, $header, 'inbound');
             if ($channel) {
                 Log::debug("fs %s new inbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
@@ -80,11 +77,12 @@ class Channels
                 return $channel;
         	}
 
+        	$this->esl->recvFilteredEventTimed(250, $value, $header, 'inbound');
+        	
             if ((time() - $start) > $timeout) {
                 Log::notice("fs %s timeout inbound channel header:%s value:%s", $this->esl->getType(), $header, $value);
                 return null;
             }
-            usleep(25000);
         }
     }
 
