@@ -12,6 +12,5 @@ RUN  git clone $REPO ./make-busy \
      && ./composer install \
      && ./composer clear-cache
 WORKDIR /home/user/make-busy
-ADD config.json /home/user/make-busy
 ENTRYPOINT ["php", "-S", "0.0.0.0:8080"]
 
