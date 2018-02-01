@@ -9,7 +9,7 @@
 	],
 	"require" : {
 		"php" : ">=5.3.2",
-		"2600hz/kazoo-php-sdk" : "2.0.0",
+		"2600hz/kazoo-php-sdk" : "dev-master",
 		"phpseclib/phpseclib" : "dev-master"
 	},
 	"require-dev" : {

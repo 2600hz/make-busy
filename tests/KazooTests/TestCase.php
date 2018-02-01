@@ -236,7 +236,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	
     	self::safeCall(function() {
 	        self::saveSystemConfigs();
-	        self::SystemConfig("token_buckets/default")->fetch()->patch(["tokens_fill_rate"], 100);
+	        self::SystemConfig("token_buckets/default")->fetch()->change(["tokens_fill_rate"], 100);
     	});
 
 
