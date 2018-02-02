@@ -37,7 +37,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
 {
 	protected static $is_suite = false;
 	protected static $setup = false;
-    protected static $account;
+    protected static $account = null;
     protected static $type;
     protected static $base_type;
     protected static $system_configs = [];
@@ -228,7 +228,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	self::$type = AbstractTestAccount::shortName($class);
     	self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
     	
-    	if(self::$setup) {
+    	if(self::$setup && self::$account != null) {
     		self::$account->setType(self::$type);
     		return;
     	}
