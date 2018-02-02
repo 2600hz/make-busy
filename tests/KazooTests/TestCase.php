@@ -261,11 +261,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             $is_loaded = false;
         }
         
-        static::syncProfiles();
+        static::syncProfiles($is_loaded);
 
     }
     
-    public static function syncProfiles() {
+    public static function syncProfiles($is_loaded) {
     	self::syncSofiaProfile("auth", $is_loaded);
     	self::syncSofiaProfile("carrier", $is_loaded);
     	self::syncSofiaProfile("pbx", $is_loaded);    	
