@@ -7,9 +7,9 @@ LOGS_DIR=${LOGS_DIR:-~/logs}
 export COMMIT=$COMMIT
 
 up() {
-   pushd ${BASE_STACK}/mkbusy > /dev/null
-   docker stack deploy -c docker-stack.yml mb_${COMMIT}
-   popd > /dev/null
+    pushd ${BASE_STACK}/mkbusy > /dev/null
+    docker stack deploy -c docker-stack.yml mb_${COMMIT}
+    popd > /dev/null
 }
 
 devup() {
@@ -19,11 +19,11 @@ devup() {
 }
 
 down() {
-   docker stack rm mb_${COMMIT}
+    docker stack rm mb_${COMMIT}
 }
 
 help() {
- echo usage: "mkbusy up | down | run"
+    echo usage: "mkbusy up | down | run"
 }
 
 runtest()
@@ -38,7 +38,7 @@ LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LO
 }
 
 runtests()
-{                                                                                                      
+{
 shift
 COMMIT=${1:-${COMMIT:-master}}
 export COMMIT=$COMMIT
@@ -90,4 +90,3 @@ case $COMMAND in
     run-tests) runtests $*;;
     help) help;;
 esac
-
