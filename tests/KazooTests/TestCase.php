@@ -456,7 +456,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     private static function restoreSystemConfigs() {
         $configs = array_merge(static::system_configs(), ["token_buckets"]);
         foreach($configs as $config) {
-            self::$system_configs[$config]->save();
+        	if(isset(self::$system_configs[$config])) {
+        		self::$system_configs[$config]->save();
+        	}
         }
     }
 
