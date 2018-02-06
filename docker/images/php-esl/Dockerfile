@@ -1,4 +1,4 @@
-FROM php:7.0-alpine
+FROM php:7.1-alpine
 RUN wget https://github.com/lazedo/freeswitch-php-esl/archive/esl7-1.6.19.tar.gz \
 	&& mkdir -p /tmp/esl \
 	&& tar -xf esl7-1.6.19.tar.gz -C /tmp/esl --strip-components=1 \
