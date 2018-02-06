@@ -107,7 +107,7 @@ docker> export PATH=$PATH:~/make-busy/bin
 This is the commit SHA you want to run the test suite(s) against. Please limit it to the first 10 characters of the SHA.
 
 ```bash
-docker> export COMMIT=abcdef
+docker> export COMMIT=abcdef0123
 ```
 
 ### Start Kazoo
@@ -168,6 +168,9 @@ docker> wait-for makebusy-fs-carrier 120 "FreeSWITCH Started"
 waiting for 'FreeSWITCH Started' in node 'makebusy-fs-carrier' => d91c14478a82
 found 'FreeSWITCH Started' in makebusy-fs-carrier
 ```
+
+This is where the dind (Docker in Docker) comes in. You are connected to the "outer" docker instance. `mkbusy up` takes a snapshot and builds many docker containers within the "outer" docker instance. This means changes to a file under `vendor` (for instance the PHP SDK libs) and other directories, won't be reflected at runtime when running tests. You'll need to connect to the inner Docker instance (`mb_$(COMMIT)_makebusy`) and edit the files there.
+
 ### Configure Kazoo for make-busy testing
 
 ```bash
