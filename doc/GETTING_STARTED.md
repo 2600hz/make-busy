@@ -99,7 +99,7 @@ OK: 46 MiB in 51 packages
 ### Add PATH location
 
 ```bash
-docker> export PATH=$PATH:~/make-busy/bin
+docker> export PATH=$PATH:~/make-busy/docker/bin
 ```
 
 ### Export Kazoo git SHA
