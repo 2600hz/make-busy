@@ -12,5 +12,3 @@ pages:
     - 'How to write tests': './doc/HOWTO.md'
 - 'Docker':
     - './docker/README.md'
-- 'CI':
-    - './ci/README.md'
