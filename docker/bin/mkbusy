@@ -43,7 +43,7 @@ COMMIT=${1:-${COMMIT:-master}}
 export COMMIT=$COMMIT                                                                                  
 shift                                                                                       
 mkdir -p ${LOGS_DIR}/$COMMIT                                                                
-LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log     
+LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log     
 }
 
 runcase()
