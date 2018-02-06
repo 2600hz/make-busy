@@ -212,9 +212,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     public function setUp() {
-//    	if(self::$is_suite) {
-//    		$this->setUpBeforeClass();
-//    	}
         self::safeCall(function() {
             $this->setUpTest();
         });
@@ -231,8 +228,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     	self::$type = AbstractTestAccount::shortName($class);
     	$base_type = AbstractTestAccount::shortName(get_parent_class($class));
 
-    	Log::notice("BEFORE test: %s case: %s, %s", $base_type, self::$base_type, self::$setup);
-    	
     	if(self::$setup && isset(self::$account) && $base_type == self::$base_type) {
     		self::$account->reset(self::$type);
 	   		return;
