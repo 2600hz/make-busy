@@ -14,10 +14,14 @@ class MakeBusy_Printer extends \PHPUnit\Util\Printer implements \PHPUnit\Framewo
     protected $currentTestClassName = '';
     protected $pass = true;
     protected $incomplete = false;
+    protected $risky = false;
+    protected $skip = false;
     protected $start_time = 0;
     protected $test_start_time = 0;
     protected $errors = 0;
     protected $incompletes = 0;
+    protected $risks = 0;
+    protected $skipped = 0;
     
     public function __construct($out = null) {
         $this->start_time = microtime(true);
@@ -58,12 +62,14 @@ class MakeBusy_Printer extends \PHPUnit\Util\Printer implements \PHPUnit\Framewo
 
     public function addRiskyTest(Test $test, Exception $e, $time) {
         $this->writeCase('RISKY', $time, $e->getMessage(), $test);
-//        $this->pass = false;
+        $this->pass = false;
+        $this->risky = true;
     }
 
     public function addSkippedTest(Test $test, Exception $e, $time) {
         $this->writeCase('SKIP', $time, $e->getMessage(), $test);
         $this->pass = false;
+        $this->skip = true;
     }
 
     public function startTest(Test $test) {
@@ -83,6 +89,10 @@ class MakeBusy_Printer extends \PHPUnit\Util\Printer implements \PHPUnit\Framewo
         } else {
         	if($this->incomplete) {
         		$this->incompletes++;
+        	} else if($this->risky) {
+        		$this->risks++;
+        	} else if($this->skip) {
+        		$this->skipped++;
         	} else {
         		$this->errors++;
         	}
