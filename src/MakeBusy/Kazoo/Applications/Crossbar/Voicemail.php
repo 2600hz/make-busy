@@ -205,4 +205,9 @@ class Voicemail
             'delay'         => null
         );
     }
+
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }

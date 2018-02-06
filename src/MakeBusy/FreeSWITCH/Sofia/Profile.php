@@ -33,6 +33,11 @@ class Profile
         return $this->gateways;
     }
 
+    public function resetGateways() {
+   		$this->gateways = new Gateways($this);
+    	return $this->gateways;
+    }
+    
     public function getGateway($name) {
         return $this->getGateways()->getGateway($name);
     }

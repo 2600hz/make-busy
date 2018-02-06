@@ -105,5 +105,10 @@ class Media
     private function getAccount() {
         return $this->test_account->getAccount();
     }
+    
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }
 

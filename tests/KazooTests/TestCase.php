@@ -4,8 +4,8 @@ namespace KazooTests;
 
 require_once('ESL.php');
 
-use \PHPUnit_Framework_TestCase;
-use \PHPUnit_Framework_TestSuite;
+//use \PHPUnit\Framework\TestCase;
+//use \PHPUnit_Framework_TestSuite;
 
 use \MakeBusy\Common\Configuration;
 use \MakeBusy\Common\Utils;
@@ -33,7 +33,7 @@ function handleError($e) {
     throw($e);
 }
 
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
 	protected static $is_suite = false;
 	protected static $setup = false;
@@ -54,13 +54,13 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	try {
     		self::safeCall(function() use ($sipUri) {
     			$this->main($sipUri);
-    		});    			
+    		});
     	}
     	catch(Exception $e) {
     		Log::error("Generic exception error: %s, code: %d", $e->getMessage(), $e->getCode());
     		self::flushChannels();
     		throw($e);
-    	}    	
+    	}
     	self::flushChannels();
     }
 
@@ -75,6 +75,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	$profile->getEsl()->hangupChannels();
     }
 
+/*     
     public static function suite()
     {
     	$class = get_called_class();
@@ -131,10 +132,12 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	self::$is_suite= true;
     	
     	return $suite;
-    }
-    
+    }   
+ */
+
     // override this to run a test
     public function main($sip_uri) {
+    	self::assertTrue(true);
     }
 
     // override this to save system configs
@@ -209,9 +212,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     public function setUp() {
-    	if(self::$is_suite) {
-    		$this->setUpBeforeClass();
-    	}
+//    	if(self::$is_suite) {
+//    		$this->setUpBeforeClass();
+//    	}
         self::safeCall(function() {
             $this->setUpTest();
         });
@@ -226,13 +229,14 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass() {
     	$class = get_called_class();
     	self::$type = AbstractTestAccount::shortName($class);
-    	self::$base_type = AbstractTestAccount::shortName(get_parent_class($class));
+    	$base_type = AbstractTestAccount::shortName(get_parent_class($class));
+
+    	Log::notice("BEFORE test: %s case: %s, %s", $base_type, self::$base_type, self::$setup);
     	
-    	if(self::$setup && self::$account != null) {
-    		self::$account->setType(self::$type);
-    		return;
+    	if(self::$setup && isset(self::$account) && $base_type == self::$base_type) {
+    		self::$account->reset(self::$type);
+	   		return;
     	}
-    	self::$setup = true;
     	
     	self::safeCall(function() {
 	        self::saveSystemConfigs();
@@ -240,45 +244,66 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     	});
 
 
-        Log::info("Start test: %s case: %s", self::$type, self::$base_type);
-        if (isset($_ENV['CLEAN'])) {
+    	AbstractTestAccount::nukeTestAccounts();
+    	/*
+    	if (isset($_ENV['CLEAN'])) {
             Log::debug("Cleaning MakeBusy traces from Kazoo");
             AbstractTestAccount::nukeTestAccounts();
         } else {
-            Log::debug("Trying to use pre-created Kazoo's MakeBusy setup, creating entities if necessary");
+        	if((! isset(self::$base_type)) || self::$base_type != $base_type) {
+        		Log::debug("Resetting MakeBusy Account");
+        		AbstractTestAccount::nukeTestAccounts();
+        	} else {
+        		Log::debug("Trying to use pre-created Kazoo's MakeBusy setup, creating entities if necessary");        		
+        	}
         }
+        */
 
+        self::resetSofiaProfile("auth");
+        self::resetSofiaProfile("pbx");
+        self::resetSofiaProfile("carrier");
+
+        self::$setup = true;
+        self::$base_type = $base_type;
+        
         self::safeCall(function() {
-            if( ! isset($_ENV['SKIP_ACCOUNT'])) {
+//            if( ! isset($_ENV['SKIP_ACCOUNT'])) {
                 self::$account = new TestAccount(get_called_class());
-            }
+//            }
             static::setUpCase();
         });
 
-        if(isset(self::$account)) {
-            $is_loaded = self::$account->isLoaded();
-        } else {
-            $is_loaded = false;
-        }
+//         if(isset(self::$account)) {
+//             $is_loaded = self::$account->isLoaded();
+//         } else {
+//             $is_loaded = false;
+//         }
         
-        static::syncProfiles($is_loaded);
+//         static::syncProfiles($is_loaded);
+        static::syncProfiles(false);
 
     }
     
     public static function syncProfiles($is_loaded) {
     	self::syncSofiaProfile("auth", $is_loaded);
     	self::syncSofiaProfile("carrier", $is_loaded);
-    	self::syncSofiaProfile("pbx", $is_loaded);    	
+    	self::syncSofiaProfile("pbx", $is_loaded);
     }
 
     public static function tearDownAfterClass() {
-        Log::info("Teardown test: %s case: %s\n\n", self::$type, self::$base_type);
+        Log::notice("Teardown test: %s case: %s\n\n", self::$type, self::$base_type);
         self::safeCall(function() {
             static::tearDownCase();
         });
+        self::flushChannels();
         self::restoreSystemConfigs();
     }
 
+    public static function resetSofiaProfile($profile_name) {
+    	$profile = self::getProfile($profile_name);
+    	$profile->resetGateways();
+    }
+    	
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
 

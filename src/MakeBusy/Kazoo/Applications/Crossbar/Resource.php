@@ -158,4 +158,10 @@ class Resource
 
         return $flow;
     }
+    
+    public static function resetCounter() {
+    	self::$counter = 1;
+    	self::$call_counter = 1;
+    }
+    
 }

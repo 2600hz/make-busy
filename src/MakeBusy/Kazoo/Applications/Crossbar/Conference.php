@@ -242,5 +242,10 @@ class Conference
         unset($conference->max_participants);
         $conference->save();
     }
+    
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 
 }

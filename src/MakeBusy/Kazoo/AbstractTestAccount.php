@@ -37,6 +37,7 @@ abstract class AbstractTestAccount
         $this->type = self::shortName($class);
         $this->base_type = self::shortName(get_parent_class($class));
 
+        self::$counter = 1;
         $name = sprintf("BS %s %s", $this->base_type, self::$counter++);
         $acc = self::load(['filter_name' => $name, 'filter_makebusy.type' => $this->base_type]);
         if (isset($acc[0])) {
@@ -58,6 +59,11 @@ abstract class AbstractTestAccount
 
     public function setType($type) {
     	$this->type = $type;
+    }
+
+    public function reset($type) {
+    	$this->type = $type;
+    	self::$counter = 1;
     }
     
     public static function shortName($namespace) {

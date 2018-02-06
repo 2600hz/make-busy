@@ -221,4 +221,8 @@ class User {
        return $this->getUser()->caller_id->$type;
     }
 
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }

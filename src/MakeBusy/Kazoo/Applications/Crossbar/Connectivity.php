@@ -242,4 +242,8 @@ class Connectivity
         $cfg->save();
     }
 
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }

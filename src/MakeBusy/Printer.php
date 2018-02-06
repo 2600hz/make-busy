@@ -1,9 +1,12 @@
 <?php
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestSuite\DataProvider;
+use \PHPUnit\Framework\TestListener;
+use \PHPUnit\Framework\TestSuite\DataProvider;
+use \PHPUnit\Framework\Test;
+use \PHPUnit\Framework\TestSuite;
+use \PHPUnit\Framework\Warning;
 use \MakeBusy\Common\Log;
 
-class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework_TestListener {
+class MakeBusy_Printer extends \PHPUnit\Util\Printer implements \PHPUnit\Framework\TestListener {
 
     protected $currentTestSuiteName = '';
     protected $currentTestName = '';
@@ -21,15 +24,19 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         return parent::__construct($out);
     }
 
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
+    public function addError(Test $test, Exception $e, $time) {
         $this->writeCase('ERROR', $time, $e->getMessage(), $test);
         $this->pass = false;
         if (isset($_ENV['STACK_TRACE'])) {
             $this->write($e->getTraceAsString());
         }
     }
+    
+    public function addWarning(Test $test, Warning $e, $time) {
+    	$this->writeCase('WARNING', $time, $e->getMessage(), $test);
+    }
 
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
+    public function addFailure(Test $test, \PHPUnit\Framework\AssertionFailedError $e, $time) {
     	$subject = str_ireplace("/", "\/", $this->currentTestFileName);
     	$subject = str_ireplace(".", "\.", $subject);
     	preg_match_all("/" . $subject . "\(?(\d+)\)/", $e->getTraceAsString(), $out);
@@ -43,23 +50,23 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         }
     }
 
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+    public function addIncompleteTest(Test $test, Exception $e, $time) {
         $this->writeCase('INCOMPLETE', $time, $e->getMessage(), $test);
         $this->pass = false;
         $this->incomplete = true;
     }
 
-    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+    public function addRiskyTest(Test $test, Exception $e, $time) {
         $this->writeCase('RISKY', $time, $e->getMessage(), $test);
-        $this->pass = false;
+//        $this->pass = false;
     }
 
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+    public function addSkippedTest(Test $test, Exception $e, $time) {
         $this->writeCase('SKIP', $time, $e->getMessage(), $test);
         $this->pass = false;
     }
 
-    public function startTest(PHPUnit_Framework_Test $test) {
+    public function startTest(Test $test) {
     	$this->test_start_time = microtime(true);
     	$re = new ReflectionClass($test);
     	$this->currentTestClassName = $re->getName();
@@ -70,7 +77,7 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
     	$this->write(sprintf("TEST %s %s... ", $this->currentTestClassName, $name));
     }
 
-    public function endTest(PHPUnit_Framework_Test $test, $time) {
+    public function endTest(Test $test, $time) {
     	if ($this->pass) {
             $this->writeCase('OK', $time, '', $test);
         } else {
@@ -95,20 +102,21 @@ class MakeBusy_Printer extends PHPUnit_Util_Printer implements PHPUnit_Framework
         return join(" ", $re);
     }
 
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+    public function startTestSuite(TestSuite $suite) {
     	$this->currentTestSuiteName = $suite->getName();
     	$this->currentTestName = '';
-    	if($suite->count() > 1) {
-            $this->write(sprintf("START CASE %s\n", $suite->getName()));
+    	if($suite->count() > 1 && $suite->getName() != "") {
+    		$this->errors = 0;
+            $this->write(sprintf("START SUITE %s\n", $suite->getName()));           
         }
     }
 
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+    public function endTestSuite(TestSuite $suite) {
         $this->currentTestSuiteName = $suite->getName();
         $this->currentTestName = '';
-        if($suite->count() > 1) {
+        if($suite->count() > 1 && $suite->getName() != "") {
         	$status = $this->errors == 0 ? "COMPLETED" : "ERROR";
-        	$this->write(sprintf("CASE %s %s\n", $status, $suite->getName()));
+        	$this->write(sprintf("SUITE %s %s\n", $status, $suite->getName()));
         }
     }
 

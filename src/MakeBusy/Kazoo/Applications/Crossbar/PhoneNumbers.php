@@ -156,4 +156,8 @@ class PhoneNumbers
         return $this;
     }
 
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }

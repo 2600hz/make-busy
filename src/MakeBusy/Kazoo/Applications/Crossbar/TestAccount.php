@@ -10,10 +10,16 @@ use \CallflowBuilder\Node\Resource as CfResource;
 use \CallflowBuilder\Builder;
 
 use \MakeBusy\Common\Log;
+use Kazoo\Api\Entity\PhoneNumber;
 
 class TestAccount extends AbstractTestAccount
 {
     private static $callflow = 1;
+    
+    public function __construct($class) {
+    	parent::__construct($class);
+    	self::$callflow = 1;
+    }
 
     public function createCallflow($data) {
         $id = self::$callflow++;
@@ -89,4 +95,18 @@ class TestAccount extends AbstractTestAccount
         return $this->getAccount()->Config($config);
     }
 
+    public function reset($type) {
+    	parent::reset($type);
+    	Conference::resetCounter();
+    	Connectivity::resetCounter();
+    	Device::resetCounter();
+    	Media::resetCounter();
+    	PhoneNumbers::resetCounter();
+    	Resource::resetCounter();
+    	RingGroup::resetCounter();
+    	User::resetCounter();
+    	Voicemail::resetCounter();
+    	Webhook::resetCounter();    	
+    }
+    
 }

@@ -339,5 +339,10 @@ class Device
         $device->save();
         Log::info("successfully reset restriction(s) on device %s", $device->getId() );
     }
+    
+    public static function resetCounter() {
+    	self::$counter = 1;
+    	self::$call_counter = 1;
+    }
 }
 

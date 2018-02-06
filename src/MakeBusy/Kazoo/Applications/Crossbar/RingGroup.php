@@ -103,4 +103,9 @@ class RingGroup
             'strategy' => "simultaneous"
         );
     }
+    
+    public static function resetCounter() {
+    	self::$counter = 1;
+    }
+    
 }
