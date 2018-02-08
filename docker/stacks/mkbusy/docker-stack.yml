@@ -10,7 +10,7 @@ services:
         target: /home/user/make-busy/src
         read_only: true
       - type: bind
-        source: ../../../tests
+        source: ../../../../tests
         target: /home/user/make-busy/tests/KazooTests/Applications
         read_only: true
       - type: bind
