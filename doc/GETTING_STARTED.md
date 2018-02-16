@@ -290,3 +290,41 @@ docker> HUPALL=1 LOG_CONSOLE=1 run-suite Callflow/Voicemail
 ```bash
 docker> HUPALL=1 LOG_CONSOLE=1 run-test Callflow/Voicemail/SetupOwner.php
 ```
+
+### Read the logs
+
+Now that you've run some tests, it is nice to get some logs to find where a particular test went awry.
+
+First, find the container you want logs from:
+
+```bash
+docker> docker ps
+CONTAINER ID        IMAGE                     COMMAND                  CREATED             STATUS              PORTS                                                 NAMES
+d1b2772a84ae        2600hz/mkbusy:latest      "php -S 0.0.0.0:8080"    24 minutes ago      Up 24 minutes                                                             mb_b72d15fc_makebusy.1.1fihj0skxm6fresw1eiw5m93u
+ecbfd71196e5        2600hz/mkbusy-fs:latest   "freeswitch -nonat"      24 minutes ago      Up 24 minutes                                                             mb_b72d15fc_makebusy-fs-carrier.1.8u8q0z5vhc3741357su7uz225
+9027c1cfe261        2600hz/mkbusy-fs:latest   "freeswitch -nonat"      24 minutes ago      Up 24 minutes                                                             mb_b72d15fc_makebusy-fs-pbx.1.60plb6yhtbu6hgkl5gxf80rkb
+d21ebf16ff44        2600hz/mkbusy-fs:latest   "freeswitch -nonat"      24 minutes ago      Up 24 minutes                                                             mb_b72d15fc_makebusy-fs-auth.1.kuuyphll43wq91dkymm75kpo6
+a0a741ac29e7        apache/couchdb:latest     "tini -- /docker-ent…"   30 minutes ago      Up 30 minutes       4369/tcp, 5984/tcp, 9100/tcp                          kz_b72d15fc_couchdb.1.8f6mv8lvb8ombztjhuz9vzv43
+dc3c77393eb5        2600hz/kamailio:edge      "/docker-entrypoint.…"   30 minutes ago      Up 30 minutes                                                             kz_b72d15fc_kamailio.1.d82gvvew0ro5a5rrouw1mdvqy
+806467d66417        2600hz/kazoo-fs:latest    "freeswitch -nonat"      30 minutes ago      Up 30 minutes                                                             kz_b72d15fc_freeswitch.1.g7blbl1bih1lw2bsm3irnhtas
+6ff95a96483f        rabbitmq:3-management     "docker-entrypoint.s…"   30 minutes ago      Up 30 minutes       4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 25672/tcp   kz_b72d15fc_rabbitmq.1.7nb8crtvvehx8osa640m430u2
+419cee0a2fa9        2600hz/kazoo:b72d15fc     "kazoo foreground"       31 minutes ago      Up 30 minutes                                                             kz_b72d15fc_media.1.qodszboyu2at46fdweoxuvrw0
+eb34dce0e11e        2600hz/kazoo:b72d15fc     "kazoo foreground"       31 minutes ago      Up 31 minutes                                                             kz_b72d15fc_callmgr.1.znhr6530baxqoi1vcerlgzfns
+4e7e70112a9d        2600hz/kazoo:b72d15fc     "kazoo foreground"       31 minutes ago      Up 31 minutes                                                             kz_b72d15fc_crossbar.1.yc3eohzgv6zurscdwnaw0ox3v
+4513ca6c51a5        2600hz/kazoo:b72d15fc     "kazoo foreground"       31 minutes ago      Up 31 minutes                                                             kz_b72d15fc_kazoo.1.uhfq3j0309yx9k6qnhp2218bq
+```
+
+Choose the appropriate container ID and then fetch logs. For instance, if we want to see logs for a call `XYZ` in ecallmgr, we'd use `kz_b72d15fc_callmgr.1.znhr6530baxqoi1vcerlgzfns` (container ID `eb34dce0e11e`):
+
+```bash
+docker logs eb34dce0e11e | grep XYZ
+```
+
+### Building from a new commit
+
+With an existing docker container running:
+
+```bash
+docker> export COMMIT={NEW_COMMIT}
+docker> kazoo build
+```
