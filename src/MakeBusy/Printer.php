@@ -100,6 +100,8 @@ class MakeBusy_Printer extends \PHPUnit\Util\Printer implements \PHPUnit\Framewo
         $this->currentTestName = '';
         $this->pass = true;
         $this->incomplete = false;
+        $this->risky = false;
+        $this->skip = false;
     }
 
     private function getEnv($keys) {
