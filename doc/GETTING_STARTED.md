@@ -324,7 +324,17 @@ docker logs eb34dce0e11e | grep XYZ
 
 With an existing docker container running:
 
+#### Stop the running setup
+
+```bash
+docker> mkbusy down
+docker> kazoo down
+```
+#### Start from the new commit
+
+
 ```bash
 docker> export COMMIT={NEW_COMMIT}
-docker> kazoo build
+docker> kazoo up
+docker> mkbusy up
 ```
