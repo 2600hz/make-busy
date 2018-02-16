@@ -48,12 +48,19 @@ up() {
    popd > /dev/null
 }
 
+devup() {
+   COMMIT=dev
+   export COMMIT=dev
+   KAZOO_DEV_BASE_CONTAINER=${1:-erlang:20}
+   export KAZOO_DEV_BASE_CONTAINER=${1:-erlang:20}
+   pushd ${BASE_STACK}/kazoo-dev > /dev/null
+   docker stack deploy -c docker-stack.yml kz_$COMMIT
+   popd > /dev/null
+}
 
 down() {
    echo kazoo is going down   
-   pushd ${BASE_STACK}/kazoo > /dev/null
    docker stack rm kz_$COMMIT
-   popd > /dev/null
 }
 
 
@@ -138,6 +145,7 @@ COMMAND=${1:-help}
 shift
 case "$COMMAND" in
     build) build;;
+    devup) devup $*;;
     up) up;;
     down) down;;
     configure) configure;;
