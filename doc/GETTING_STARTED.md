@@ -41,6 +41,7 @@ It is an option to add your user to the `docker` group so avoid needing sudo/roo
 ```bash
 docker run -td --name mkbusy \
   -v /path/to/make-busy:/root/make-busy \
+  -v /path/to/make-busy:/root/make-busy \
   -v /path/to/make-busy/tests:/root/tests \
   --privileged docker:dind --experimental --storage-driver=overlay2
 docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
@@ -337,4 +338,47 @@ docker> kazoo down
 docker> export COMMIT={NEW_COMMIT}
 docker> kazoo up
 docker> mkbusy up
+```
+
+## Running Kazoo locally
+
+Instead of building Kazoo from a commit hash (pulled from Github) you can point to a local version of Kazoo instead.
+
+### Run MakeBusy Docker image
+
+Creates kazoo as a sibling to make-busy in the container
+
+```bash
+docker run -td --name mkbusy \
+  -v /path/to/make-busy:/root/make-busy \
+  -v /path/to/kazoo:/root/dev \
+  -v /path/to/make-busy/tests:/root/tests \
+  --privileged docker:dind --experimental --storage-driver=overlay2
+docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/kazoo-pr/:/root/dev -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
+
+docker exec -ti mkbusy sh
+
+docker> docker swarm init
+
+docker> apk --update add git jq bash coreutils
+
+docker> export PATH=$PATH:~/make-busy/docker/bin
+```
+
+### Building Kazoo
+
+Make sure you specify the Erlang version used to build the local kazoo release (using `make build-dev-release`).
+
+```bash
+docker> export COMMIT=dev
+docker> kazoo devup erlang:19
+Creating network kz_dev_kazoo
+Creating service kz_dev_rabbitmq
+Creating service kz_dev_freeswitch
+Creating service kz_dev_kazoo
+Creating service kz_dev_crossbar
+Creating service kz_dev_callmgr
+Creating service kz_dev_media
+Creating service kz_dev_kamailio
+Creating service kz_dev_couchdb
 ```
