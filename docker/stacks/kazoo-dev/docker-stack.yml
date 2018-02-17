@@ -2,7 +2,7 @@ version: '3.5'
 
 x-node-env:
   &kz-env
-    KAZOO_COOKIE: change_me                                                                                                                                                                        
+    KAZOO_COOKIE: change_me
     LC_CTYPE: en_US.UTF-8
     LANG: en_US.UTF-8
     CODE_LOADING_MODE: interactive
@@ -12,22 +12,22 @@ x-node-env:
 x-media-cfg:
   &kz-media
     - type: bind
-      source: ../../../../dev
+      source: /home/james/local/git/2600hz/kazoo-pr
       target: /opt/kazoo
       read_only: true
     - type: bind
       source: ./config.ini
       target: /etc/kazoo/config.ini
       read_only: true
-    - type: bind                  
-      source: ../media-files/kazoo                      
-      target: /media-files               
+    - type: bind
+      source: ../media-files/kazoo
+      target: /media-files
       read_only: true
 
 x-devnode-cfg:
   &kz-dev
     - type: bind
-      source: ../../../../dev
+      source: /home/james/local/git/2600hz/kazoo-pr
       target: /opt/kazoo
       read_only: false
     - type: bind
@@ -41,7 +41,7 @@ services:
     image: apache/couchdb
     hostname: 'couchdb-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes:
-      - type: bind                          
+      - type: bind
         source: ./couchdb_cluster.ini
         target: /opt/couchdb/local.d/cluster.ini
       - type: tmpfs
@@ -54,8 +54,8 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     hostname: 'rabbitmq-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
-    deploy:                                                                                                                       
-      endpoint_mode: dnsrr                                                                   
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -89,30 +89,30 @@ services:
     image: ${KAZOO_DEV_BASE_CONTAINER}
     environment:
        << : *kz-env
-       KAZOO_NODE: api                                                                                                                                      
+       KAZOO_NODE: api
        KAZOO_APPS: "crossbar"
     hostname: 'crossbar-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-dev
     command: ["kazoo", "foreground"]
     tty: true
-    networks:                                                                                                                                                 
+    networks:
       - kazoo
 
   callmgr:
-    image: ${KAZOO_DEV_BASE_CONTAINER}                                                                                                                                                         
+    image: ${KAZOO_DEV_BASE_CONTAINER}
     environment:
        << : *kz-env
-       KAZOO_NODE: ecallmgr                                                                                                                                                                 
-       KAZOO_APPS: "ecallmgr"                                                                                                                                                           
+       KAZOO_NODE: ecallmgr
+       KAZOO_APPS: "ecallmgr"
     hostname: 'callmgr-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-dev
     command: ["kazoo", "foreground"]
     tty: true
-    networks:                                                                                                                                                                           
-      - kazoo                                                                                                                                                                           
+    networks:
+      - kazoo
 
-  media:                                                                                                                                           
-    image: ${KAZOO_DEV_BASE_CONTAINER}                                                                                                                      
+  media:
+    image: ${KAZOO_DEV_BASE_CONTAINER}
     environment:
        << : *kz-env
        KAZOO_NODE: media
@@ -121,8 +121,8 @@ services:
     volumes: *kz-media
     command: ["kazoo", "foreground"]
     tty: true
-    networks:                                                                                                                                        
-      - kazoo                                                                                                                                        
+    networks:
+      - kazoo
 
   kamailio:
     image: 2600hz/kazoo-kamailio:alpine-edge

@@ -2,54 +2,54 @@ version: '3.5'
 
 x-node-env:
   &kz-env
-    KAZOO_COOKIE: change_me                                                                                                                                                                        
-    VMARGS_PATH: /etc/kazoo/vm.args                                                                                                                                                                
+    KAZOO_COOKIE: change_me
+    VMARGS_PATH: /etc/kazoo/vm.args
     RELX_CONFIG_PATH: /etc/kazoo/sys.config
     LC_CTYPE: en_US.UTF-8
     LANG: en_US.UTF-8
     CODE_LOADING_MODE: interactive
     RELX_REPLACE_OS_VARS: "true"
 
+x-media-cfg:
+  &kz-media
+    - type: bind
+      source: ./config.ini
+      target: /etc/kazoo/config.ini
+      read_only: true
+    - type: bind
+      source: ./sys.config
+      target: /etc/kazoo/sys.config
+      read_only: true
+    - type: bind
+      source: ./vm.args
+      target: /etc/kazoo/vm.args
+      read_only: true
+    - type: bind
+      source: ./kazoo
+      target: /opt/kazoo/bin/kazoo
+      read_only: true
+    - type: bind
+      source: ../media-files/kazoo
+      target: /media-files
+      read_only: true
+
 x-node-cfg:
   &kz-cfg
     - type: bind
-      source: ./config.ini                                                                                                                                           
-      target: /etc/kazoo/config.ini                                                                                                                                                                 
-      read_only: true                                                                                                                                                                               
-    - type: bind                                                                                                                                                                                    
-      source: ./sys.config                                                                                                                                           
-      target: /etc/kazoo/sys.config                                                                                                                                                                 
-      read_only: true                                                                                                                                                                               
-    - type: bind                                                                                                                                                                                    
-      source: ./vm.args                                                                                                                                              
-      target: /etc/kazoo/vm.args                                                                                                                                                                    
-      read_only: true                                                                                                                                                                               
-    - type: bind                                                                                                                                                                                    
-      source: ./kazoo                                                                                                                                                
-      target: /opt/kazoo/bin/kazoo                                                                                                                                                                  
+      source: ./config.ini
+      target: /etc/kazoo/config.ini
       read_only: true
-
-x-media-cfg:
-  &kz-media
-    - type: bind                                                                                                                  
-      source: ./config.ini                                                                         
-      target: /etc/kazoo/config.ini                                                                                               
-      read_only: true                                             
-    - type: bind                                                 
+    - type: bind
       source: ./sys.config
-      target: /etc/kazoo/sys.config                               
-      read_only: true                                                                                                             
-    - type: bind                                                 
-      source: ./vm.args                                                                            
-      target: /etc/kazoo/vm.args                                                                                                  
-      read_only: true                                             
-    - type: bind                                                  
-      source: ./kazoo                                                                              
-      target: /opt/kazoo/bin/kazoo                                                                                                
-      read_only: true                                            
-    - type: bind                  
-      source: ../media-files/kazoo                      
-      target: /media-files               
+      target: /etc/kazoo/sys.config
+      read_only: true
+    - type: bind
+      source: ./vm.args
+      target: /etc/kazoo/vm.args
+      read_only: true
+    - type: bind
+      source: ./kazoo
+      target: /opt/kazoo/bin/kazoo
       read_only: true
 
 services:
@@ -57,23 +57,23 @@ services:
   couchdb:
     image: apache/couchdb
     hostname: 'couchdb-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
-    volumes:                                                                                                                      
-      - type: bind                                             
+    volumes:
+      - type: bind
         source: ./couchdb_cluster.ini
         target: /opt/couchdb/local.d/cluster.ini
-#        read_only: true        
+#        read_only: true
       - type: tmpfs
         target: /opt/couchdb/data
-    deploy:                                                                                                                       
-      endpoint_mode: dnsrr                                                                   
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
   rabbitmq:
     image: rabbitmq:3-management
     hostname: 'rabbitmq-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
-    deploy:                                                                                                                       
-      endpoint_mode: dnsrr                                                                   
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -106,37 +106,35 @@ services:
     image: 2600hz/kazoo:$COMMIT
     environment:
        << : *kz-env
-       KAZOO_NODE: api                                                                                                                                      
+       KAZOO_NODE: api
        KAZOO_APPS: "crossbar"
     hostname: 'crossbar-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-cfg
     tty: true
-    networks:                                                                                                                                                 
+    networks:
       - kazoo
 
-                                                                                                                                                 
-
   callmgr:
-    image: 2600hz/kazoo:$COMMIT                                                                                                                                                         
+    image: 2600hz/kazoo:$COMMIT
     environment:
        << : *kz-env
-       KAZOO_NODE: ecallmgr                                                                                                                                                                 
-       KAZOO_APPS: "ecallmgr"                                                                                                                                                           
+       KAZOO_NODE: ecallmgr
+       KAZOO_APPS: "ecallmgr"
     hostname: 'callmgr-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-cfg
-    networks:                                                                                                                                                                           
-      - kazoo                                                                                                                                                                           
+    networks:
+      - kazoo
 
-  media:                                                                                                                                           
-    image: 2600hz/kazoo:$COMMIT                                                                                                                      
+  media:
+    image: 2600hz/kazoo:$COMMIT
     environment:
        << : *kz-env
-       KAZOO_NODE: media                                                                                                                          
-       KAZOO_APPS: "media_mgr"                                                                                                                        
+       KAZOO_NODE: media
+       KAZOO_APPS: "media_mgr"
     hostname: 'media-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-media
-    networks:                                                                                                                                        
-      - kazoo                                                                                                                                        
+    networks:
+      - kazoo
 
 
   kamailio:
