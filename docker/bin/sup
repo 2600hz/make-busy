@@ -2,6 +2,6 @@
 NODE=${1:-"kazoo"}
 COMMIT=${COMMIT:-${2:-master}}
 shift
-docker exec -i $(docker ps --filter name=${COMMIT}_$NODE --format="{{.ID}}") /opt/kazoo/bin/sup "$*"
+docker exec -i $(docker ps --filter name=${COMMIT}_$NODE --format="{{.ID}}") sup $*
 
 
