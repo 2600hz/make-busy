@@ -65,8 +65,10 @@ down() {
 
 
 add_media_files() {
+   echo "adding media files"
    sup media kazoo_media_maintenance import_prompts /media-files/en-mb/ en-mb > /dev/null 2>&1
 #   sup media kazoo_media_maintenance import_prompts /media-files/en-us/ en-us > /dev/null 2>&1
+   echo "finished adding media files"
 }
 
 add_freeswitch() {

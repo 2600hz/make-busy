@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# first arg is `-something` or `+something`
+# first arg is `-something` 
 if [ "${1#-}" != "$1" ]; then
     set -- kamailio "$@"
 fi
@@ -50,6 +50,7 @@ cat > /etc/kamailio/dynamic.cfg <<EOF
 
 #!trydef PUSHER_ROLE
 #!trydef PRESENCE_NOTIFY_SYNC_ROLE
+#!define KZ_DISPATCHER_PROBE_MODE 3
 
 #!substdef "!MY_HOSTNAME!${MY_HOSTNAME}!g"
 #!substdef "!MY_IP_ADDRESS!${MY_IP_ADDRESS}!g"
@@ -82,6 +83,6 @@ EOF
 >&2
 
 cat /etc/kamailio/dynamic.cfg
-
+echo "args : $@"
 exec "$@"
 

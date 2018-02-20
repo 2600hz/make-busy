@@ -13,3 +13,4 @@ RUN rm -rf /etc/kamailio \
 
 ADD docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["kamailio", "-DD", "-E"]
