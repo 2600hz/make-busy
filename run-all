@@ -1,16 +1,3 @@
 #!/bin/sh
 export PHPRC=./php.ini
-result=0
-for APP in $(ls tests/KazooTests/Applications)                             
-do                                                                                                                                          
-        ./run-app $APP
-        if [ ! $? -eq 0 ]; then
-           result=1
-        fi
-done                                                                                                                                          
-if [ ! $result -eq 0 ]; then
-     echo TESTS ERROR
-     exit 1
-fi
-echo TESTS COMPLETED
-exit 0
+exec vendor/bin/phpunit --printer MakeBusy_Printer --testsuite all

@@ -12,6 +12,13 @@ up() {
    popd > /dev/null
 }
 
+devup() {
+   COMMIT=dev
+   export COMMIT=dev
+   pushd ${BASE_STACK}/mkbusy-dev > /dev/null
+   docker stack deploy -c docker-stack.yml mb_$COMMIT
+   popd > /dev/null
+}
 
 down() {
    docker stack rm mb_${COMMIT}
@@ -24,78 +31,65 @@ help() {
 runtest()
 {
 shift
-TEST=${1:-Error}
-COMMIT=${2:-${COMMIT:-master}}
+COMMIT=${1:-${COMMIT:-master}}
 export COMMIT=$COMMIT
-FILE=$(basename $TEST)
-BASE=${FILE%.*}
-EXT=${FILE##*.} 
-
+shift
+TEST=${1:-Error}
 mkdir -p ${LOGS_DIR}/$COMMIT
-CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
 LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-runtests()                                                                                             
+runtests()
 {                                                                                                      
-shift                                                                                                  
-COMMIT=${1:-${COMMIT:-master}}                                                                         
-export COMMIT=$COMMIT                                                                                  
-shift                                                                                       
-mkdir -p ${LOGS_DIR}/$COMMIT                                                                
-LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log     
+shift
+COMMIT=${1:-${COMMIT:-master}}
+export COMMIT=$COMMIT
+shift
+mkdir -p ${LOGS_DIR}/$COMMIT
+LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
 runcase()
 {
 shift
-CASE=${1:-Device}
-COMMIT=${2:-${COMMIT:-master}}
+COMMIT=${1:-${COMMIT:-master}}
 export COMMIT=$COMMIT
+shift
+CASE=${1:-Device}
 mkdir -p ${LOGS_DIR}/$COMMIT
-CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
-LOG_CONSOLE=1 run-case ${CASE} 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+LOG_CONSOLE=1 run-test ${CASE}\\ 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+}
+
+runsuite()
+{
+shift
+COMMIT=${1:-${COMMIT:-master}}
+export COMMIT=$COMMIT
+shift
+SUITE=${1:-all}
+mkdir -p ${LOGS_DIR}/$COMMIT
+LOG_CONSOLE=1 run-suite ${SUITE} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
 runall()
 {
 mkdir -p ${LOGS_DIR}/$COMMIT
-CID=$(docker ps --filter name=^/mb_${COMMIT}_makebusy\\. --format="{{.ID}}")
 LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-run() {
- 
-mkdir -p ${LOGS_DIR}/$COMMIT
-pushd $TESTS_DIR > /dev/null
-for APP in $(ls $TESTS)                             
-do                                                                                                                                          
-        if [ -d $APP ]                              
-        then                                                    
-                for CASE in $(ls $APP)                                          
-                do                                                              
-                        if [ -d $APP/$CASE ]                                     
-                        then                                                                         
-                                LOG_CONSOLE=1 run-suite $APP/$CASE 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
-                                CLEAN=1 SKIP_ACCOUNT=1 run-test ../EmptyTestCase.php                                                       
-                        fi                                                                                                                    
-                done                                                                                                                          
-        fi                                                                                                                                    
-done                                                                                                                                          
-popd > /dev/null
-
-}
 
 COMMAND=${1:-help}
 
 case $COMMAND in
     up) up;;
+    devup) devup $*;;
     down) down;;
     run) run;;
-    runall) runall;;
-    runcase) runcase $*;;
-    runtest) runtest $*;;
-    runtests) runtests $*;;
+    run-all) runall;;
+    run-suite) runsuite $*;;
+    run-case) runcase $*;;
+    run-test) runtest $*;;
+    run-tests) runtests $*;;
     help) help;;
 esac
 

@@ -14,6 +14,7 @@ use \MakeBusy\Common\Log;
 use \MakeBusy\Kazoo\Applications\Crossbar\TestAccount;
 use \MakeBusy\Kazoo\AbstractTestAccount;
 use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
+use \MakeBusy\Kazoo\Gateways as KazooGateways;
 use \MakeBusy\Kazoo\Applications\Callflow\FeatureCodes;
 use \MakeBusy\Kazoo\SDK;
 
@@ -21,7 +22,6 @@ use \Exception;
 use \Kazoo\Api\Exception\ApiException;
 use \Kazoo\HttpClient\Exception\HttpException;
 use \Kazoo\Api\Exception\Conflict;
-
 use \ReflectionClass;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
@@ -74,66 +74,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     	$profile = self::getProfile($profile_name);
     	$profile->getEsl()->hangupChannels();
     }
-
-/*     
-    public static function suite()
-    {
-    	$class = get_called_class();
-    	$type = AbstractTestAccount::shortName($class);
-    	$base_type = AbstractTestAccount::shortName(get_parent_class($class));
-
-    	$suite = new PHPUnit_Framework_TestSuite;
-    	
-    	if($base_type != "TestCase") {
-    		$suite->addTest(new PHPUnit_Framework_TestSuite($class));
-    		return $suite;
-    	}
-
-    	$obj = new ReflectionClass($class);
-    	$filename = $obj->getFileName();
-    	$path = str_replace("TestCase.php", "/", $filename);
-    	
-    	$directory = new RecursiveDirectoryIterator($path , RecursiveDirectoryIterator::SKIP_DOTS);
-    	$fileIterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
-    	foreach ($fileIterator as $file) {
-    		if ($file->getExtension() == "php") {
-    			if ($file->isReadable()) {
-    				include_once $file->getPathname();
-    			} else {
-    				Log::info("not readable ? %s", $file->getPathname());
-    			}
-    		}
-    	}
-
-    	$this_class = get_called_class();
-    	$children = array();
-    	foreach( get_declared_classes() as $class ){
-    		if( is_subclass_of( $class, $this_class) ) {
-    			$children[] = new ReflectionClass($class);
-    		}
-    	}
-
-    	foreach($children as $child) {
-    		$has_tests = false;
-    		foreach ($child->getMethods() as $method) {
-    			if($suite->isTestMethod($method) && $method->getName() != 'testMain') {
-    				$has_tests = true;
-    				$t = PHPUnit_Framework_TestSuite::createTest($child, $method->getName());
-    				$suite->addTest($t);
-    			}
-    		}
-    		if(! $has_tests ) {
-	    		$t = PHPUnit_Framework_TestSuite::createTest($child, 'testMain');
-	    		$suite->addTest($t);
-    		}
-    	}
-
-    	$suite->setName($obj->name);
-    	self::$is_suite= true;
-    	
-    	return $suite;
-    }   
- */
 
     // override this to run a test
     public function main($sip_uri) {
@@ -238,25 +178,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 	        self::SystemConfig("token_buckets/default")->fetch()->change(["tokens_fill_rate"], 100);
     	});
 
-
-    	AbstractTestAccount::nukeTestAccounts();
-    	/*
     	if (isset($_ENV['CLEAN'])) {
             Log::debug("Cleaning MakeBusy traces from Kazoo");
             AbstractTestAccount::nukeTestAccounts();
-        } else {
-        	if((! isset(self::$base_type)) || self::$base_type != $base_type) {
-        		Log::debug("Resetting MakeBusy Account");
-        		AbstractTestAccount::nukeTestAccounts();
-        	} else {
-        		Log::debug("Trying to use pre-created Kazoo's MakeBusy setup, creating entities if necessary");        		
-        	}
+     	} else {
+        	Log::debug("Trying to use pre-created Kazoo's MakeBusy setup, creating entities if necessary");        		
         }
-        */
-
-        self::resetSofiaProfile("auth");
-        self::resetSofiaProfile("pbx");
-        self::resetSofiaProfile("carrier");
+        
+        self::resetSofiaProfiles();
 
         self::$setup = true;
         self::$base_type = $base_type;
@@ -267,24 +196,11 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 //            }
             static::setUpCase();
         });
-
-//         if(isset(self::$account)) {
-//             $is_loaded = self::$account->isLoaded();
-//         } else {
-//             $is_loaded = false;
-//         }
         
-//         static::syncProfiles($is_loaded);
-        static::syncProfiles(false);
+        static::syncSofiaProfiles(false);
 
     }
     
-    public static function syncProfiles($is_loaded) {
-    	self::syncSofiaProfile("auth", $is_loaded);
-    	self::syncSofiaProfile("carrier", $is_loaded);
-    	self::syncSofiaProfile("pbx", $is_loaded);
-    }
-
     public static function tearDownAfterClass() {
         Log::notice("Teardown test: %s case: %s\n\n", self::$type, self::$base_type);
         self::safeCall(function() {
@@ -298,7 +214,20 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     	$profile = self::getProfile($profile_name);
     	$profile->resetGateways();
     }
+
+    public static function resetSofiaProfiles() {
+    	self::resetSofiaProfile("auth");
+    	self::resetSofiaProfile("pbx");
+    	self::resetSofiaProfile("carrier");
+    }
+    
+    public static function syncSofiaProfiles($is_loaded) {
     	
+    	self::syncSofiaProfile("auth", $is_loaded);
+    	self::syncSofiaProfile("carrier", $is_loaded);
+    	self::syncSofiaProfile("pbx", $is_loaded);
+    }
+    
     public static function syncSofiaProfile($profile_name, $loaded = false, $timeout = 10) {
         $profile = self::getProfile($profile_name);
 
@@ -306,6 +235,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $profile->getEsl()->api("hupall");
         }
 
+        self::saveProfile($profile_name, $profile);
+        
         if ($loaded) {
             if (isset($_ENV['SKIP_REGISTER'])) {
                 return;
@@ -317,6 +248,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
                 $profile->register(false);
             }
         } else {
+        	$profile->unregister_all();
+        	$profile->killgw_all();
             $profile->safe_restart();
         }
 
@@ -474,4 +407,15 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         return SDK::getInstance()->SystemConfig($config);
     }
 
+    public static function rescanProfile($profile_name) {
+    	$profile = self::getProfile($profile_name);
+    	self::saveProfile($profile_name, $profile);
+    	$profile->rescan();
+    }
+
+    public static function saveProfile($profile_name, $profile) {
+    	$include = $profile->getGateways()->asXmlInclude();
+    	file_put_contents("/tmp/" . $profile_name. ".xml", $include);
+    }
+    
 }

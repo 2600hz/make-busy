@@ -114,7 +114,7 @@ class Profile
     }
 
     public function rescan() {
-        return$this->esl->api_f('sofia profile %s rescan', $this->getName());
+        return $this->esl->api_f('sofia profile %s rescan', $this->getName());
     }
 
     public function register_all() {

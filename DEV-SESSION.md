@@ -29,15 +29,16 @@ root@fl03:~# docker exec -ti mkbusy sh
    # wait-for makebusy-fs-auth 120 "FreeSWITCH Started"
    # wait-for makebusy-fs-carrier 120 "FreeSWITCH Started"
    # kazoo configure
-   # sup callmgr ecallmgr_maintenance reload_acls
    # kazoo check
    
-   # mkbusy run 4277e28f4d
+   # mkbusy run-all
    
-   running a single test
-   # HUPALL=1 LOG_CONSOLE=1 run-test Callflow/Voicemail/SetupOwner.php
+   running a single test, test shold be ClassName, separate namespace with : 
+   # LOG_CONSOLE=1 run-test SetupOwner
+   # LOG_CONSOLE=1 run-test Device:TransferBlind
    
    running a suite of tests
-   HUPALL=1 LOG_CONSOLE=1 run-suite Callflow/Voicemail
+   # LOG_CONSOLE=1 run-suite voicemail
+   # LOG_CONSOLE=1 run-suite voicemail,incoming
 
 ```

@@ -18,7 +18,7 @@ class TestAccount extends AbstractTestAccount
     
     public function __construct($class) {
     	parent::__construct($class);
-    	self::$callflow = 1;
+    	self::reset();
     }
 
     public function createCallflow($data) {
@@ -95,8 +95,11 @@ class TestAccount extends AbstractTestAccount
         return $this->getAccount()->Config($config);
     }
 
-    public function reset($type) {
-    	parent::reset($type);
+    public function reset($type = null) {
+    	if($type != null) {
+    		parent::reset($type);
+    	}
+    	self::$callflow = 1;
     	Conference::resetCounter();
     	Connectivity::resetCounter();
     	Device::resetCounter();

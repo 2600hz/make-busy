@@ -1,4 +1,4 @@
-from alpine as build
+FROM alpine as build
 RUN    apk update \
     && apk add alpine-sdk vim swig \
     && ln `which swig` `which swig`3.0 \
@@ -14,12 +14,13 @@ RUN    abuild-keygen -a -i \
     && abuild checksum \
     && abuild -r
 
-from alpine as freeswitch
-COPY --from=build /home/freeswitch/packages/freeswitch/x86_64/freeswitch-1.9.0-r0.apk /
-RUN apk update \
-    && apk add /freeswitch-1.9.0-r0.apk --allow-untrusted \
-    && rm freeswitch-1.9.0-r0.apk
+FROM alpine as freeswitch
+COPY --from=build /home/freeswitch/packages/freeswitch/x86_64/* /apks/x86_64/
+RUN echo -e "/apks\n$(cat /etc/apk/repositories)" > /etc/apk/repositories \
+    && apk add --update --allow-untrusted \
+           bash curl wget iproute2 \
+           freeswitch=1.9.0-r0 freeswitch-flite=1.9.0-r0
 
-ENTRYPOINT ["freeswitch", "-nonat"]
+CMD ["freeswitch", "-nonat"]
 
 

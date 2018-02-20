@@ -299,6 +299,7 @@ class Device
         Log::debug("trying to set username %s on device %s", $username, $device->getId() );
         $device->sip->username = $username;
         $device->save();
+        $this->getGateway()->setParam('username', $device->sip->username);
         Log::info("successfully set username %s on device %s", $username, $device->getId() );
     }
 
@@ -311,6 +312,7 @@ class Device
        Log::debug("trying to set password %s on device %s", $password, $device->getId() );
        $device->sip->password = $password;
        $device->save();
+       $this->getGateway()->setParam('password', $device->sip->password);
        Log::info("successfully set password %s on device %s", $password, $device->getId() );
     }
 
@@ -345,4 +347,3 @@ class Device
     	self::$call_counter = 1;
     }
 }
-

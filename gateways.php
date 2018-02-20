@@ -2,20 +2,19 @@
 
 require_once "vendor/autoload.php";
 
-use \MakeBusy\FreeSWITCH\Esl\Connection as EslConnection;
-use \MakeBusy\Kazoo\Gateways as KazooGateways;
-
 // $argv is for testing (to run from console)
 $type = isset($_GET['type']) ? $_GET["type"] : $argv[1];
 
 $_ENV['LOG_CONSOLE'] = 1;
-KazooGateways::loadFromAccounts();
 
-$include = EslConnection::getInstance($type)
-	->getProfiles()
-	->getProfile("profile")
-	->getGateways()
-	->asXmlInclude();
+error_log("input:" . "Type=$type\n");
 
-error_log("response:\n" . htmlentities($include));
+$filename = "/tmp/" . $type . ".xml";
+if( file_exists($filename) ) {
+	$include = file_get_contents($filename);
+} else {
+	error_log("FILE " . $filename . " NOT FOUND\n");
+	$include = "<!-- file ". $filename . " not found -->";
+}
+error_log("response: " . $filename ."\n" . htmlentities($include));
 echo $include;

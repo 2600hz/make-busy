@@ -61,8 +61,10 @@ abstract class AbstractTestAccount
     	$this->type = $type;
     }
 
-    public function reset($type) {
-    	$this->type = $type;
+    public function reset($type = null) {
+    	if($type != null) {
+    		$this->type = $type;
+    	}
     	self::$counter = 1;
     }
     

@@ -2,6 +2,7 @@
     <settings>
         <param name="colorize" value="false"/>
         <param name="loglevel" value="info"/>
+        <param name="uuid" value="true" />
     </settings>
 
     <mappings>

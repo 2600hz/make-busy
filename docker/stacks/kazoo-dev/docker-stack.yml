@@ -7,7 +7,7 @@ x-node-env:
     LANG: en_US.UTF-8
     CODE_LOADING_MODE: interactive
     RELX_REPLACE_OS_VARS: "true"
-    PATH: ${PATH}:/opt/kazoo/_rel/kazoo/bin
+    PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/kazoo/_rel/kazoo/bin"
 
 x-media-cfg:
   &kz-media
@@ -40,14 +40,14 @@ services:
   couchdb:
     image: apache/couchdb
     hostname: 'couchdb-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
-    volumes:                                                                                                                      
-      - type: bind                                             
+    volumes:
+      - type: bind                          
         source: ./couchdb_cluster.ini
         target: /opt/couchdb/local.d/cluster.ini
       - type: tmpfs
         target: /opt/couchdb/data
-    deploy:                                                                                                                       
-      endpoint_mode: dnsrr                                                                   
+    deploy:
+      endpoint_mode: dnsrr
     networks:
       - kazoo
 
@@ -60,7 +60,7 @@ services:
       - kazoo
 
   freeswitch:
-    image: 2600hz/kazoo-fs
+    image: 2600hz/kazoo-freeswitch:alpine-edge
     hostname: 'freeswitch-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes:
       - type: bind
@@ -81,7 +81,7 @@ services:
     volumes: *kz-dev
     hostname: 'kazoo-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     tty: true
-    command: ["/opt/kazoo/_rel/kazoo/bin/kazoo", "foreground"]
+    command: ["kazoo", "foreground"]
     networks:
       - kazoo
 
@@ -93,7 +93,7 @@ services:
        KAZOO_APPS: "crossbar"
     hostname: 'crossbar-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-dev
-    command: ["/opt/kazoo/_rel/kazoo/bin/kazoo", "foreground"]
+    command: ["kazoo", "foreground"]
     tty: true
     networks:                                                                                                                                                 
       - kazoo
@@ -106,7 +106,7 @@ services:
        KAZOO_APPS: "ecallmgr"                                                                                                                                                           
     hostname: 'callmgr-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-dev
-    command: ["/opt/kazoo/_rel/kazoo/bin/kazoo", "foreground"]
+    command: ["kazoo", "foreground"]
     tty: true
     networks:                                                                                                                                                                           
       - kazoo                                                                                                                                                                           
@@ -119,13 +119,13 @@ services:
        KAZOO_APPS: "media_mgr"
     hostname: 'media-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes: *kz-media
-    command: ["/opt/kazoo/_rel/kazoo/bin/kazoo", "foreground"]
+    command: ["kazoo", "foreground"]
     tty: true
     networks:                                                                                                                                        
       - kazoo                                                                                                                                        
 
   kamailio:
-    image: 2600hz/kamailio:edge
+    image: 2600hz/kazoo-kamailio:alpine-edge
     hostname: 'kamailio-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     environment:
        ENABLE_SERVICE_NAME: "false"

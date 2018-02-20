@@ -78,7 +78,7 @@ services:
       - kazoo
 
   freeswitch:
-    image: 2600hz/kazoo-fs
+    image: 2600hz/kazoo-freeswitch:alpine-edge
     hostname: 'freeswitch-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     volumes:
       - type: bind
@@ -140,7 +140,7 @@ services:
 
 
   kamailio:
-    image: 2600hz/kamailio:edge
+    image: 2600hz/kazoo-kamailio:alpine-edge
     hostname: 'kamailio-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     environment:
        ENABLE_SERVICE_NAME: "false"
