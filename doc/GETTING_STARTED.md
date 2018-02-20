@@ -351,10 +351,10 @@ Creates kazoo as a sibling to make-busy in the container
 ```bash
 docker run -td --name mkbusy \
   -v /path/to/make-busy:/root/make-busy \
-  -v /path/to/kazoo:/root/dev \
+  -v /path/to/kazoo:/opt/kazoo \
   -v /path/to/make-busy/tests:/root/tests \
   --privileged docker:dind --experimental --storage-driver=overlay2
-docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/kazoo-pr/:/root/dev -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
+docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/kazoo-pr/:/opt/kazoo -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
 
 docker exec -ti mkbusy sh
 
