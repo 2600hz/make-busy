@@ -13,8 +13,6 @@ up() {
 }
 
 devup() {
-   COMMIT=dev
-   export COMMIT=dev
    pushd ${BASE_STACK}/mkbusy-dev > /dev/null
    docker stack deploy -c docker-stack.yml mb_$COMMIT
    popd > /dev/null
