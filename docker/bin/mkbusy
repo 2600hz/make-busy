@@ -13,9 +13,9 @@ up() {
 }
 
 devup() {
-   pushd ${BASE_STACK}/mkbusy-dev > /dev/null
-   docker stack deploy -c docker-stack.yml mb_$COMMIT
-   popd > /dev/null
+    pushd ${BASE_STACK}/mkbusy-dev > /dev/null
+    docker stack deploy -c docker-stack.yml mb_$COMMIT
+    popd > /dev/null
 }
 
 down() {
@@ -26,53 +26,48 @@ help() {
     echo usage: "mkbusy up | down | run"
 }
 
-runtest()
-{
-shift
-COMMIT=${1:-${COMMIT:-master}}
-export COMMIT=$COMMIT
-shift
-TEST=${1:-Error}
-mkdir -p ${LOGS_DIR}/$COMMIT
-LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+runtest() {
+    shift
+    COMMIT=${1:-${COMMIT:-master}}
+    export COMMIT=$COMMIT
+    shift
+    TEST=${1:-Error}
+    mkdir -p ${LOGS_DIR}/$COMMIT
+    LOG_CONSOLE=1 run-test ${TEST} 2>> ${LOGS_DIR}/$COMMIT/${BASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-runtests()
-{
-shift
-COMMIT=${1:-${COMMIT:-master}}
-export COMMIT=$COMMIT
-shift
-mkdir -p ${LOGS_DIR}/$COMMIT
-LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+runtests() {
+    shift
+    COMMIT=${1:-${COMMIT:-master}}
+    export COMMIT=$COMMIT
+    shift
+    mkdir -p ${LOGS_DIR}/$COMMIT
+    LOG_CONSOLE=1 run-tests $* 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-runcase()
-{
-shift
-COMMIT=${1:-${COMMIT:-master}}
-export COMMIT=$COMMIT
-shift
-CASE=${1:-Device}
-mkdir -p ${LOGS_DIR}/$COMMIT
-LOG_CONSOLE=1 run-test ${CASE}\\ 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+runcase() {
+    shift
+    COMMIT=${1:-${COMMIT:-master}}
+    export COMMIT=$COMMIT
+    shift
+    CASE=${1:-Device}
+    mkdir -p ${LOGS_DIR}/$COMMIT
+    LOG_CONSOLE=1 run-test ${CASE}\\ 2>> ${LOGS_DIR}/$COMMIT/${CASE}.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-runsuite()
-{
-shift
-COMMIT=${1:-${COMMIT:-master}}
-export COMMIT=$COMMIT
-shift
-SUITE=${1:-all}
-mkdir -p ${LOGS_DIR}/$COMMIT
-LOG_CONSOLE=1 run-suite ${SUITE} 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+runsuite() {
+    shift
+    COMMIT=${1:-${COMMIT:-master}}
+    export COMMIT=$COMMIT
+    shift
+    SUITE=${1:-all}
+    mkdir -p ${LOGS_DIR}/$COMMIT
+    LOG_CONSOLE=1 run-suite ${SUITE} 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
-runall()
-{
-mkdir -p ${LOGS_DIR}/$COMMIT
-LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
+runall() {
+    mkdir -p ${LOGS_DIR}/$COMMIT
+    LOG_CONSOLE=1 run-all 2>> ${LOGS_DIR}/$COMMIT/suite.log | tee -a ${LOGS_DIR}/$COMMIT/run.log
 }
 
 
