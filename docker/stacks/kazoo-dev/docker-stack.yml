@@ -12,7 +12,7 @@ x-node-env:
 x-media-cfg:
   &kz-media
     - type: bind
-      source: /home/james/local/git/2600hz/kazoo-pr
+      source: ../../../../kazoo-pr
       target: /opt/kazoo
       read_only: true
     - type: bind
@@ -27,7 +27,7 @@ x-media-cfg:
 x-devnode-cfg:
   &kz-dev
     - type: bind
-      source: /home/james/local/git/2600hz/kazoo-pr
+      source: ../../../../kazoo-pr
       target: /opt/kazoo
       read_only: false
     - type: bind
