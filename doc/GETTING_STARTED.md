@@ -354,7 +354,7 @@ docker run -td --name mkbusy \
   -v /path/to/kazoo:/opt/kazoo \
   -v /path/to/make-busy/tests:/root/tests \
   --privileged docker:dind --experimental --storage-driver=overlay2
-docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/kazoo-pr/:/opt/kazoo -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
+docker run -td --name mkbusy -v /home/james/local/git/2600hz/make-busy/:/root/make-busy -v /home/james/local/git/2600hz/kazoo-pr/:/root/kazoo-pr -v /home/james/local/git/2600hz/make-busy/tests/:/root/tests --privileged docker:dind --experimental --storage-driver=overlay2
 
 docker exec -ti mkbusy sh
 
@@ -371,7 +371,7 @@ Make sure you specify the Erlang version used to build the local kazoo release (
 
 ```bash
 docker> export COMMIT=dev
-docker> kazoo devup erlang:19
+docker> kazoo devup erlang:19.3
 Creating network kz_dev_kazoo
 Creating service kz_dev_rabbitmq
 Creating service kz_dev_freeswitch
