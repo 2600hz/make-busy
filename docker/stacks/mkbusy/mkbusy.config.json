@@ -7,7 +7,7 @@
 },
 
 "webhooks": {
-    "uri": "http://makebusy/webhook.php"
+    "uri": "http://makebusy-http/webhook.php"
 },
 
 "sdk": {

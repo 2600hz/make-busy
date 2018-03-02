@@ -17,6 +17,10 @@ services:
         source: ./mkbusy.config.json
         target: /home/user/make-busy/config.json
         read_only: true
+      - type: bind
+        source: /tmp
+        target: /tmp
+        read_only: false
     deploy:
       endpoint_mode: dnsrr
     networks:
@@ -36,6 +40,22 @@ services:
       endpoint_mode: dnsrr
     networks:
       - kazoo
+
+  makebusy-http:
+    image: php:7.0-apache
+    hostname: "makebusy-http.$COMMIT"
+    volumes:
+       - type: bind
+         source: ../../../../make-busy
+         target: /var/www/html
+       - type: bind
+         source: /tmp
+         target: /tmp
+         read_only: false
+    deploy:
+         endpoint_mode: dnsrr
+    networks:
+       - kazoo
 
   makebusy-fs-pbx:                 
     image: 2600hz/mkbusy-fs                     
