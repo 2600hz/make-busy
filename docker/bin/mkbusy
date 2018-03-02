@@ -8,7 +8,7 @@ export COMMIT=$COMMIT
 
 up() {
    pushd ${BASE_STACK}/mkbusy > /dev/null
-   docker stack deploy -c docker-stack.yml mb_${COMMIT}
+   docker -l debug stack deploy -c docker-stack.yml mb_${COMMIT}
    popd > /dev/null
 }
 
