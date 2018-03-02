@@ -95,7 +95,7 @@ services:
     environment:
        << : *kz-env
        KAZOO_NODE: apps
-       KAZOO_APPS: "sysconf,blackhole,callflow,conference,registrar,pusher,stepswitch,trunkstore"
+       KAZOO_APPS: "webhooks,sysconf,blackhole,callflow,conference,registrar,pusher,stepswitch,trunkstore"
     volumes: *kz-cfg
     hostname: 'kazoo-{{.Task.Slot}}.{{index .Service.Labels "com.docker.stack.namespace"}}'
     tty: true
