@@ -17,7 +17,7 @@ root@fl03:~# docker run -td --name mkbusy \
 root@fl03:~# docker exec -ti mkbusy sh
    # docker swarm init
    # apk --update add git jq bash coreutils
-   # export PATH=$PATH:~/make-busy/bin
+   # export PATH=$PATH:~/make-busy/docker/bin
    
    # export COMMIT=4277e28f4d
    # if exported, the commit can be ommited in next commands

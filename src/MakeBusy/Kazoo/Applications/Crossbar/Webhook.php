@@ -33,8 +33,14 @@ class Webhook
             $webhook->uri = $options['uri'];
             $webhook->hook = $options['hook'];
             $webhook->http_verb = "post";
+
+            if (!empty($options['custom_data']) ){
+                $webhook->custom_data = $options['custom_data'];
+            }
+
             $webhook->save();
             $this->setWebhook($webhook);
+            Log::info("%s\n",$webhook);
         } else {
             throw new Exception("Requires uri and hook");
         }

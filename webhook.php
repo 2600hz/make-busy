@@ -7,5 +7,5 @@ if($_POST) {
     $event = explode('_', $hook_event);
     $event = $event[1];
 
-    file_put_contents("/tmp/$call_id" . "_$direction" . "_$event" . ".log", print_r($data, TRUE), FILE_APPEND);
+    file_put_contents("/tmp/$call_id" . "_$direction" . "_$event" . ".log", json_encode($data));
 }

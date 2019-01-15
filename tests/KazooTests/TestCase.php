@@ -232,19 +232,24 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $profile = self::getProfile($profile_name);
 
         if(isset($_ENV['HUPALL'])) {
+            echo "mark 1";
             $profile->getEsl()->api("hupall");
         }
 
         self::saveProfile($profile_name, $profile);
         
         if ($loaded) {
+            echo "mark 2";
             if (isset($_ENV['SKIP_REGISTER'])) {
+                echo "mark 3";
                 return;
             }
 
             if (isset($_ENV['RESTART_PROFILE'])) {
+                echo "mark 4";
                 $profile->safe_restart();
             } else {
+                echo "mark 5";
                 $profile->register(false);
             }
         } else {
@@ -252,6 +257,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         	$profile->killgw_all();
             $profile->safe_restart();
         }
+        var_dump($profile);
+        var_dump($proifle->getRegistered());
 
         if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
             Log::error("fs %s %d gateways are not registered, repeat registration after 5 seconds", $profile_name, $wait);
@@ -260,6 +267,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             if( ($wait = $profile->waitForRegister($profile->getRegistered())) > 0) {
                 Log::error("fs %s %d gateways are not registered still, giving up", $profile_name, $wait);
                 $status = $profile->status();
+                var_dump($status);
                 Log::error("fs %s sofia status:\n%s", $profile_name, $status == null ? "down" : $status->getBody());
                 throw new Exception("gateways weren't registered");
             }
