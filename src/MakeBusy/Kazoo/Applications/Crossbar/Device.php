@@ -273,7 +273,7 @@ class Device
 
     public function setCid($number, $name, $type = "external") {
         $this->setCidNumber($number, $type);
-        $this->setCidName($number, $type);
+        $this->setCidName($name, $type);
     }
 
     public function setCidNumber($number, $type = "external"){
